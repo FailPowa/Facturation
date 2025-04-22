@@ -5,5 +5,7 @@ import { contextBridge, ipcRenderer } from "electron";
  */
 contextBridge.exposeInMainWorld("serviceElectron", {
     versions: () => ipcRenderer.invoke("versions"),
-    getEvents: () => ipcRenderer.invoke('getEvents')
+    getEvents: () => ipcRenderer.invoke('getEvents'),
+    getTjm: () => ipcRenderer.invoke('getTjm'),
+    updateTjm: (montant: number) => ipcRenderer.invoke('updateTjm', montant)
 });
