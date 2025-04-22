@@ -1,0 +1,67 @@
+{
+  "name": "facturation",
+  "version": "1.0.0",
+  "main": "./dist/main.js",
+  "author": "Florentin B.",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "watch": "nodemon --exec yarn serve:electron",
+    "start": "yarn nightly:rename && concurrently -k \"yarn serve:front\" \"yarn watch\"",
+    "front:setup": "cd vite-project && yarn",
+    "electron:setup": "yarn",
+    "setup": "yarn front:setup && yarn electron:setup",
+    "serve:front": "cd vite-project && yarn dev",
+    "serve:electron": "set APP_IS_NIGHTLY=yes && set APP_IS_DEV=yes && yarn build && wait-on tcp:3000 && electron .",
+    "build:front": "cd vite-project && yarn build",
+    "electron:build": "yarn build",
+    "electron:builder": "electron-builder",
+    "app:build": "yarn prod:rename && yarn build:front && yarn electron:build && yarn electron:builder",
+    "app:build:nightly": "set APP_IS_NIGHTLY=yes && set APP_IS_DEV=no && yarn nightly:rename && yarn build:front && yarn electron:build && yarn electron:builder",
+    "nightly:rename": "json -I -f package.json -e \"this.name='facturation'\" && json -I -f package.json -e \"this.build.productName='Facturation Nightly'\" && json -I -f package.json -e \"this.build.appId='com.official-electron-vue.app'\"",
+    "prod:rename": "json -I -f package.json -e \"this.name='facturation'\" && json -I -f package.json -e \"this.build.productName='Facturation'\" && json -I -f package.json -e \"this.build.appId='com.official-electron-vue.app'\"",
+    "electron-rebuild": "./node_modules/.bin/electron-rebuild",
+    "sqlite-rebuild": "cd node_modules/better-sqlite3 && npm run build-release",
+    "postinstall": "electron-builder install-app-deps",
+    "up:win": "up_using_window.cmd"
+  },
+  "devDependencies": {
+    "@types/electron-json-storage": "^4.5.4",
+    "concurrently": "^9.0.1",
+    "electron": "^32.1.2",
+    "electron-builder": "^25.1.7",
+    "electron-devtools-installer": "^3.2.0",
+    "json": "^11.0.0",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.6.2",
+    "wait-on": "^8.0.1"
+  },
+  "dependencies": {
+    "electron-json-storage": "^4.6.0",
+    "electron-log": "^5.2.0",
+    "electron-store": "8.2.0",
+    "electron-updater": "^6.3.9"
+  },
+  "build": {
+    "appId": "com.official-electron-vue.app",
+    "productName": "Facturation Nightly",
+    "copyright": "Copyright © 2025 ${author}",
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "deleteAppDataOnUninstall": true
+    },
+    "files": [
+      "dist/**/*"
+    ],
+    "extraResources": [
+      "defaults/**/*",
+      "./Electron/resources/*"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist_electron"
+    }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
