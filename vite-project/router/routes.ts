@@ -1,5 +1,5 @@
-import HelpLayout from '../src/views/HelpLayout.vue';
-import HomeLayout from '../src/views/HomeLayout.vue';
+import HelpLayout from '../src/views/HelpView.vue';
+import HomeLayout from '../src/views/HomeView.vue';
 
 /** Définition des routes de l'application */
 export const routes = [
