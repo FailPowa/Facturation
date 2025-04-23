@@ -35,7 +35,7 @@
 <script setup lang="ts">
     import { ref, Ref, onMounted } from 'vue';
     import { mdiWrench } from '@mdi/js';
-    import { Tjm } from '../../../types/Tjm';
+    import { Tjm } from '../../../types';
     import TjmDialog from '../dialogs/TjmDialog.vue';
 
     /** Variable contenant les icones du composant */

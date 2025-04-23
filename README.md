@@ -44,6 +44,8 @@ yarn app:build
 # Prérequis
 Des fichiers JSON pour stocker les différentes données de l'application sont nécessaires à son bon fonctionnement
 
+Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modèles de leurs types respectifs dans le dossier `vite-project/types/`
+
 > Le premier fichier JSON s'intitule `tjm.json` et suit ce modèle
 >>```json
 >>{
