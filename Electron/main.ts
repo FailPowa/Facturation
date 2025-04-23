@@ -3,7 +3,6 @@ import path from "path";
 import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
-import { getAllEvents } from "./services/eventHandler";
 import { getTjm, updateTjm } from "./services/tjmService";
 
 /**
@@ -54,7 +53,6 @@ async function createWindow() {
 /** Ecoute des événements concernant les events pour charger les événements du fichier JSON */
 ipcMain.handle('getTjm', getTjm);
 ipcMain.handle('updateTjm', updateTjm);
-ipcMain.handle('getEvents', getAllEvents);
 ipcMain.handle('versions', () => {
     return {
         node: process.versions.chrome,

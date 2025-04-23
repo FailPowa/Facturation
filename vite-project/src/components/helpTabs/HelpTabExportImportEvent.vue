@@ -87,9 +87,6 @@
      */
     async function exportEvents(): Promise<void> {
         loadingExport.value = true;
-        const events: any[] = await window.serviceElectron.getEvents();
-        if ( events.length > 0 ) console.log(events);
-        else console.log("PAS DE RESULTAT");
         loadingExport.value = false;
     }
 
