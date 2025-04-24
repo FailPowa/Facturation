@@ -1,6 +1,5 @@
-import { Event, CalendarEvent } from './Event';
+import { Tjm } from './Tjm';
 
 export type {
-    Event,
-    CalendarEvent
+    Tjm
 }
