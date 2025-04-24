@@ -1,3 +1,4 @@
+import ClientLayout from '../src/components/layout/ClientLayout.vue';
 import HelpLayout from '../src/views/HelpView.vue';
 import HomeLayout from '../src/views/HomeView.vue';
 
@@ -12,5 +13,10 @@ export const routes = [
         path: '/help',
         component: HelpLayout,
         label: 'Aide'
+    },
+    {
+        path: '/form',
+        component: ClientLayout,
+        label: "Formulaire"
     }
 ];

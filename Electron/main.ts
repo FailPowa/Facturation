@@ -5,6 +5,7 @@ import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
 import { getAllEvents } from "./services/eventHandler";
 import { getTjm, updateTjm } from "./services/tjmService";
+import { getClients, updateClients } from "./services/clientService";
 
 /**
  * Fonction de création de la fenêtre
@@ -54,6 +55,8 @@ async function createWindow() {
 /** Ecoute des événements concernant les events pour charger les événements du fichier JSON */
 ipcMain.handle('getTjm', getTjm);
 ipcMain.handle('updateTjm', updateTjm);
+ipcMain.handle('getClients', getClients);
+ipcMain.handle('updateClients', updateClients);
 ipcMain.handle('getEvents', getAllEvents);
 ipcMain.handle('versions', () => {
     return {
@@ -64,6 +67,7 @@ ipcMain.handle('versions', () => {
         name: app.getName(),
     };
 });
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
