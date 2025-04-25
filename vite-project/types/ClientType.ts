@@ -3,8 +3,15 @@
  */
 
 export interface ClientType {
-    firstname: string,
-    lastname: string
+    id : number
+    nom: string
+    adresse: string
+    codePostal: string
+    ville: string
+    mail: string
+    numTva: string
+    siret: string
+    isMe: boolean
 }
 
 /**
@@ -13,11 +20,35 @@ export interface ClientType {
  * 
  */
 export class Client implements ClientType{
-    firstname: string
-    lastname: string
+    id : number
+    nom: string
+    adresse: string
+    codePostal: string
+    ville: string
+    mail: string
+    numTva: string
+    siret: string
+    isMe: boolean
 
-    constructor(firstname: string, lastname: string){
-        this.firstname = firstname
-        this.lastname = lastname
+    constructor(
+        id : number,
+        nom: string,
+        adresse: string,
+        codePostal: string,
+        ville: string,
+        mail: string,
+        numTva: string,
+        siret: string,
+        isMe: boolean
+    ){
+        this.id = id
+        this.nom = nom
+        this.adresse = adresse
+        this.codePostal = codePostal
+        this.ville = ville
+        this.mail = mail
+        this.numTva = numTva
+        this.siret = siret
+        this.isMe = isMe
     }
 }

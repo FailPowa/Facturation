@@ -35,12 +35,13 @@
     <!-- Boite de dialogue contenant le formulaire d'ajout d'un client -->
     <v-dialog
         v-model="dialog"
-        width="auto"
+        width="75%"
         persistent
     >
-        <ClientFormDialog
+        <ClientForm
             @cancel="dialog = false"
             @confirm="addClient"
+            :client="null"
         />
     </v-dialog>
 </v-container>
@@ -59,7 +60,7 @@
 <script setup lang="ts">
     import {ClientType} from '../../../types/ClientType';
     import { Ref, ref, onMounted} from 'vue';
-    import ClientFormDialog from '../dialogs/ClientFormDialog.vue';
+    import ClientForm from '../forms/ClientForm.vue';
     import { mdiAccountPlus } from '@mdi/js';
     import { clientHeaders } from './headers'
 
@@ -78,14 +79,15 @@
 
         
     /** Ajoute un nouveau client ( A modifier )*/
-    async function addClient(form: ClientType): Promise<void> {
-        clients.value = await window.serviceElectron.updateClients({firstname: form.firstname, lastname: form.lastname })
+    async function addClient(newClient: ClientType): Promise<void> {
+        await window.serviceElectron.addClient(newClient)
+        await getClients()
         dialog.value = false
     };
 
     /** Récupère les clients */
     async function getClients(){
-        clients.value = (await window.serviceElectron.getClients()) as any[]
+        clients.value = (await window.serviceElectron.getClients()) as ClientType[]
         console.log(clients.value)
     }
 </script>
