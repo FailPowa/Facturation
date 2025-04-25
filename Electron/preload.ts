@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     getTjm: () => ipcRenderer.invoke('getTjm'),
     updateTjm: (montant: number) => ipcRenderer.invoke('updateTjm', montant),
     getClients: () => ipcRenderer.invoke('getClients'),
-    addClient: (newClient: Entreprise) => ipcRenderer.invoke('addClient', newClient, false)
+    addClient: (newClient: Entreprise) => ipcRenderer.invoke('addClient', newClient, false),
+    updateClient: (id: number, updatedClient: Entreprise) => ipcRenderer.invoke('updateClient', id, updatedClient)
 });

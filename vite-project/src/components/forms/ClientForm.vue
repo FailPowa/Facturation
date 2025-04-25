@@ -1,6 +1,6 @@
 <template>
 <v-card class="pa-6">
-      <v-card-title class="text-h6 text-center">Créer un nouveau client</v-card-title>
+      <v-card-title class="text-h5 text-center">{{ formTitle }}</v-card-title>
       <v-form fast-fail ref="formRef" v-model="formIsValid" @submit.prevent="confirmDialog">
         <v-text-field v-model="clientForm.nom" label="Nom" class="mb-3" />
         <v-text-field v-model="clientForm.adresse" label="Adresse" class="mb-3" />
@@ -40,11 +40,18 @@
 
     /** Définition d'un paramètre du composant */
     const props = defineProps({
+        formTitle: {
+            type: String,
+            required: true
+        },
         client: {
             type: [Client, null],
             required: true
         }
     });
+
+    /** Variable contenant le titre du formulaire */
+    const formTitle: Ref<string> = ref(props.formTitle)
 
     /** 
      * Variable contenant les champs du formulaire.
@@ -81,9 +88,9 @@
      */
     async function confirmDialog(submitEventPromise: any): Promise<void>{
         const {valid, errors} = await submitEventPromise
-        const newClient = Object.assign({}, clientForm.value) as ClientType
+        const client = Object.assign({}, clientForm.value) as ClientType
         if (valid) {
-            emit('confirm', newClient)
+            emit('confirm', client)
         }else{
             console.log(errors)
         }

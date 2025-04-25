@@ -6,7 +6,7 @@
                 
                 <!-- Bouton ajouter nouveau client-->
                 <v-btn
-                    @click="dialog = true"
+                    @click="addClientDialog = true"
                     class="d-flex align-self-end"
                     color="success"
                     >
@@ -28,11 +28,32 @@
                         <!-- Boutons actions (visualiser, modifier, supprimer) -->
                         <template v-slot:item.actions="{ item }">
                             <div class="d-flex ga-2 justify-end">
-                                <v-icon color="primary" size="small" @click="">{{ mdiEyeOutline }}</v-icon>
+                                <!-- Bouton visualiser client -->
+                                <v-icon 
+                                    color="primary" 
+                                    size="small"
+                                    @click=""
+                                >
+                                    {{ mdiEyeOutline }}
+                                </v-icon>
 
-                                <v-icon color="primary" size="small" @click="">{{ mdiPencilOutline }}</v-icon>
+                                <!-- Bouton modifier -->
+                                <v-icon 
+                                    color="primary" 
+                                    size="small" 
+                                    @click="updateClientDialog = true; updatingClient = item"
+                                >
+                                    {{ mdiPencilOutline }}
+                                </v-icon>
 
-                                <v-icon color="error"size="small" @click="">{{ mdiDeleteOutline }}</v-icon>
+                                <!-- Bouton supprimer -->
+                                <v-icon 
+                                    color="error" 
+                                    size="small" 
+                                    @click=""
+                                >
+                                    {{ mdiDeleteOutline }}
+                                </v-icon>
                             </div>
                         </template>
                     </v-data-table>
@@ -44,14 +65,29 @@
 
     <!-- Boite de dialogue contenant le formulaire d'ajout d'un client -->
     <v-dialog
-        v-model="dialog"
+        v-model="addClientDialog"
         width="75%"
         persistent
     >
         <ClientForm
-            @cancel="dialog = false"
+            @cancel="addClientDialog = false"
             @confirm="addClient"
+            :formTitle="'Modifier client'"
             :client="null"
+        />
+    </v-dialog>
+
+    <!-- Boite de dialogue contenant le formulaire de modification d'un client -->
+    <v-dialog
+        v-model="updateClientDialog"
+        width="75%"
+        persistent
+    >
+        <ClientForm
+            @cancel="updateClientDialog = false"
+            @confirm="updateClient"
+            :formTitle="'Créer un client'"
+            :client="updatingClient"
         />
     </v-dialog>
 </v-container>
@@ -79,8 +115,12 @@
     const clients : Ref<ClientType[]> = ref([])
 
         
-    /** Variable du dialog */
-    const dialog: Ref<boolean> = ref(false);
+    /** Variables des boites de dialogues */
+    const addClientDialog: Ref<boolean> = ref(false);
+    const updateClientDialog: Ref<boolean> = ref(false)
+
+    /** Variable contenant l'entreprise cliente en cours de modication */
+    const updatingClient : Ref<ClientType | null> = ref(null) 
 
     /** Récupération des clients au chargement de la page */
     onMounted( async () => {
@@ -92,12 +132,21 @@
     async function addClient(newClient: ClientType): Promise<void> {
         await window.serviceElectron.addClient(newClient)
         await getClients()
-        dialog.value = false
+        addClientdialog.value = false
     };
+
+    
+    /** Met à jour un client */
+    async function updateClient(updatedClient: ClientType): Promise<void>{
+        if (updatingClient.value !== null){
+            await window.serviceElectron.updateClient(updatingClient.value.id, updatedClient)
+            await getClients()
+            updateClientDialog.value = false
+        }
+    }
 
     /** Récupère les clients */
     async function getClients(){
         clients.value = (await window.serviceElectron.getClients()) as ClientType[]
-        console.log(clients.value)
     }
 </script>

@@ -56,6 +56,35 @@ function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entrep
     return newCompany
 }
 
+/**
+ * Met à jour une entreprise existante identifié par son id 
+ * 
+ * 
+ * @throws Si l'entreprise est introuvable
+ * @param updatedCompany 
+ * @returns 
+ */
+function updateClient(_event: any, id: number, updatedClient: Entreprise): Entreprise{
+    const companies = getCompanies()
+    
+    /** Variable contenant la position du client n°{id} dans la liste d'entreprises */
+    const updatedClientIndex = companies.findIndex((company) => company.id === id)
+    
+    if (updatedClientIndex === -1){
+        throw new Error(`Echec de la mise à jour des entreprises: Impossible de trouver l'entreprise n°${id} du nom de ${updatedClient.nom}`)
+    }
+    
+    /** Permet d'empêcher l'utilisateur de changer l'id et le boolean isMe lors de la mise à jour */
+    updatedClient.id = id
+    updatedClient.isMe = false
+
+    /** Mise à jour de la liste en remplaçant les anciennes informations de l'entreprise cliente par les nouvelles informations */
+    companies[updatedClientIndex] = updatedClient
+    updateJson(companies, 'entreprise.json')
+    
+    return updatedClient
+}
 
 
-export { getCompanies, getClients, addCompany }
+
+export { getCompanies, getClients, addCompany, updateClient }
