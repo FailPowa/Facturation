@@ -50,7 +50,7 @@
                                 <v-icon 
                                     color="error" 
                                     size="small" 
-                                    @click=""
+                                    @click="deleteConfirmDialog = true; deletingClient = item"
                                 >
                                     {{ mdiDeleteOutline }}
                                 </v-icon>
@@ -90,6 +90,19 @@
             :client="updatingClient"
         />
     </v-dialog>
+    
+    <!-- Boite de dialogue de confirmation de suppresion d'un client -->
+    <v-dialog
+        v-model="deleteConfirmDialog"
+        max-width="600"
+        persistent
+    >
+        <ConfirmDialog 
+            @cancel="deleteConfirmDialog = false"
+            @confirm="deleteClient"
+            :question-title="`Êtes-vous certain de vouloir supprimer le client ${deletingClient?.nom} ?`"
+        />
+    </v-dialog>
 </v-container>
 </template>
 
@@ -107,21 +120,27 @@
     import {ClientType} from '../../../types/ClientType';
     import { Ref, ref, onMounted} from 'vue';
     import ClientForm from '../forms/ClientForm.vue';
+    import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
     import { mdiAccountPlus, mdiEyeOutline, mdiDeleteOutline, mdiPencilOutline } from '@mdi/js';
     import { clientHeaders } from './headers'
 
 
     /** Variable contenant les clients enregistrés */
-    const clients : Ref<ClientType[]> = ref([])
-
-        
-    /** Variables des boites de dialogues */
-    const addClientDialog: Ref<boolean> = ref(false);
-    const updateClientDialog: Ref<boolean> = ref(false)
+    const clients : Ref<ClientType[]> = ref([]);
 
     /** Variable contenant l'entreprise cliente en cours de modication */
-    const updatingClient : Ref<ClientType | null> = ref(null) 
+    const updatingClient : Ref<ClientType | null> = ref(null);
+    
+    /** Variable contenant l'id de l'entreprise en attente de confirmation de sa suppression */
+    const deletingClient: Ref<ClientType | null> = ref(null)
+    
+    
+    /** Variables des boites de dialogues */
+    const addClientDialog: Ref<boolean> = ref(false);
+    const updateClientDialog: Ref<boolean> = ref(false);
+    const deleteConfirmDialog: Ref<boolean> = ref(false);
 
+    
     /** Récupération des clients au chargement de la page */
     onMounted( async () => {
         await getClients()
@@ -142,6 +161,17 @@
             await window.serviceElectron.updateClient(updatingClient.value.id, updatedClient)
             await getClients()
             updateClientDialog.value = false
+            updatingClient.value = null
+        }
+    }
+
+    /** Supprime un client */
+    async function deleteClient(): Promise<void>{
+        if (deletingClient.value !== null){
+            await window.serviceElectron.deleteClient(deletingClient.value.id)
+            await getClients()
+            deleteConfirmDialog.value = false
+            deletingClient.value = null
         }
     }
 

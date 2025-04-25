@@ -59,7 +59,6 @@ function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entrep
 /**
  * Met à jour une entreprise existante identifié par son id 
  * 
- * 
  * @throws Si l'entreprise est introuvable
  * @param updatedCompany 
  * @returns 
@@ -86,5 +85,28 @@ function updateClient(_event: any, id: number, updatedClient: Entreprise): Entre
 }
 
 
+/**
+ * Supprime une entreprise cliente
+ * 
+ * @param _event 
+ * @param id 
+ * @returns Renvoie l'entreprise supprimée ou null si aucune entreprise n'a été supprimée
+ */
+function deleteClient(_event: any, id: number): Record<string, any> | null{
+    const companies = getCompanies()
+    /** Récupère les informations de l'entreprise avant sa supprésion */
+    const deletedCompany = companies.find((company) => company.id === id)
 
-export { getCompanies, getClients, addCompany, updateClient }
+    if (deletedCompany?.isMe === true){
+        throw new Error(`Echec de la suppression d'une entreprise: Impossible de supprimer votre entreprise`)
+    }
+
+    /** Met à jour la liste en renvoyant une liste sans l'entreprise supprimé */
+    const updatedCompanies = companies.filter((company) => company !== deletedCompany)
+    
+    /** Met à jour le fichier Json avec la nouvelle liste */
+    updateJson(updatedCompanies, 'entreprise.json')
+    return deletedCompany ? deletedCompany : null
+}
+
+export { getCompanies, getClients, addCompany, updateClient, deleteClient }
