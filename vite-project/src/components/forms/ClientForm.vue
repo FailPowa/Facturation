@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
     import { Ref, ref } from 'vue';
-    import { Client, ClientType } from '../../../types/ClientType'
+    import { Client, ClientType } from '../../../types/ClientType';
 
     /** Variables du formulaire */
     const formRef = ref();
@@ -61,7 +61,7 @@
         numTva: "",
         siret: "",
         isMe: false
-    })
+    });
 
     /** Définition des événements */
     const emit = defineEmits([

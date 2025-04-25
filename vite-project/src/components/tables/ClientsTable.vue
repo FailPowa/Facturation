@@ -25,6 +25,16 @@
                         :items="clients"
                         :headers="clientHeaders"
                     >
+                        <!-- Boutons actions (visualiser, modifier, supprimer) -->
+                        <template v-slot:item.actions="{ item }">
+                            <div class="d-flex ga-2 justify-end">
+                                <v-icon color="primary" size="small" @click="">{{ mdiEyeOutline }}</v-icon>
+
+                                <v-icon color="primary" size="small" @click="">{{ mdiPencilOutline }}</v-icon>
+
+                                <v-icon color="error"size="small" @click="">{{ mdiDeleteOutline }}</v-icon>
+                            </div>
+                        </template>
                     </v-data-table>
                 </v-card>
                 
@@ -61,7 +71,7 @@
     import {ClientType} from '../../../types/ClientType';
     import { Ref, ref, onMounted} from 'vue';
     import ClientForm from '../forms/ClientForm.vue';
-    import { mdiAccountPlus } from '@mdi/js';
+    import { mdiAccountPlus, mdiEyeOutline, mdiDeleteOutline, mdiPencilOutline } from '@mdi/js';
     import { clientHeaders } from './headers'
 
 
