@@ -44,7 +44,7 @@ yarn app:build
 # Prérequis
 Des fichiers JSON pour stocker les différentes données de l'application sont nécessaires à son bon fonctionnement
 
-Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modèles de leurs types respectifs dans le dossier `vite-project/types/`
+Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modèles de leurs types respectifs dans le dossier `Electron/types/`
 
 > Le premier fichier JSON s'intitule `tjm.json` et suit ce modèle
 >>```json
@@ -57,7 +57,7 @@ Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modè
 >>```json
 >>[
 >>    {
->>        "id": "number",
+>>        "id": number,
 >>        "nom": "string",
 >>        "adresse": "string",
 >>        "codePostal": "string",
@@ -65,7 +65,7 @@ Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modè
 >>        "mail": "string",
 >>        "numTva": "string",
 >>        "siret": "string",
->>        "isMe": "boolean"
+>>        "isMe": boolean
 >>    }    
 >>]
 >>```
@@ -74,7 +74,7 @@ Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modè
 >>```json
 >>[
 >>    {
->>        "id": "number",
+>>        "id": number,
 >>        "value": "string",
 >>        "text": "string",
 >>        "color": "string"
@@ -86,16 +86,16 @@ Ceux-ci sont stockés dans le dossier `Electron/resources/` et suivent les modè
 >>```json
 >>[
 >>    {
->>        "id": "number",
->>        "isAvoir": "boolean",
+>>        "id": number,
+>>        "isAvoir": boolean,
 >>        "date": "date",
->>        "tjm": "number",
->>        "nbJours": "number",
->>        "entrepriseId": "number",
->>        "clientId": "number",
->>        "tva": "boolean",
->>        "nbJoursPaiement": "number",
->>        "statutId": "number",
+>>        "tjm": number,
+>>        "nbJours": number,
+>>        "entrepriseId": number,
+>>        "clientId": number,
+>>        "tva": boolean,
+>>        "nbJoursPaiement": number,
+>>        "statutId": number,
 >>        "datePaiement": "date"
 >>    }    
 >>]

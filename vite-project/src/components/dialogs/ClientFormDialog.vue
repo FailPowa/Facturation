@@ -3,7 +3,6 @@
         <v-form fast-fail ref="formRef" v-model="formIsValid" @submit.prevent="confirmDialog">
             <v-text-field
                 v-model="form.firstname"
-                :rules="firstnameRules"
                 label="First name"
             ></v-text-field>
 
@@ -37,21 +36,6 @@
         firstname: "",
         lastname: ""
     });
-
-    /** Règles de validation des champs */
-    const firstnameRules = [
-        (value: string) => {
-            if (value?.length >= 2) return true
-            return 'Le prénom doit être avoir au moins 2 caractères'
-        }
-    ];
-    const lastnameRules = [
-        (value: string) => {
-            if (/[^0-9]/.test(value)) return true
-            return 'Le nom ne doit pas contenir de chiffre'
-        }
-    ];
-
 
     /** Définition des événements */
     const emit = defineEmits([

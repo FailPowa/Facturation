@@ -1,4 +1,3 @@
-import fs, { read } from 'fs';
 import path from 'path';
 import { isDev } from "../config";
 import { readJson, updateJson } from './jsonService';
@@ -10,7 +9,7 @@ const resourcesPath = isDev ? './Electron/resources' : path.join(process.resourc
  * @returns 
  */
 function getClients(): any{
-    const data = readJson('clients.json')
+    const data = readJson('client.json')
     return data
 }
 
@@ -25,7 +24,7 @@ function getClients(): any{
 function updateClients(_event: any, newClient: any): any{
     const clients = getClients()
     clients.push(newClient)
-    updateJson(clients, 'clients.json')
+    updateJson(clients, 'client.json')
     return clients
 }
 

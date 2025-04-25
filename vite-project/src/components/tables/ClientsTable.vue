@@ -1,42 +1,91 @@
 <template>
-    <v-card>
-        <v-data-table :items="clients">
-        </v-data-table>
-    </v-card>
+<v-container>
+    <v-row>
+        <v-col>
+            <v-container class="d-flex flex-column ga-4">
+                
+                <!-- Bouton ajouter nouveau client-->
+                <v-btn
+                    @click="dialog = true"
+                    class="d-flex align-self-end"
+                    color="success"
+                    >
+                    <b class="me-2">Ajouter client</b>
+                    <v-icon
+                        variant="outlined"
+                        color="primary"
+                    >
+                        {{mdiAccountPlus}}
+                    </v-icon>
+                </v-btn>
+
+                <!-- Tableau contenant tous les clients -->
+                <v-card>
+                    <v-data-table
+                        :items="clients"
+                        :headers="clientHeaders"
+                    >
+                    </v-data-table>
+                </v-card>
+                
+            </v-container>
+        </v-col>
+    </v-row>
+
+    <!-- Boite de dialogue contenant le formulaire d'ajout d'un client -->
+    <v-dialog
+        v-model="dialog"
+        width="auto"
+        persistent
+    >
+        <ClientFormDialog
+            @cancel="dialog = false"
+            @confirm="addClient"
+        />
+    </v-dialog>
+</v-container>
 </template>
+
+<style scoped>
+.custom-header {
+    background-color: #3DADFF;
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+}
+</style>
 
 <script setup lang="ts">
     import {ClientType} from '../../../types/ClientType';
-    import { onUpdated, Ref, ref, watch} from 'vue';
+    import { Ref, ref, onMounted} from 'vue';
+    import ClientFormDialog from '../dialogs/ClientFormDialog.vue';
+    import { mdiAccountPlus } from '@mdi/js';
+    import { clientHeaders } from './headers'
 
-    /** Définition des paramètres du composant */
-    const props = defineProps({
-        clients: {
-            type: Array<any>,
-            required: true
-        }
-    });
-    const items = [
-        { firstname: "Jean", lastname: "Bob"},
-        { firstname: "Jean", lastname: "Bob"},
-        { firstname: "Jean", lastname: "Bob"},
-        { firstname: "Jean", lastname: "Bob"},
-        { firstname: "Jean", lastname: "Bob"},
-    ]
 
-    /** Liste des clients sauvegardés */
+    /** Variable contenant les clients enregistrés */
     const clients : Ref<ClientType[]> = ref([])
 
-    watch(() =>
-        props.clients, (newValue: ClientType[]) => {
-            clients.value = newValue
-            console.log("Passe ici  ")
-    })
-    
-    async function waitAndExecute(): Promise<void> {
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        
+    /** Variable du dialog */
+    const dialog: Ref<boolean> = ref(false);
+
+    /** Récupération des clients au chargement de la page */
+    onMounted( async () => {
+        await getClients()
+    });
+
+        
+    /** Ajoute un nouveau client ( A modifier )*/
+    async function addClient(form: ClientType): Promise<void> {
+        clients.value = await window.serviceElectron.updateClients({firstname: form.firstname, lastname: form.lastname })
+        dialog.value = false
+    };
+
+    /** Récupère les clients */
+    async function getClients(){
+        clients.value = (await window.serviceElectron.getClients()) as any[]
         console.log(clients.value)
     }
-
-    waitAndExecute()
 </script>

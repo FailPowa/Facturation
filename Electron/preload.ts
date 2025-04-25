@@ -8,5 +8,4 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     getTjm: () => ipcRenderer.invoke('getTjm'),
     updateTjm: (montant: number) => ipcRenderer.invoke('updateTjm', montant),
     getClients: () => ipcRenderer.invoke('getClients'),
-    updateClients: (client: Record<string, string>) => ipcRenderer.invoke('updateClients', client)
 });

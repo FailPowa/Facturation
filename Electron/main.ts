@@ -4,7 +4,8 @@ import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
 import { getTjm, updateTjm } from "./services/tjmService";
-import { getClients, updateClients } from "./services/clientService";
+import { getClients } from "./services/entrepriseService"
+
 
 /**
  * Fonction de création de la fenêtre
@@ -55,7 +56,6 @@ async function createWindow() {
 ipcMain.handle('getTjm', getTjm);
 ipcMain.handle('updateTjm', updateTjm);
 ipcMain.handle('getClients', getClients);
-ipcMain.handle('updateClients', updateClients);
 ipcMain.handle('versions', () => {
     return {
         node: process.versions.chrome,
