@@ -1,8 +1,8 @@
 /** 
- * Type de l'objet Client
+ * Type de l'objet Entreprise
  */
 
-export interface ClientType {
+export interface EntrepriseType {
     id : number
     nom: string
     adresse: string
@@ -15,11 +15,11 @@ export interface ClientType {
 }
 
 /**
- * Classe implémentant l'interface ClientType
- *  pour pouvoir définir des props de type ClientType
+ * Classe implémentant l'interface EntrepriseType
+ *  pour pouvoir définir des props de type EntrepriseType
  * 
  */
-export class Client implements ClientType{
+export class Entreprise implements EntrepriseType{
     id : number
     nom: string
     adresse: string
