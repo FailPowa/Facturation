@@ -10,9 +10,9 @@ export const routes = [
         label: 'Accueil'
     },
     {
-        path: '/form',
+        path: '/clients',
         component: ClientLayout,
-        label: "Formulaire"
+        label: "Clients"
     },
     {
         path: '/help',
