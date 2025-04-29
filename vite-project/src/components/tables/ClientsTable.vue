@@ -40,16 +40,7 @@
 
                         <!-- Boutons actions (visualiser, modifier, supprimer) -->
                         <template v-slot:item.actions="{ item }">
-                            <div class="d-flex ga-2 justify-end">
-                                <!-- Bouton visualiser client -->
-                                <v-icon 
-                                    color="primary" 
-                                    size="small"
-                                    @click=""
-                                >
-                                    {{ mdiEyeOutline }}
-                                </v-icon>
-
+                            <div class="d-flex ga-2 justify-center">
                                 <!-- Bouton modifier -->
                                 <v-icon 
                                     color="primary" 
@@ -131,11 +122,11 @@
 
 <script setup lang="ts">
     import {EntrepriseType} from '../../../types/EntrepriseType';
-    import { numTvaFormatter, siretFormatter } from '../../../plugins/clientFormatter'
+    import { numTvaFormatter, siretFormatter } from '../../../plugins/entrepriseFormatter'
     import { Ref, ref, onMounted} from 'vue';
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
-    import { mdiAccountPlus, mdiEyeOutline, mdiDeleteOutline, mdiPencilOutline } from '@mdi/js';
+    import { mdiAccountPlus, mdiDeleteOutline, mdiPencilOutline } from '@mdi/js';
     import { clientHeaders } from './headers'
 
 

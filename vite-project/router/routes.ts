@@ -10,13 +10,13 @@ export const routes = [
         label: 'Accueil'
     },
     {
-        path: '/help',
-        component: HelpLayout,
-        label: 'Aide'
-    },
-    {
         path: '/form',
         component: ClientLayout,
         label: "Formulaire"
+    },
+    {
+        path: '/help',
+        component: HelpLayout,
+        label: 'Aide'
     }
 ];

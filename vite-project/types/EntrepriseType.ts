@@ -9,7 +9,7 @@ export interface EntrepriseType {
     codePostal: string
     ville: string
     mail: string
-    numTva: string
+    numTva?: string
     siret: string
     isMe: boolean
 }
@@ -26,7 +26,7 @@ export class Entreprise implements EntrepriseType{
     codePostal: string
     ville: string
     mail: string
-    numTva: string
+    numTva?: string
     siret: string
     isMe: boolean
 
@@ -47,7 +47,7 @@ export class Entreprise implements EntrepriseType{
         this.codePostal = codePostal
         this.ville = ville
         this.mail = mail
-        this.numTva = numTva
+        this.numTva = numTva == null ? "" : numTva
         this.siret = siret
         this.isMe = isMe
     }
