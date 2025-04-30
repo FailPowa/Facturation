@@ -7,9 +7,9 @@
                 <!-- Bouton ajouter nouveau client-->
                 <v-btn
                     @click="addClientDialog = true"
-                    class="d-flex align-self-end"
+                    class="d-flex align-self-end animate__animated animate__fadeInDown"
                     color="success"
-                    >
+                >
                     <b class="me-2">Ajouter client</b>
                     <v-icon
                         variant="outlined"
@@ -20,49 +20,47 @@
                 </v-btn>
 
                 <!-- Tableau contenant tous les clients -->
-                <v-card>
-                    <v-data-table
-                        :items="clients"
-                        :headers="clientHeaders"
-                    >
+                <v-data-table
+                    :items="clients"
+                    :headers="clientHeaders"
+                    class="animate__animated animate__fadeInUp"
+                >
 
-                        <template v-slot:item.adresse="{ item }">
-                            <p>{{ `${item.adresse} ${item.codePostal} ${item.ville}` }}</p>
-                        </template>
-                        
-                        <template v-slot:item.numTva="{ item }">
-                            <p>{{ numTvaFormatter(item.numTva) }}</p>
-                        </template>
-                        
-                        <template v-slot:item.siret="{ item }">
-                            <p>{{ siretFormatter(item.siret) }}</p>
-                        </template>
+                    <template v-slot:item.adresse="{ item }">
+                        <p>{{ `${item.adresse} ${item.codePostal} ${item.ville}` }}</p>
+                    </template>
+                    
+                    <template v-slot:item.numTva="{ item }">
+                        <p>{{ numTvaFormatter(item.numTva) }}</p>
+                    </template>
+                    
+                    <template v-slot:item.siret="{ item }">
+                        <p>{{ siretFormatter(item.siret) }}</p>
+                    </template>
 
-                        <!-- Boutons actions (visualiser, modifier, supprimer) -->
-                        <template v-slot:item.actions="{ item }">
-                            <div class="d-flex ga-2 justify-center">
-                                <!-- Bouton modifier -->
-                                <v-icon 
-                                    color="primary" 
-                                    size="small" 
-                                    @click="updateClientDialog = true; updatingClient = item"
-                                >
-                                    {{ mdiPencilOutline }}
-                                </v-icon>
+                    <!-- Boutons actions (visualiser, modifier, supprimer) -->
+                    <template v-slot:item.actions="{ item }">
+                        <div class="d-flex ga-2 justify-center">
+                            <!-- Bouton modifier -->
+                            <v-icon 
+                                color="primary" 
+                                size="small" 
+                                @click="updateClientDialog = true; updatingClient = item"
+                            >
+                                {{ mdiPencilOutline }}
+                            </v-icon>
 
-                                <!-- Bouton supprimer -->
-                                <v-icon 
-                                    color="error" 
-                                    size="small" 
-                                    @click="deleteConfirmDialog = true; deletingClient = item"
-                                >
-                                    {{ mdiDeleteOutline }}
-                                </v-icon>
-                            </div>
-                        </template>
-                    </v-data-table>
-                </v-card>
-                
+                            <!-- Bouton supprimer -->
+                            <v-icon 
+                                color="error" 
+                                size="small" 
+                                @click="deleteConfirmDialog = true; deletingClient = item"
+                            >
+                                {{ mdiDeleteOutline }}
+                            </v-icon>
+                        </div>
+                    </template>
+                </v-data-table>
             </v-container>
         </v-col>
     </v-row>
