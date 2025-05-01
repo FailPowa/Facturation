@@ -1,10 +1,10 @@
 import type { ThemeDefinition } from "vuetify";
 
 export const blueTheme: ThemeDefinition = {
-    dark: false,
+    dark: true,
     colors: {
         background: '#09002f',
-        surface: '#09002f',
+        surface: '#422ad5',
         'surface-bright': '#120b3d',
         'surface-light': '#09002f',
         primary: '#f861b4',
