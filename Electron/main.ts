@@ -4,6 +4,8 @@ import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
 import { getTjm, updateTjm } from "./services/tjmService";
+import { getClients, addCompany, updateClient, deleteClient } from "./services/entrepriseService"
+
 
 /**
  * Fonction de création de la fenêtre
@@ -53,6 +55,10 @@ async function createWindow() {
 /** Ecoute des événements concernant les events pour charger les événements du fichier JSON */
 ipcMain.handle('getTjm', getTjm);
 ipcMain.handle('updateTjm', updateTjm);
+ipcMain.handle('getClients', getClients);
+ipcMain.handle('addClient', addCompany);
+ipcMain.handle('updateClient', updateClient),
+ipcMain.handle('deleteClient', deleteClient);
 ipcMain.handle('versions', () => {
     return {
         node: process.versions.chrome,
@@ -62,6 +68,7 @@ ipcMain.handle('versions', () => {
         name: app.getName(),
     };
 });
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
