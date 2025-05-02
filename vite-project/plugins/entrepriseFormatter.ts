@@ -1,4 +1,10 @@
-export function numTvaFormatter(numTva: string): string {
+
+/**
+ * Formate le numero de TVA au format suivant : FRXX XXX XXX XXX
+ * @param numTva le numéro de tva
+ * @returns string
+ */
+function numTvaFormatter(numTva: string): string {
     let numTvaFormated = ""
     if (numTva.length != 0){
         if (numTva.length != 13)
@@ -14,7 +20,12 @@ export function numTvaFormatter(numTva: string): string {
     return numTvaFormated
 }
 
-export function siretFormatter(siret: string): string {
+/**
+ * Formate un numero de SIRET au format suivant : XXX XXX XXX XXXXX
+ * @param siret le numéro de siret
+ * @returns string
+ */
+function siretFormatter(siret: string): string {
     if (siret.length != 14) throw new Error("Le numero de SIRET donné est invalide.")
     let siretFormated = ""
     for(let index = 0; index < 14; index++){
@@ -25,3 +36,5 @@ export function siretFormatter(siret: string): string {
     }
     return siretFormated
 }
+
+export { numTvaFormatter, siretFormatter}

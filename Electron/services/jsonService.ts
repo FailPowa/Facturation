@@ -16,6 +16,7 @@ function readJson(fileName: string): any{
 /**
  * Met à jour le fichier JSON
  * @param newValue La nouvelle valeur à enregistrer
+ * @param fileName Le nom du fichier JSON
  */
 function updateJson(newValue: any, fileName: string): void {
     return fs.writeFileSync(path.join(resourcesPath, fileName), JSON.stringify(newValue, null, 4));

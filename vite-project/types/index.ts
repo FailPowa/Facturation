@@ -1,5 +1,11 @@
 import { Tjm } from './Tjm';
+import { EntrepriseType, Entreprise } from './EntrepriseType';
 
 export type {
-    Tjm
+    Tjm,
+    EntrepriseType
+}
+
+export {
+    Entreprise
 }

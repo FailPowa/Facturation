@@ -1,3 +1,8 @@
+/**
+ * Algorithme de Luhn pour valider un numéro de SIRET
+ * @param siret le numéro de SIRET
+ * @returns boolean
+ */
 export function validateSiret(siret: string): boolean{
     let resultAlgoLuhn = 0
     for(let index = 0; index < siret.length; index++){

@@ -1,14 +1,9 @@
-import path from 'path';
-import { isDev } from "../config";
 import { readJson, updateJson } from './jsonService';
 import { Entreprise } from '../types/Entreprise';
 
-const resourcesPath = isDev ? './Electron/resources' : path.join(process.resourcesPath, 'Electron/resources');
-
 /**
- *  Récupère les entreprises
- * 
- * @returns 
+ * Récupère les entreprises
+ * @returns Entreprise[]
  */
 function getCompanies(): Entreprise[]{
     /** Variable stockant toutes les entreprises */
@@ -19,22 +14,22 @@ function getCompanies(): Entreprise[]{
 
 /**
  * Récupère les entreprises clientes
- * @returns 
+ * @returns Entreprise[]
  */
 function getClients(): Entreprise[]{
     const companies = getCompanies()
 
     /** Variable stockant les entreprises cientes (isMe === false) */
-    const onlyClients = companies.filter( (company) => company.isMe !== true)
+    const onlyClients = companies.filter((company) => company.isMe === false)
     return onlyClients
 }
 
 /**
  * Ajoute une nouvelle entreprises cliente à la liste des entreprises 
  * stockés dans le fichier entreprise.json.
- * 
- * @param newCompany 
- * @returns 
+ * @param newCompany L'objet de l'entreprise à créer
+ * @param isMe Boolean spécifiant s'il s'agit de mon entreprise ou non (Par défaut, il vaut 'false')
+ * @returns Entreprise
  */
 function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entreprise{
     const companies = getCompanies()
@@ -58,24 +53,19 @@ function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entrep
 
 /**
  * Met à jour une entreprise existante identifié par son id 
- * 
  * @throws Si l'entreprise est introuvable
- * @param updatedCompany 
- * @returns 
+ * @param updatedCompany L'objet de l'entreprise à mettre à jour
+ * @returns Entreprise
  */
-function updateClient(_event: any, id: number, updatedClient: Entreprise): Entreprise{
+function updateClient(_event: any, updatedClient: Entreprise): Entreprise{
     const companies = getCompanies()
     
     /** Variable contenant la position du client n°{id} dans la liste d'entreprises */
-    const updatedClientIndex = companies.findIndex((company) => company.id === id)
+    const updatedClientIndex = companies.findIndex((company) => company.id === updatedClient.id)
     
     if (updatedClientIndex === -1){
-        throw new Error(`Echec de la mise à jour des entreprises: Impossible de trouver l'entreprise n°${id} du nom de ${updatedClient.nom}`)
+        throw new Error(`Echec de la mise à jour des entreprises: Impossible de trouver l'entreprise n°${updatedClient.id} du nom de ${updatedClient.nom}`)
     }
-    
-    /** Permet d'empêcher l'utilisateur de changer l'id et le boolean isMe lors de la mise à jour */
-    updatedClient.id = id
-    updatedClient.isMe = false
 
     /** Mise à jour de la liste en remplaçant les anciennes informations de l'entreprise cliente par les nouvelles informations */
     companies[updatedClientIndex] = updatedClient
@@ -87,12 +77,10 @@ function updateClient(_event: any, id: number, updatedClient: Entreprise): Entre
 
 /**
  * Supprime une entreprise cliente
- * 
- * @param _event 
- * @param id 
+ * @param id Identifiant de l'entreprise à supprimer
  * @returns Renvoie l'entreprise supprimée ou null si aucune entreprise n'a été supprimée
  */
-function deleteClient(_event: any, id: number): Record<string, any> | null{
+function deleteClient(_event: any, id: number): Entreprise | null{
     const companies = getCompanies()
     /** Récupère les informations de l'entreprise avant sa supprésion */
     const deletedCompany = companies.find((company) => company.id === id)
@@ -112,9 +100,9 @@ function deleteClient(_event: any, id: number): Record<string, any> | null{
 
 /**
  * Récupère les informations de votre entreprise
- * @returns 
+ * @returns Entreprise
  */
-function getProvider(): Entreprise{
+function getMyEntreprise(): Entreprise{
     const companies = getCompanies()
     const provider = companies.find((company) => company.isMe === true)
     if (!provider){
@@ -123,28 +111,4 @@ function getProvider(): Entreprise{
     return provider
 }
 
-/**
- * Met à jour les informations de votre entreprise
- * @returns
- */
-function updateProvider(_event: any, updatedProvider: Entreprise): Entreprise{
-    const companies = getCompanies()
-
-    /** Récupère la position (index) de votre entreprise dans la liste des entreprises */
-    const index = companies.findIndex((company) => company.isMe === true)
-    if (index === -1){
-        throw new Error(`Echec de la mise à jour de votre entreprise: Impossible de trouver votre entreprise (identifiant: ${updatedProvider.id})`)
-    }
-    
-    /** Permet d'éviter que l'utilisateur puisse modifier les attribut isMe et id de son entreprise */
-    updatedProvider.isMe = true
-    updatedProvider.id = companies[index].id
-
-    /** Met à jour votre entreprise dans la liste stockée dans entreprise.json */
-    companies[index] = updatedProvider
-    updateJson(companies, 'entreprise.json')
-
-    return updatedProvider
-}
-
-export { getCompanies, getClients, addCompany, updateClient, deleteClient, getProvider, updateProvider }
+export { getCompanies, getClients, addCompany, updateClient, deleteClient, getMyEntreprise }

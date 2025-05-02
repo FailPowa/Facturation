@@ -1,3 +1,7 @@
+
+/**
+ * Header du tableau des clients
+ */
 export const clientHeaders: Record<string, any>[] = [
     { title: 'Id', key: 'id', align: 'center'},
     { title: 'Nom', key: 'nom', align: 'center'},

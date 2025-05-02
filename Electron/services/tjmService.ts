@@ -1,9 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-import { isDev } from "../config";
 import { readJson, updateJson } from './jsonService';
-
-const resourcesPath = isDev ? './Electron/resources' : path.join(process.resourcesPath, 'Electron/resources');
 
 /**
  * Retourne le montant sauvegardé dans le fichier tjm.json

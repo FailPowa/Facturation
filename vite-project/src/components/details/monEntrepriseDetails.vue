@@ -29,7 +29,7 @@
 
 
 <script setup lang="ts">
-    import { Entreprise } from '../../../types/EntrepriseType';
+    import { Entreprise } from '../../../types';
     import { onUpdated, ref, Ref } from 'vue';
 
     const props = defineProps({

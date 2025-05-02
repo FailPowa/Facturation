@@ -67,7 +67,7 @@
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
-    import { EntrepriseType } from '../../../types/EntrepriseType';
+    import { EntrepriseType } from '../../../types';
     import { mdiPencil, mdiCog, mdiArrowULeftBottom  } from '@mdi/js';
 
 
@@ -90,7 +90,7 @@
 
     async function updateMonEntreprise() {
         const updatedMonEntreprise = Object.assign({}, updatingMonEntreprise.value)
-        await window.serviceElectron.updateMonEntreprise(updatedMonEntreprise)
+        await window.serviceElectron.updateClient(updatedMonEntreprise)
         getMonEntreprise()
     }
 </script>

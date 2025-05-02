@@ -3,8 +3,17 @@ import path from "path";
 import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
-import { getTjm, updateTjm } from "./services/tjmService";
-import { getClients, addCompany, updateClient, deleteClient, getProvider, updateProvider } from "./services/entrepriseService"
+import {
+    // TJM
+    getTjm,
+    updateTjm,
+    // Entreprise
+    getClients,
+    addCompany,
+    updateClient,
+    deleteClient,
+    getMyEntreprise
+} from './services';
 
 
 /**
@@ -53,14 +62,16 @@ async function createWindow() {
 }
 
 /** Ecoute des événements concernant les events pour charger les événements du fichier JSON */
+// TJM
 ipcMain.handle('getTjm', getTjm);
 ipcMain.handle('updateTjm', updateTjm);
+// Entreprise
 ipcMain.handle('getClients', getClients);
 ipcMain.handle('addClient', addCompany);
 ipcMain.handle('updateClient', updateClient),
 ipcMain.handle('deleteClient', deleteClient);
-ipcMain.handle('getMonEntreprise', getProvider)
-ipcMain.handle('updateMonEntreprise', updateProvider)
+ipcMain.handle('getMonEntreprise', getMyEntreprise)
+// Versions
 ipcMain.handle('versions', () => {
     return {
         node: process.versions.chrome,

@@ -6,12 +6,13 @@ import { Entreprise } from "./types/Entreprise";
  */
 contextBridge.exposeInMainWorld("serviceElectron", {
     versions: () => ipcRenderer.invoke("versions"),
+    /** TJM */
     getTjm: () => ipcRenderer.invoke('getTjm'),
     updateTjm: (montant: number) => ipcRenderer.invoke('updateTjm', montant),
+    /** Entreprise */
     getClients: () => ipcRenderer.invoke('getClients'),
     addClient: (newClient: Entreprise) => ipcRenderer.invoke('addClient', newClient, false),
-    updateClient: (id: number, updatedClient: Entreprise) => ipcRenderer.invoke('updateClient', id, updatedClient),
+    updateClient: (updatedClient: Entreprise) => ipcRenderer.invoke('updateClient', updatedClient),
     deleteClient: (id: number) => ipcRenderer.invoke('deleteClient', id),
-    getMonEntreprise: () => ipcRenderer.invoke('getMonEntreprise'),
-    updateMonEntreprise: (updatedProvider: Entreprise) => ipcRenderer.invoke('updateMonEntreprise', updatedProvider)
+    getMonEntreprise: () => ipcRenderer.invoke('getMonEntreprise')
 });

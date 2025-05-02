@@ -3,8 +3,7 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
-import { darkTheme, greenTheme, retroTheme, lightTheme } from '../src/themes';
-import { blueTheme } from '../src/themes/blueTheme';
+import { darkTheme, greenTheme, retroTheme, lightTheme, blueTheme } from '../src/themes';
 
 
 const vuetify = createVuetify({
