@@ -32,14 +32,14 @@
 
         <v-navigation-drawer
             v-model="drawer"
+            width="500"
+            elevation="5"
             right
             scrim
             temporary
-            width="500"
-            elevation="5"
             sticky
         >
-            <MeLayout />
+            <MyEntrepriseLayout />
         </v-navigation-drawer>
         <v-main>
             <v-container>
@@ -56,8 +56,12 @@
 <script setup lang="ts">
     import { ref, Ref } from 'vue';
     import { routes } from '../router/routes';
-    import MeLayout from './components/layout/MeLayout.vue'
-    import { mdiHelpCircleOutline, mdiAccountGroupOutline, mdiHomeOutline } from '@mdi/js';
+    import MyEntrepriseLayout from './components/layout/MyEntrepriseLayout.vue'
+    import { 
+        mdiHelpCircleOutline, 
+        mdiAccountGroupOutline, 
+        mdiHomeOutline 
+    } from '@mdi/js';
 
     /** Variable contenant les différentes routes */
     const routesList: Ref<any[]> = ref(routes);
@@ -69,5 +73,8 @@
         '/help': mdiHelpCircleOutline
     });
 
+    /** Variable contenant le boolean permettant d'ouvrir/fermer
+     *  la fenêtre pour afficher les informations sur votre entreprise 
+     */
     const drawer = ref(false)
 </script>

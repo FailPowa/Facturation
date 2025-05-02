@@ -50,7 +50,13 @@
 
 
 <script setup lang="ts">
-    import { greenTheme, darkTheme, retroTheme, lightTheme, blueTheme } from '../../themes';
+    import { 
+        greenTheme, 
+        darkTheme, 
+        retroTheme, 
+        lightTheme, 
+        blueTheme 
+    } from '../../themes';
     import { useTheme } from 'vuetify';
 
     const theme = useTheme();

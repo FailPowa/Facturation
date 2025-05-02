@@ -83,7 +83,15 @@
 <script setup lang="ts">
     import { Ref, ref } from 'vue';
     import { Entreprise, EntrepriseType } from '../../../types';
-    import { validateSiret } from '../../../plugins/validateSiret'
+    import {
+        nomRules,
+        adresseRules,
+        codePostalRules,
+        villeRules,
+        mailRules,
+        siretRules,
+        numTvaRules
+    } from './rules'
 
     /** Définition d'un paramètre du composant */
     const props = defineProps({
@@ -127,50 +135,7 @@
         isMe: false
     });
 
-    /** Variables contenant les regex de différents à respecter */
-    const mailRegex = new RegExp(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
-    const siretRegex = new RegExp(/^[\d\s]+$/)
-     
 
-    /** Règles de validation des informations de l'entreprise */
-    
-    const nomRules = [
-        /** Règle: Le nom de l'entreprise est requis */
-        (value: string) => value.trim().length !== 0? true : "Le nom de l'entreprise est requis.",
-    ]
-    const adresseRules = [
-        /** Règle: L'adresse de l'entreprise est requis */
-        (value: string) => value.trim().length !== 0? true : "L'adresse de l'entreprise est requise."
-    ]
-    const codePostalRules = [
-        /** Règle: Le code postal est requis */
-        (value: string) => value.trim().length !== 0? true : "Le code postal de l'entreprise est requis."
-    ]
-    const villeRules = [
-        /** Règle: Le nom de la ville d'entreprise est requis */
-        (value: string) => value.trim().length !== 0? true : "La ville de l'entreprise est requise."
-    ]
-    const mailRules = [
-        /** Règle: Le mail de l'entreprise est requis */
-        (value: string) => value.trim().length !== 0? true : "Un mail est requis.",
-        
-        /** Règle: L'email respecte le format suivant => anything@anything.anything */
-        (value: string) => mailRegex.test(value.trim())? true : "Le mail est invalide."
-    ]
-    const siretRules = [
-        /** Règle: Le numéro de siret de l'entreprise est requis */
-        (value: string) => value.trim().length !== 0? true : "Le numéro de SIRET de l'entreprise est requis.",
-
-        /** Règle: Le numéro de siret de l'entreprise est invalide */
-        (value: string) => siretRegex.test(value.replace(' ', ''))? true : "Le numéro de siret est invalide.",
-
-        /** Règle: Le numéro de siret de l'entreprise ne respecte pas l'algorithme de Luhn */
-        (value: string) => validateSiret(value.replace(' ', ''))? true : "Le numéro de siret ne respecte pas l'algorithme de Luhn."
-    ]
-    const numTvaRules = [
-        /** Règle: Le numéro de tva de l'entreprise doit contenir 13 caractères ou rien. */
-        (value: string) => ( !value || value.replace(' ', '').length === 13) || "Le numéro de TVA est invalide."
-    ]
     
 
     /**
@@ -188,14 +153,13 @@
         const entreprise = Object.assign({}, entrepriseForm.value) as EntrepriseType
 
         if (valid) {
-            /** Assainissement des champs des formulaires */
-
+            /** Assainissement des champs du formulaire */
             entreprise.nom = entreprise.nom.trim()
             entreprise.adresse = entreprise.adresse.trim()    
-            entreprise.codePostal = entreprise.codePostal.replace(' ', '')
-            entreprise.mail = entreprise.mail.replace(' ', '')
-            entreprise.siret = entreprise.siret.replace(' ', '')
-            entreprise.numTva = entreprise.numTva ? entreprise.numTva.replace(' ', ''): ""
+            entreprise.codePostal = entreprise.codePostal.replace(/ /g, '')
+            entreprise.mail = entreprise.mail.replace(/ /g, '')
+            entreprise.siret = entreprise.siret.replace(/ /g, '')
+            entreprise.numTva = entreprise.numTva ? entreprise.numTva.replace(/ /g, ''): ""
             entreprise.ville = entreprise.ville.trim()
 
             /** Formattage des champs { ville, nom } */

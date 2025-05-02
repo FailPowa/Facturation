@@ -2,7 +2,11 @@
     <v-container>
         <v-row>
             <v-col>
-                <p class="text-h3 animate__animated animate__fadeInDown">Liste des clients</p>
+                <p 
+                    class="text-h3 animate__animated animate__fadeInDown"
+                >
+                    Liste des clients
+                </p>
             </v-col>
         </v-row>
         <v-row>

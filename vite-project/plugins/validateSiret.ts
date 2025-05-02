@@ -5,6 +5,10 @@
  */
 export function validateSiret(siret: string): boolean{
     let resultAlgoLuhn = 0
+
+    if (siret.length !== 14)
+        return false
+    
     for(let index = 0; index < siret.length; index++){
         const digit = Number(siret[index])
         let resultDigit = digit

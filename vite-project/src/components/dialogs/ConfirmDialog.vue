@@ -4,7 +4,7 @@
             <v-row>
                 <v-col offset="0" cols="12">
                     <v-card-title 
-                    class="text-h6 text-center"
+                        class="text-h6 text-center"
                     >
                         {{ title }}
                     </v-card-title>
@@ -30,6 +30,7 @@
         </v-container>
     </v-card>
 </template>
+
 <script setup lang="ts">
     import { Ref, ref } from 'vue';
 

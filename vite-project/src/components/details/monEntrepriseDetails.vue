@@ -32,13 +32,25 @@
     import { Entreprise } from '../../../types';
     import { onUpdated, ref, Ref } from 'vue';
 
+    /** Paramètres du composant */
     const props = defineProps({
         entreprise: {
             type: Entreprise,
             required: true
         }
     })
-    const monEntreprise : Ref<Entreprise> = ref({} as Entreprise)
+    /** Variable contenant l'entreprise récupéré en paramètre */
+    const monEntreprise : Ref<Entreprise> = ref({
+        id: -1,
+        nom: "",
+        adresse: "",
+        codePostal: "",
+        ville: "",
+        mail: "",
+        numTva: "",
+        siret: "",
+        isMe: true
+    } as Entreprise)
     
     onUpdated(() => {
         monEntreprise.value = props.entreprise
