@@ -30,7 +30,9 @@
                 <v-container>
                     <p class="text-h4">Paramètres</p>
                 </v-container>
-
+                <v-container>
+                    <SettingThemes />
+                </v-container>
                 <v-container class="mt-auto d-flex justify-center ga-16 ">
                     <v-btn color="primary" class="mb-2" icon @click="windowPart=1">
                         <v-icon 
@@ -63,6 +65,7 @@
 <script setup lang="ts">
     import { onMounted, ref, Ref } from 'vue';
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
+    import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
     import { EntrepriseType } from '../../../types/EntrepriseType';
     import { mdiPencil, mdiCog, mdiArrowULeftBottom  } from '@mdi/js';

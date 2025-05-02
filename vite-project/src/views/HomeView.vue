@@ -2,7 +2,7 @@
     <v-container>
         <v-row>
             <v-col
-                offset="10"
+                offset="8"
                 cols="2"
             >
                 <TjmLayout />

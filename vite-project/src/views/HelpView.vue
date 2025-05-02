@@ -10,7 +10,8 @@
                     v-for="t in tabs"
                     :key="t.value"
                     :text="t.text"
-                    :value="t.value" 
+                    :value="t.value"
+                    class="animate__animated animate__backInLeft"
                 />
             </v-tabs>
         </v-col>
@@ -20,6 +21,7 @@
                     v-for="t in tabs"
                     :key="t.value"
                     :value="t.value"
+                    class="animate__animated animate__fadeIn"
                 >
                     <component :is="t.component" />
                 </v-tabs-window-item>
@@ -83,4 +85,5 @@
         }
     ]);
     const activeTab: Ref<string> = ref('add-event');
+    const delay = ref(1)
 </script>

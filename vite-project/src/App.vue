@@ -1,7 +1,7 @@
 <template>
     <v-layout>
         <v-app-bar 
-            color="secondary" 
+            color="surface-bright" 
             density="compact"
         >
             <v-app-bar-nav-icon @click="drawer = !drawer" />
