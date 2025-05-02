@@ -109,4 +109,42 @@ function deleteClient(_event: any, id: number): Record<string, any> | null{
     return deletedCompany ? deletedCompany : null
 }
 
-export { getCompanies, getClients, addCompany, updateClient, deleteClient }
+
+/**
+ * Récupère les informations de votre entreprise
+ * @returns 
+ */
+function getProvider(): Entreprise{
+    const companies = getCompanies()
+    const provider = companies.find((company) => company.isMe === true)
+    if (!provider){
+        return {id: 1, nom:"", adresse: "", ville:"", codePostal:"", mail:"", numTva:"", siret:"", isMe:true}
+    }
+    return provider
+}
+
+/**
+ * Met à jour les informations de votre entreprise
+ * @returns
+ */
+function updateProvider(_event: any, updatedProvider: Entreprise): Entreprise{
+    const companies = getCompanies()
+
+    /** Récupère la position (index) de votre entreprise dans la liste des entreprises */
+    const index = companies.findIndex((company) => company.isMe === true)
+    if (index === -1){
+        throw new Error(`Echec de la mise à jour de votre entreprise: Impossible de trouver votre entreprise (identifiant: ${updatedProvider.id})`)
+    }
+    
+    /** Permet d'éviter que l'utilisateur puisse modifier les attribut isMe et id de son entreprise */
+    updatedProvider.isMe = true
+    updatedProvider.id = companies[index].id
+
+    /** Met à jour votre entreprise dans la liste stockée dans entreprise.json */
+    companies[index] = updatedProvider
+    updateJson(companies, 'entreprise.json')
+
+    return updatedProvider
+}
+
+export { getCompanies, getClients, addCompany, updateClient, deleteClient, getProvider, updateProvider }

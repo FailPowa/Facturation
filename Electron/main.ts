@@ -4,7 +4,7 @@ import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
 import { getTjm, updateTjm } from "./services/tjmService";
-import { getClients, addCompany, updateClient, deleteClient } from "./services/entrepriseService"
+import { getClients, addCompany, updateClient, deleteClient, getProvider, updateProvider } from "./services/entrepriseService"
 
 
 /**
@@ -59,6 +59,8 @@ ipcMain.handle('getClients', getClients);
 ipcMain.handle('addClient', addCompany);
 ipcMain.handle('updateClient', updateClient),
 ipcMain.handle('deleteClient', deleteClient);
+ipcMain.handle('getMonEntreprise', getProvider)
+ipcMain.handle('updateMonEntreprise', updateProvider)
 ipcMain.handle('versions', () => {
     return {
         node: process.versions.chrome,

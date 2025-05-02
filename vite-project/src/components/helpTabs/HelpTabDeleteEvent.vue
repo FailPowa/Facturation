@@ -1,7 +1,6 @@
 <template>
     <v-card
         flat
-        theme="dark"
         :title="title"
     >
         <v-card-text class="help-text">

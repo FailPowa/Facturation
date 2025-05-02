@@ -44,7 +44,7 @@
   },
   "build": {
     "appId": "com.official-electron-vue.app",
-    "productName": "Facturation Nightly",
+    "productName": "Facturation",
     "copyright": "Copyright © 2025 ${author}",
     "nsis": {
       "oneClick": true,

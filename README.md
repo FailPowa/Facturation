@@ -13,6 +13,7 @@ Outil de facturation local pour un développeur indépendant
     - Electron ( 32.1.2 )
     - Vue ( 3.5 )
     - Vuetify ( 3.7 )
+    - Animate CSS ( 4.1.1 )
 
     Le projet est divisé en deux
         Un projet Electron pour l'architecture de notre application et les services

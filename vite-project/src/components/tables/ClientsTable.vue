@@ -2,12 +2,12 @@
 <v-container>
     <v-row>
         <v-col>
-            <v-container class="d-flex flex-column ga-4">
+            <v-container class="d-flex flex-column ga-4 ">
                 
                 <!-- Bouton ajouter nouveau client-->
                 <v-btn
                     @click="addClientDialog = true"
-                    class="d-flex align-self-end"
+                    class="d-flex align-self-end animate__animated animate__backInRight"
                     color="success"
                     >
                     <b class="me-2">Ajouter client</b>
@@ -20,7 +20,7 @@
                 </v-btn>
 
                 <!-- Tableau contenant tous les clients -->
-                <v-card>
+                <v-card class="animate__animated animate__zoomIn">
                     <v-data-table
                         :items="clients"
                         :headers="clientHeaders"
