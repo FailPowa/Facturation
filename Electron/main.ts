@@ -12,7 +12,11 @@ import {
     addCompany,
     updateClient,
     deleteClient,
-    getMyEntreprise
+    getMyEntreprise,
+    // Facture
+    getFactures,
+    // Statut
+    getStatuts
 } from './services';
 
 
@@ -71,6 +75,10 @@ ipcMain.handle('addClient', addCompany);
 ipcMain.handle('updateClient', updateClient),
 ipcMain.handle('deleteClient', deleteClient);
 ipcMain.handle('getMonEntreprise', getMyEntreprise)
+// Facture
+ipcMain.handle('getFactures', getFactures)
+// Statut
+ipcMain.handle('getStatuts', getStatuts)
 // Versions
 ipcMain.handle('versions', () => {
     return {

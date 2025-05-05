@@ -10,7 +10,7 @@ export const retroTheme: ThemeDefinition = {
         primary: '#ff9fa0',
         secondary: '#b7f6cd',
         accent: '#d08700',
-        error: '#ff6266',
+        error: '#ff4246',
         info: '#0082ce',
         success: '#00776f',
         warning: '#f34700'

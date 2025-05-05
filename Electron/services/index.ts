@@ -1,5 +1,13 @@
 import { getTjm, updateTjm } from "./tjmService";
-import { getClients, addCompany, updateClient, deleteClient, getMyEntreprise } from "./entrepriseService";
+import { 
+    getClients, 
+    addCompany, 
+    updateClient, 
+    deleteClient, 
+    getMyEntreprise 
+} from "./entrepriseService";
+import { getFactures } from "./factureService";
+import { getStatuts } from "./statutService";
 
 
 export {
@@ -11,5 +19,9 @@ export {
     addCompany,
     updateClient,
     deleteClient,
-    getMyEntreprise
+    getMyEntreprise,
+    // Facture
+    getFactures,
+    // Statut
+    getStatuts
 }

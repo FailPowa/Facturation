@@ -14,5 +14,9 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     addClient: (newClient: Entreprise) => ipcRenderer.invoke('addClient', newClient, false),
     updateClient: (updatedClient: Entreprise) => ipcRenderer.invoke('updateClient', updatedClient),
     deleteClient: (id: number) => ipcRenderer.invoke('deleteClient', id),
-    getMonEntreprise: () => ipcRenderer.invoke('getMonEntreprise')
+    getMonEntreprise: () => ipcRenderer.invoke('getMonEntreprise'),
+    /** Facture */
+    getFactures: () => ipcRenderer.invoke('getFactures'),
+    /** Statut */
+    getStatuts: () => ipcRenderer.invoke('getStatuts')
 });

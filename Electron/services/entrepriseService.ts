@@ -1,5 +1,9 @@
 import { readJson, updateJson } from './jsonService';
-import { Entreprise } from '../types/Entreprise';
+import { Entreprise } from '../types';
+
+
+/** Variable stockant le nom du fichier json stockant les entreprises */
+const jsonFile = 'entreprise.json'
 
 /**
  * Récupère les entreprises
@@ -7,7 +11,7 @@ import { Entreprise } from '../types/Entreprise';
  */
 function getCompanies(): Entreprise[]{
     /** Variable stockant toutes les entreprises */
-    const companies = readJson('entreprise.json') as Entreprise[]
+    const companies = readJson(jsonFile) as Entreprise[]
     return companies
 }
 
@@ -47,7 +51,7 @@ function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entrep
     }
     
     companies.push(newCompany)
-    updateJson(companies, 'entreprise.json')
+    updateJson(companies, jsonFile)
     return newCompany
 }
 
@@ -69,7 +73,7 @@ function updateClient(_event: any, updatedClient: Entreprise): Entreprise{
 
     /** Mise à jour de la liste en remplaçant les anciennes informations de l'entreprise cliente par les nouvelles informations */
     companies[updatedClientIndex] = updatedClient
-    updateJson(companies, 'entreprise.json')
+    updateJson(companies, jsonFile)
     
     return updatedClient
 }
@@ -93,7 +97,7 @@ function deleteClient(_event: any, id: number): Entreprise | null{
     const updatedCompanies = companies.filter((company) => company !== deletedCompany)
     
     /** Met à jour le fichier Json avec la nouvelle liste */
-    updateJson(updatedCompanies, 'entreprise.json')
+    updateJson(updatedCompanies, jsonFile)
     return deletedCompany ? deletedCompany : null
 }
 
