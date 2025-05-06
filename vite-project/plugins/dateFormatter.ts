@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
  * @param date La date à convertir
  * @param format Le format demandé
  */
-export function formatDate(date: Date, format: string): string {
+export function formatDate(date: Date, format: string = 'DD/MM/YYYY'): string {
     return dayjs(date).format(format);
 }
 
