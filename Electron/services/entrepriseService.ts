@@ -28,6 +28,17 @@ function getClients(): Entreprise[]{
     return onlyClients
 }
 
+
+/**
+ * Récupère un client via son id mais retourne null si aucun client n'a été trouvé
+ * @param id Id du client
+ * @returns Entreprise or null
+ */
+function getClientById(id: number): Entreprise | null {
+    const clients = getClients()
+    const client = clients.find( entreprise => entreprise.id === id) || null
+    return client
+}
 /**
  * Ajoute une nouvelle entreprises cliente à la liste des entreprises 
  * stockés dans le fichier entreprise.json.
@@ -115,4 +126,12 @@ function getMyEntreprise(): Entreprise{
     return provider
 }
 
-export { getCompanies, getClients, addCompany, updateClient, deleteClient, getMyEntreprise }
+export { 
+    getCompanies, 
+    getClients, 
+    getClientById, 
+    addCompany, 
+    updateClient, 
+    deleteClient, 
+    getMyEntreprise 
+}

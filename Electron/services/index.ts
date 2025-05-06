@@ -1,13 +1,18 @@
 import { getTjm, updateTjm } from "./tjmService";
+import { getStatuts, getStatutById } from "./statutService";
 import { 
-    getClients, 
+    getClients,
+    getClientById,
     addCompany, 
     updateClient, 
     deleteClient, 
     getMyEntreprise 
 } from "./entrepriseService";
-import { getFactures } from "./factureService";
-import { getStatuts } from "./statutService";
+import { 
+    getFactures,
+    getFullFacturesByYear,
+    getAllFacturesYears
+} from "./factureService";
 
 
 export {
@@ -16,12 +21,16 @@ export {
     updateTjm,
     // Entreprise
     getClients,
+    getClientById,
     addCompany,
     updateClient,
     deleteClient,
     getMyEntreprise,
     // Facture
     getFactures,
+    getFullFacturesByYear,
+    getAllFacturesYears,
     // Statut
-    getStatuts
+    getStatuts,
+    getStatutById
 }

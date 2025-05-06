@@ -14,9 +14,10 @@ import {
     deleteClient,
     getMyEntreprise,
     // Facture
-    getFactures,
+    getFullFacturesByYear,
+    getAllFacturesYears,
     // Statut
-    getStatuts
+    getStatuts,
 } from './services';
 
 
@@ -74,11 +75,12 @@ ipcMain.handle('getClients', getClients);
 ipcMain.handle('addClient', addCompany);
 ipcMain.handle('updateClient', updateClient),
 ipcMain.handle('deleteClient', deleteClient);
-ipcMain.handle('getMonEntreprise', getMyEntreprise)
+ipcMain.handle('getMonEntreprise', getMyEntreprise);
 // Facture
-ipcMain.handle('getFactures', getFactures)
+ipcMain.handle('getFullFacturesByYear', getFullFacturesByYear);
+ipcMain.handle('getAllFacturesYears', getAllFacturesYears)
 // Statut
-ipcMain.handle('getStatuts', getStatuts)
+ipcMain.handle('getStatuts', getStatuts);
 // Versions
 ipcMain.handle('versions', () => {
     return {

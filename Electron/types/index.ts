@@ -1,10 +1,11 @@
 import { Entreprise } from "./Entreprise";
-import { Facture, objToFacture } from "./Facture";
+import { Facture, FullFacture, objToFacture } from "./Facture";
 import { Statut } from "./Statut";
 
 export type {
     Entreprise,
     Facture,
+    FullFacture,
     Statut
 }
 

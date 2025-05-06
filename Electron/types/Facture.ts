@@ -1,4 +1,5 @@
 import { parseDateDDMMYYYY } from "../utils/parseDate"
+import { Entreprise, Statut } from "./"
 
 export interface Facture {
     id: string
@@ -11,6 +12,20 @@ export interface Facture {
     tva: boolean
     nbJoursPaiement: number
     statutId: number
+    datePaiement: Date | null
+}
+
+export interface FullFacture {
+    id: string
+    isAvoir: boolean
+    date: Date
+    tjm: number
+    nbJours: number
+    entreprise: Entreprise
+    client: Entreprise
+    tva: boolean
+    nbJoursPaiement: number
+    statut: Statut
     datePaiement: Date | null
 }
 
