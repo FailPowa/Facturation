@@ -2,7 +2,7 @@
  * Type de l'objet Entreprise
  */
 
-export interface EntrepriseType {
+interface EntrepriseType {
     id : number
     nom: string
     adresse: string
@@ -19,7 +19,7 @@ export interface EntrepriseType {
  *  pour pouvoir définir des props de type EntrepriseType
  * 
  */
-export class Entreprise implements EntrepriseType{
+class Entreprise implements EntrepriseType{
     id : number
     nom: string
     adresse: string
@@ -51,4 +51,12 @@ export class Entreprise implements EntrepriseType{
         this.siret = siret
         this.isMe = isMe
     }
+}
+
+export type {
+    EntrepriseType,
+}
+
+export {
+    Entreprise
 }

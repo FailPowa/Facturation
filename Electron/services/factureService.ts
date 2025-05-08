@@ -2,7 +2,8 @@ import { readJson, updateJson } from "./jsonService";
 import { Facture, objToFacture } from "../types";
 import { FullFacture } from "../types";
 import { getClientById, getMyEntreprise } from "./entrepriseService";
-import { getStatutById, getStatuts } from "./statutService";
+import { getStatutById } from "./statutService";
+import { factureToObjectJson } from "../types/Facture";
 
 /** Variable stockant le nom du fichier json stockant les factures */
 const jsonFile = 'facture.json'
@@ -106,9 +107,89 @@ function getAllFacturesYears(): number[]{
     return years
 }
 
+
+/**
+ * Ajoute une nouvelle facture
+ * @param _event 
+ * @param newFacture La nouvelle facture
+ * @returns 
+ */
+function addFacture(_event: any, newFacture: Facture){
+    const factures = getFactures();
+    const lastId = getLastId() || 1;
+    const year = newFacture.date.getFullYear().toString().slice(2);
+    const month = newFacture.date.getMonth().toString();
+    newFacture.id = `${year}-${month}-${lastId + 1}`;
+    factures.push(newFacture);
+    const mappedFactures = factures.map(factureToObjectJson);
+    updateJson(mappedFactures, jsonFile);
+    return newFacture;
+}
+
+
+/**
+ * Met à jour une facture existante
+ * @param _event 
+ * @param updatedFacture la facture mise à jour
+ * @returns 
+ */
+function updateFacture(_event: any, updatedFacture: Facture){
+    const factures = getFactures();
+    const index = factures.findIndex( facture => facture.id === updatedFacture.id);
+    if (index === -1){
+        throw new Error(``);
+    }
+    factures[index] = updatedFacture
+    const mappedFactures = factures.map(factureToObjectJson)
+    updateJson(mappedFactures, jsonFile);
+    return updatedFacture;
+}
+
+/**
+ * Récupère l'identifiant aa-mm-XX de la derniere facture ajouté
+ * sinon retourne null si aucune facture n'a déjà été créée
+ * @returns number or null
+ */
+function getLastId() : number | null{
+    const factures = getFactures();
+  
+    // On extrait les parties "numérotés" de chaque ID
+    const numeros = factures
+        .map(f => {
+            const match = f.id?.match(/^\d{2}-\d{2}-(\d{2})$/);
+            return match ? parseInt(match[1], 10) : null;
+        })
+        .filter(n => n !== null);
+  
+    // On retourne le plus grand (dernier) numéro trouvé
+    return numeros.length ? Math.max(...numeros) : null;
+}
+
+/**
+ * Supprime une facture
+ * @param _event 
+ * @param id Identifiant de la facture à supprimer
+ * @returns 
+ */
+function deleteFacture(_event: any, id: string) {
+    let factures = getFactures();
+    const deletedFacture = factures.find(facture => facture.id === id) || null;
+    if (deletedFacture !== null){
+        factures = factures.filter( facture => facture !== deletedFacture);
+        updateJson(factures, jsonFile);
+    }
+    const mappedFactures = factures.map(factureToObjectJson)
+    updateJson(mappedFactures, jsonFile)
+    return deletedFacture;
+}
+  
+
 export { 
     getFactures,
     getAllFacturesYears,
     getFullFactures,
-    getFullFacturesByYear
+    getFullFacturesByYear,
+    addFacture,
+    updateFacture,
+    deleteFacture
 }

@@ -11,7 +11,10 @@ import {
 import { 
     getFactures,
     getFullFacturesByYear,
-    getAllFacturesYears
+    getAllFacturesYears,
+    addFacture,
+    updateFacture,
+    deleteFacture
 } from "./factureService";
 
 
@@ -30,6 +33,9 @@ export {
     getFactures,
     getFullFacturesByYear,
     getAllFacturesYears,
+    addFacture,
+    updateFacture,
+    deleteFacture,
     // Statut
     getStatuts,
     getStatutById

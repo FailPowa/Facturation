@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Entreprise } from "./types/Entreprise";
 import { getFullFacturesByYear } from "./services";
+import { Facture } from "./types";
 
 /**
  * Expose vers le projet front un service fictif serviceElectron permettant d'effectuer les appels back
@@ -19,6 +20,9 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     /** Facture */
     getFullFacturesByYear: (year: number) => ipcRenderer.invoke('getFullFacturesByYear', year),
     getAllFacturesYears: () => ipcRenderer.invoke('getAllFacturesYears'),
+    addFacture: (facture: Facture) => ipcRenderer.invoke('addFacture', facture),
+    updateFacture: (updatedFacture: Facture) => ipcRenderer.invoke('updateFacture', updatedFacture),
+    deleteFacture: (id: string) => ipcRenderer.invoke('deleteFacture', id),
     /** Statut */
     getStatuts: () => ipcRenderer.invoke('getStatuts')
 });

@@ -91,7 +91,7 @@
         mailRules,
         siretRules,
         numTvaRules
-    } from './rules'
+    } from '../../rules'
 
     /** Définition d'un paramètre du composant */
     const props = defineProps({
@@ -134,9 +134,6 @@
         siret: "",
         isMe: false
     });
-
-
-    
 
     /**
      * Clic sur le bouton Annuler

@@ -16,6 +16,9 @@ import {
     // Facture
     getFullFacturesByYear,
     getAllFacturesYears,
+    addFacture,
+    updateFacture,
+    deleteFacture,
     // Statut
     getStatuts,
 } from './services';
@@ -78,7 +81,10 @@ ipcMain.handle('deleteClient', deleteClient);
 ipcMain.handle('getMonEntreprise', getMyEntreprise);
 // Facture
 ipcMain.handle('getFullFacturesByYear', getFullFacturesByYear);
-ipcMain.handle('getAllFacturesYears', getAllFacturesYears)
+ipcMain.handle('getAllFacturesYears', getAllFacturesYears);
+ipcMain.handle('addFacture', addFacture);
+ipcMain.handle('updateFacture', updateFacture);
+ipcMain.handle('deleteFacture', deleteFacture);
 // Statut
 ipcMain.handle('getStatuts', getStatuts);
 // Versions

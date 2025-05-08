@@ -21,7 +21,7 @@
                         <v-btn
                             class="d-flex justify-end animate__animated animate__backInRight"
                             color="success"
-                            @click=""
+                            @click="addFactureDialog = true"
                         >
                             <b class="me-2">Ajouter une facture</b>
                             <v-icon
@@ -78,7 +78,7 @@
                         </template>
                         
                         <template v-slot:item.montantHt="{ item }">
-                            <p>{{ item.tjm * item.nbJours }} €</p>
+                            <p>{{ (item.tjm * item.nbJours).toFixed(2) }} €</p>
                         </template>
                         
                         <template v-slot:item.tva="{ item }">
@@ -93,16 +93,15 @@
                         </template>
 
                         <template v-slot:item.montantTTC="{ item }">
-                            <p>{{ (item.tjm * item.nbJours) * 1.2 }} €</p>
+                            <p>{{ (item.tjm * item.nbJours * 1.2).toFixed(2) }} €</p>
                         </template>
                         
                         <template v-slot:item.statut="{ item }">
-                            <v-chip 
-                                :color="item.statut.color"
-                                variant="flat"
-                            >
-                                {{ item.statut.text }}
-                            </v-chip>
+                            <StatutChip 
+                                :facture="item"
+                                @update-statut=""
+                                @add-date-payment="addDatePaiementFacture = item; addDatePaiementDialog = true"
+                            />
                         </template>
 
                         <template v-slot:item.datePaiement="{ item }">
@@ -134,7 +133,7 @@
                                 <v-icon 
                                     color="primary" 
                                     size="small" 
-                                    @click=""
+                                    @click="updatingFacture = item"
                                 >
                                     {{ mdiPencilOutline }}
                                 </v-icon>
@@ -143,7 +142,7 @@
                                 <v-icon 
                                     color="error" 
                                     size="small" 
-                                    @click=""
+                                    @click="deletingFacture = item; deleteConfirmDialog = true;"
                                 >
                                     {{ mdiDeleteOutline }}
                                 </v-icon>
@@ -155,12 +154,66 @@
         </v-row>
     </v-container>
 
-    
+    <!-- Boite de dialogue contenant le formulaire d'ajout d'une facture -->
+    <v-dialog
+            v-model="addFactureDialog"
+            width="75%"
+            persistent
+        >
+            <FactureForm
+                form-title="Ajouter une facture"
+                :facture="null"
+                @cancel="addFactureDialog = false"
+                @confirm="addFacture"
+                @save="saveFactureAsBrouillon"
+            />
+    </v-dialog>
+
+    <!-- Boite de dialogue contenant le formulaire de mise à jour d'une facture -->
+    <v-dialog
+            v-model="updateFactureDialog"
+            width="75%"
+            persistent
+        >
+            <FactureForm
+                form-title="Mettre à jour une facture"
+                :facture="updatingFacture"
+                @cancel="updateFactureDialog = false"
+                @confirm="updateFacture"
+                @save="saveFactureAsBrouillon"
+            />
+    </v-dialog>
+
+    <!-- Boite de dialogue pour valider le paiement d'une facture -->
+    <v-dialog
+        v-model="addDatePaiementDialog" 
+        width="75%"
+        persistent
+    >
+        <AddPaymentDateDialog
+            :facture="addDatePaiementFacture"
+            @cancel="addDatePaiementDialog = false"
+            @confirm="addDatePaiement"
+        />
+    </v-dialog>
+
+    <!-- Boite de dialogue de confirmation de suppresion d'un client -->
+    <v-dialog
+            v-model="deleteConfirmDialog"
+            max-width="800"
+            persistent
+        >
+            <ConfirmDialog 
+                :question-title="`Êtes-vous certain de vouloir supprimer la facture n°${deletingFacture?.id} ?`"
+                @cancel="deleteConfirmDialog = false"
+                @confirm="deleteFacture"
+            />
+    </v-dialog>
 </template>
 
 
 <script setup lang="ts">
-    import { FullFactureType } from '../../../types';
+    import { FullFactureType, FactureType } from '../../../types';
     import { Ref, ref, onMounted, onUpdated} from 'vue';
     import { 
         mdiReceiptTextPlusOutline, 
@@ -173,6 +226,10 @@
     } from '@mdi/js';
     import { factureHeaders } from './headers';
     import { formatDate } from '../../../plugins/dateFormatter';
+    import FactureForm from '../forms/FactureForm.vue';
+    import StatutChip from '../chips/StatutChip.vue';
+    import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
+    import ConfirmDialog from '../dialogs/ConfirmDialog.vue'
 
 
     /** Variable contenant les factures enregistrées */
@@ -181,18 +238,23 @@
     /** Variable contenant les années des factures */
     const years : Ref<number[]> = ref([])
 
+    /** Variable contenant l'année des factures actuellement affichés dans le tableau */
     const actualYear = ref()
 
     /** Variable contenant la facture en cours de modication */
-    // const updatingFacture : Ref<FactureType | null> = ref(null);
+    const updatingFacture : Ref<FullFactureType | null> = ref(null);
     
     /** Variable contenant l'id de la facture en attente de confirmation de sa suppression */
-    // const deletingFacture: Ref<FactureType | null> = ref(null)
+    const deletingFacture: Ref<string | null> = ref(null)
+    
+    /** Variable contenant */
+    const addDatePaiementFacture: Ref<FullFactureType | null> = ref(null)
     
     /** Variables des boites de dialogues */
-    //const addFactureDialog: Ref<boolean> = ref(false);
-    // const updateFactureDialog: Ref<boolean> = ref(false);
-    // const deleteConfirmDialog: Ref<boolean> = ref(false);
+    const addFactureDialog: Ref<boolean> = ref(false);
+    const updateFactureDialog: Ref<boolean> = ref(false);
+    const deleteConfirmDialog: Ref<boolean> = ref(false);
+    const addDatePaiementDialog: Ref<boolean> = ref(false)
 
     
     /** Récupération des clients au chargement de la page */
@@ -200,35 +262,85 @@
         await getYears();
         actualYear.value = Math.max(...years.value)
         await getFullFacturesByYear(actualYear.value);
-        console.log(actualYear)
     });
 
     /**
      * Mise à jour des années
      */
     onUpdated( async () => {
-        await getYears()
+        await getYears();
     })
+
+    /** Ajoute une facture en tant que brouillon */
+    async function saveFactureAsBrouillon(facture: FactureType): Promise<void> {
+        facture.statutId = 1;
+        if (facture.id !== ""){
+            await window.serviceElectron.updateFacture(Object.assign({}, facture));
+            updateFactureDialog.value = false;
+        }else{
+            await window.serviceElectron.addFacture(Object.assign({}, facture));
+            addFactureDialog.value = false;
+        }
+        await getYears();
+        await getFullFacturesByYear(actualYear.value);
+    }
     
     /** Ajoute une nouvelle facture */
-    /** async function addFacture(newFacture: FactureType): Promise<void> {
-        await window.serviceElectron.addFacture(newFacture)
-        await getFactures()
-        addFactureDialog.value = false
-    } */
+    async function addFacture(newFacture: FactureType): Promise<void> {
+        newFacture.statutId = 2
+        await window.serviceElectron.addFacture(Object.assign({}, newFacture));
+        actualYear.value = newFacture.date.getFullYear();
+        await getFullFacturesByYear(actualYear.value);
+    }
+
+    /**
+     * Ajoute la date de paiement à une facture
+     * @param datePaiement Date de paiement
+     */
+    async function addDatePaiement(datePaiement: Date) {
+        if (addDatePaiementFacture.value !== null){
+            const fullFacture = addDatePaiementFacture.value
+            const updatedFacture: FactureType = {
+                id: fullFacture.id,
+                isAvoir: fullFacture.isAvoir,
+                date: fullFacture.date,
+                tjm: fullFacture.tjm,
+                nbJours: fullFacture.nbJours,
+                entrepriseId: fullFacture.entreprise.id,
+                clientId: fullFacture.entreprise.id,
+                tva: fullFacture.tva,
+                nbJoursPaiement: fullFacture.nbJoursPaiement,
+                statutId: fullFacture.statut.id,
+                datePaiement: fullFacture.datePaiement
+            }
+            await window.serviceElectron.updateFacture(updatedFacture);
+            await getFullFacturesByYear(actualYear.value)
+            addDatePaiementFacture.value = null
+            addDatePaiementDialog.value = false
+        }
+    }
 
     /** Met à jour une facture */
-    // async function updateFacture(updatedFacture: FactureType): Promise<void>
+    async function updateFacture(updatedFacture: FactureType): Promise<void>{
+        if (updatingFacture.value !== null){
+            await window.serviceElectron.updateFacture(Object.assign({}, updatedFacture));
+            await getYears()
+            await getFullFacturesByYear(actualYear.value);
+            updatingFacture.value = null
+            updateFactureDialog.value = false
+        }
+    }
 
     /** Supprime un client */
-    /** async function deleteFacture(): Promise<void>{
+    async function deleteFacture(): Promise<void>{
         if (deletingFacture.value !== null){
-            await window.serviceElectron.deleteClient(deletingFacture.value.id)
-            await getFactures()
+            await getYears()
+            await window.serviceElectron.deleteFacture(deletingFacture.value.id)
+            await getFullFacturesByYear(actualYear.value)
             deleteConfirmDialog.value = false
-            deletingClient.value = null
+            deletingFacture.value = null
         }
-    } */
+    }
 
     /** Récupère les factures */
     async function getFullFacturesByYear(year: number){
@@ -238,5 +350,6 @@
     /** Récupère les années des factures */
     async function getYears(){
         years.value = (await window.serviceElectron.getAllFacturesYears())
+        actualYear.value = Math.max(...years.value)
     }
 </script>

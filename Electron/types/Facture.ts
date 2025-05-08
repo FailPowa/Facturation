@@ -1,4 +1,4 @@
-import { parseDateDDMMYYYY } from "../utils/parseDate"
+import { formatDate, parseDateDDMMYYYY } from "../utils/parseDate"
 import { Entreprise, Statut } from "./"
 
 export interface Facture {
@@ -50,4 +50,27 @@ export function objToFacture(obj: Record<string, any>): Facture{
         datePaiement: obj.datePaiement && obj.datePaiement !== "" ? parseDateDDMMYYYY(obj.datePaiement) : null
     }
     return facture
+}
+
+
+/**
+ * Convertit une facture en objet json
+ * @param facture La facture à convertir en objet json
+ * @returns 
+ */
+export function factureToObjectJson(facture: Facture): Record<string, any>{
+    const objJson: Record<string, any> = {
+        id: facture.id,
+        isAvoir: facture.isAvoir,
+        date: formatDate(facture.date), // Convertit la date au format JJ/MM/AAAA
+        tjm: facture.tjm,
+        nbJours: facture.nbJours,
+        entrepriseId: facture.entrepriseId,
+        clientId: facture.clientId,
+        tva: facture.tva,
+        nbJoursPaiement: facture.nbJoursPaiement,
+        statutId: facture.statutId,
+        datePaiement: facture.datePaiement !== null ? formatDate(facture.datePaiement) : null // Convertit la date de paiement au format JJ/MM/AAAA
+    }
+    return objJson
 }
