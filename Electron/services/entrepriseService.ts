@@ -9,7 +9,7 @@ const jsonFile = 'entreprise.json'
  * Récupère les entreprises
  * @returns Entreprise[]
  */
-function getCompanies(): Entreprise[]{
+function getCompanies(): Entreprise[] {
     /** Variable stockant toutes les entreprises */
     const companies = readJson(jsonFile) as Entreprise[]
     return companies
@@ -20,7 +20,7 @@ function getCompanies(): Entreprise[]{
  * Récupère les entreprises clientes
  * @returns Entreprise[]
  */
-function getClients(): Entreprise[]{
+function getClients(): Entreprise[] {
     const companies = getCompanies()
 
     /** Variable stockant les entreprises cientes (isMe === false) */
@@ -46,7 +46,7 @@ function getClientById(id: number): Entreprise | null {
  * @param isMe Boolean spécifiant s'il s'agit de mon entreprise ou non (Par défaut, il vaut 'false')
  * @returns Entreprise
  */
-function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entreprise{
+function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entreprise {
     const companies = getCompanies()
 
     /** Récupère l'id (attribut de type number) le plus grand parmi ceux existant, 
@@ -72,7 +72,7 @@ function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entrep
  * @param updatedCompany L'objet de l'entreprise à mettre à jour
  * @returns Entreprise
  */
-function updateClient(_event: any, updatedClient: Entreprise): Entreprise{
+function updateClient(_event: any, updatedClient: Entreprise): Entreprise {
     const companies = getCompanies()
     
     /** Variable contenant la position du client n°{id} dans la liste d'entreprises */
@@ -95,7 +95,7 @@ function updateClient(_event: any, updatedClient: Entreprise): Entreprise{
  * @param id Identifiant de l'entreprise à supprimer
  * @returns Renvoie l'entreprise supprimée ou null si aucune entreprise n'a été supprimée
  */
-function deleteClient(_event: any, id: number): Entreprise | null{
+function deleteClient(_event: any, id: number): Entreprise | null {
     const companies = getCompanies()
     /** Récupère les informations de l'entreprise avant sa supprésion */
     const deletedCompany = companies.find((company) => company.id === id)
@@ -117,7 +117,7 @@ function deleteClient(_event: any, id: number): Entreprise | null{
  * Récupère les informations de votre entreprise
  * @returns Entreprise
  */
-function getMyEntreprise(): Entreprise{
+function getMyEntreprise(): Entreprise {
     const companies = getCompanies()
     const provider = companies.find((company) => company.isMe === true)
     if (!provider){

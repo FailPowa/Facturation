@@ -32,6 +32,7 @@
                     ></v-text-field>
                     <v-autocomplete
                         v-model="facture.clientId"
+                        ref="clientFieldRef"
                         :items="clients"
                         :rules="clientRules"
                         item-title="nom"
@@ -47,7 +48,7 @@
                         </template>
                     </v-autocomplete>
                     <v-text-field
-                        v-model="facture.nbJoursPaiement"
+                        v-model.number="facture.nbJoursPaiement"
                         :rules="conditionPaiementRules"
                         label="Condition de paiement (en nombre de jours)"
                         variant="outlined"
@@ -71,6 +72,9 @@
                     <v-date-picker
                         v-model="facture.date"
                         color="secondary"
+                        elevation="3"
+                        bg-color="surface-bright"
+                        
                     >
                     </v-date-picker>
                 </v-container>
@@ -157,6 +161,9 @@
     const formIsValid = ref(false)
     const formRef = ref()
 
+    /** Variable du champs client */
+    const clientFieldRef = ref()
+
     /** Variable contenant les entreprises clientes */
     const clients : Ref<EntrepriseType[]> = ref([]);
 
@@ -177,14 +184,20 @@
         datePaiement: null
     });
 
+    // Par défaut, la date de facturation correspond au dernier jour du mois 
+    const date = new Date();
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    facture.value.date = lastDay
+
     /**
      * Récupération des clients et du TJM
-     * Récupération de la facture si le props.facture est non-null
+     * Récupération de la facture si le paramètres 'facture' est non-null
      */
     onMounted(async () => {
         await getClients();
         await getTjm();
         if (props.facture !== null){
+            // Convertit la facture complète (FullFacture) en facture simple (Facture)
             facture.value = {
                 id: props.facture.id,
                 isAvoir: props.facture.isAvoir,
@@ -209,34 +222,54 @@
     }
 
     /**
-     * Clic sur le bouton Valider
-     */
-    async function validateForm(): Promise<void> {
-        const { valid } = await formRef.value.validate();
-        if (valid){
-            emit('confirm', facture);
-            return
-        }else{
-            console.log('Formulaire invalide')
-        }
-    }
-
-    /**
-     * Clic sur le bouton Brouillon
-     */
-    function saveBrouillon(): void{
-        emit('save', facture);
-    }
-
-    /**
      * Clic sur le bouton Generer pdf
      */
     function generatePDF(): void{
         emit('generatePdf')
     }
 
+    /**
+     * Clic sur le bouton Valider
+     */
+    async function validateForm(): Promise<void> {
+        /** Verifie si les champs du formulaire respectent les règles définies */
+        const { valid, errors } = await formRef.value.validate();
+        if (valid){
+            /** Convertit les valeurs numériques en type number 
+             *  car elles sont renvoyés au format string par le formulaire.
+             */
+            facture.value.nbJours = Number(facture.value.nbJours)
+            facture.value.nbJoursPaiement = Number(facture.value.nbJoursPaiement)
+            facture.value.tjm = Number(facture.value.tjm)
+            emit('confirm', facture.value);
+            return
+        }else{
+            console.log('Formulaire invalide', errors)
+        }
+    }
+
+    /**
+     * Clic sur le bouton Brouillon
+     */
+    async function saveBrouillon(): Promise<void> {
+        /** Verifie si le champ client est valide avant l'enregistrement de la facture */
+        const isValid = await clientFieldRef.value.validate?.()
+        if (isValid.length === 0){
+            /** Convertit les valeurs numériques en type number 
+             *  car elles sont renvoyés au format string par le formulaire.
+             */
+            facture.value.nbJours = Number(facture.value.nbJours)
+            facture.value.nbJoursPaiement = Number(facture.value.nbJoursPaiement)
+            facture.value.tjm = Number(facture.value.tjm)
+            emit('save', facture.value);
+        }else{
+            console.log('Impossible de sauvegarder le brouillon sans client enregistré.')
+        }
+        
+    }
+
     /** Récupère les clients */
-    async function getClients(){
+    async function getClients() {
         clients.value = (await window.serviceElectron.getClients());
     }
 

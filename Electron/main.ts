@@ -3,6 +3,7 @@ import path from "path";
 import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
+import { withJsonParsing } from "./middlewares/withJsonParsing"
 import {
     // TJM
     getTjm,
@@ -22,6 +23,7 @@ import {
     // Statut
     getStatuts,
 } from './services';
+import { jsonStringToFacture } from "./types";
 
 
 /**
@@ -82,8 +84,8 @@ ipcMain.handle('getMonEntreprise', getMyEntreprise);
 // Facture
 ipcMain.handle('getFullFacturesByYear', getFullFacturesByYear);
 ipcMain.handle('getAllFacturesYears', getAllFacturesYears);
-ipcMain.handle('addFacture', addFacture);
-ipcMain.handle('updateFacture', updateFacture);
+ipcMain.handle('addFacture', withJsonParsing(addFacture, jsonStringToFacture));
+ipcMain.handle('updateFacture', withJsonParsing(updateFacture, jsonStringToFacture));
 ipcMain.handle('deleteFacture', deleteFacture);
 // Statut
 ipcMain.handle('getStatuts', getStatuts);

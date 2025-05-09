@@ -28,4 +28,7 @@ const factureHeaders: Record<string, any>[] = [
 ]
 
 
-export { clientHeaders, factureHeaders }
+export { 
+    clientHeaders, 
+    factureHeaders 
+}

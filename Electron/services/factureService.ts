@@ -1,9 +1,12 @@
 import { readJson, updateJson } from "./jsonService";
-import { Facture, objToFacture } from "../types";
-import { FullFacture } from "../types";
+import { 
+    Facture, 
+    FullFacture,
+    objToFacture, 
+    factureToObject 
+} from "../types";
 import { getClientById, getMyEntreprise } from "./entrepriseService";
 import { getStatutById } from "./statutService";
-import { factureToObjectJson } from "../types/Facture";
 
 /** Variable stockant le nom du fichier json stockant les factures */
 const jsonFile = 'facture.json'
@@ -64,32 +67,17 @@ function factureToFullFacture(facture: Facture): FullFacture{
 }
 
 /**
- * Récupère les factures existantes, les filtres selon l'année entrée en paramètre et
- * renvoie la liste des factures filtrées.
- * @param _event
- * @param year L'année de la/les factures recherchés 
- * @returns Facture[]
- */
-function getFacturesByYear(_event: any, year: number): Facture[]{
-    const factures = getFactures()
-    const facturesByYear = factures.filter( facture => {
-        return facture.date.getFullYear() === year
-    })
-    return facturesByYear
-}
-
-/**
  * Récupère les factures existantes avec leurs informations aux complètes, les filtres selon l'année entrée en paramètre et
  * renvoie la liste des factures filtrées.
  * @param year L'année de la/les factures recherchés 
  * @returns Facture[]
  */
 function getFullFacturesByYear(_event: any, year: number): FullFacture[]{
-    const fullFactures = getFullFactures()
+    const fullFactures = getFullFactures();
     const facturesByYear = fullFactures.filter( facture => {
-        return facture.date.getFullYear() === year
-    })
-    return facturesByYear
+        return facture.date.getFullYear() === year;
+    });
+    return facturesByYear;
 }
 
 /**
@@ -97,14 +85,14 @@ function getFullFacturesByYear(_event: any, year: number): FullFacture[]{
  * @returns number[]
  */
 function getAllFacturesYears(): number[]{
-    const factures = getFactures()
-    const years: number[] = []
+    const factures = getFactures();
+    const years: number[] = [];
     factures.forEach( facture => {
         if (!years.includes(facture.date.getFullYear())){
             years.push(facture.date.getFullYear())
         }
-    })
-    return years
+    });
+    return years;   
 }
 
 
@@ -116,12 +104,22 @@ function getAllFacturesYears(): number[]{
  */
 function addFacture(_event: any, newFacture: Facture){
     const factures = getFactures();
+
+    // Dernier id ajouter
     const lastId = getLastId() || 1;
+
+    // Année de création de la facture
     const year = newFacture.date.getFullYear().toString().slice(2);
+
+    // Mois de création de la facture
     const month = newFacture.date.getMonth().toString();
+
+    // Nouvel identifiant pour la facture
     newFacture.id = `${year}-${month}-${lastId + 1}`;
     factures.push(newFacture);
-    const mappedFactures = factures.map(factureToObjectJson);
+    
+    // Un map de la liste des factures 
+    const mappedFactures = factures.map(factureToObject);
     updateJson(mappedFactures, jsonFile);
     return newFacture;
 }
@@ -140,7 +138,7 @@ function updateFacture(_event: any, updatedFacture: Facture){
         throw new Error(``);
     }
     factures[index] = updatedFacture
-    const mappedFactures = factures.map(factureToObjectJson)
+    const mappedFactures = factures.map(factureToObject)
     updateJson(mappedFactures, jsonFile);
     return updatedFacture;
 }
@@ -178,7 +176,7 @@ function deleteFacture(_event: any, id: string) {
         factures = factures.filter( facture => facture !== deletedFacture);
         updateJson(factures, jsonFile);
     }
-    const mappedFactures = factures.map(factureToObjectJson)
+    const mappedFactures = factures.map(factureToObject)
     updateJson(mappedFactures, jsonFile)
     return deletedFacture;
 }

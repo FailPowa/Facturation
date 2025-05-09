@@ -1,7 +1,11 @@
 import { formatDate, parseDateDDMMYYYY } from "../utils/parseDate"
 import { Entreprise, Statut } from "./"
 
-export interface Facture {
+/**
+ * Type de l'objet Facture
+ * (Sans les informations complètes sur l'entreprise, le client et le statut de la facture)
+ */
+interface Facture {
     id: string
     isAvoir: boolean
     date: Date
@@ -15,7 +19,11 @@ export interface Facture {
     datePaiement: Date | null
 }
 
-export interface FullFacture {
+/**
+ * Type de l'objet FullFacture
+ * (Avec toutes les informations sur l'entreprise prestataire, le client et le statut actuel de la facture)
+ */
+interface FullFacture {
     id: string
     isAvoir: boolean
     date: Date
@@ -35,7 +43,7 @@ export interface FullFacture {
  * @param obj Un objet contenant les informations pour la facture
  * @returns 
  */
-export function objToFacture(obj: Record<string, any>): Facture{
+function objToFacture(obj: Record<string, any>): Facture {
     const facture: Facture = {
         id: String(obj.id),
         isAvoir: Boolean(obj.isAvoir),
@@ -58,7 +66,7 @@ export function objToFacture(obj: Record<string, any>): Facture{
  * @param facture La facture à convertir en objet json
  * @returns 
  */
-export function factureToObjectJson(facture: Facture): Record<string, any>{
+function factureToObject(facture: Facture): Record<string, any> {
     const objJson: Record<string, any> = {
         id: facture.id,
         isAvoir: facture.isAvoir,
@@ -73,4 +81,32 @@ export function factureToObjectJson(facture: Facture): Record<string, any>{
         datePaiement: facture.datePaiement !== null ? formatDate(facture.datePaiement) : null // Convertit la date de paiement au format JJ/MM/AAAA
     }
     return objJson
+}
+
+
+/**
+ * Récupère un string contenant le json d'une facture 
+ * et le convertit en objet Facture.
+ * @param json le string json de la facture
+ * @returns Facture
+ */
+function jsonStringToFacture(json: string) : Facture {
+    const facture = JSON.parse(json)
+    
+    // Convertit les date (string) en objet Date
+    facture.date = new Date(facture.date)
+    facture.datePaiement = facture.datePaiement ? new Date(facture.datePaiement) : null
+
+    return facture
+}
+
+export type {
+    Facture,
+    FullFacture
+}
+
+export {
+    objToFacture,
+    factureToObject,
+    jsonStringToFacture
 }

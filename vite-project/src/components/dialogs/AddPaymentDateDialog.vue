@@ -15,7 +15,6 @@
                     <v-date-input 
                         label="Date de paiement" 
                         variant="outlined"
-                        :rules="datePaiementRules"
                     ></v-date-input>
                 </v-col>
             </v-row>
@@ -62,11 +61,6 @@
     /** Variable contenant la date de paiement */
     const datePaiement: Ref<Date> = ref(new Date(Date.now()));
 
-    /** Règles */
-    const datePaiementRules = [
-        (value: Date) => (props.facture !== null && value >= props.facture.date) || 'La date de paiement doit être égal ou supérieur à la date de début de la prestation.'
-    ];
-
     /**
      * Clic sur le bouton Annuler
      */
@@ -78,6 +72,6 @@
      * Clic sur le bouton Valider
      */
     function confirmDialog(): void {
-        emit('confirm', datePaiement);
+        emit('confirm', datePaiement.value);
     };
 </script>

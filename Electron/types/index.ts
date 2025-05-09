@@ -1,5 +1,5 @@
 import { Entreprise } from "./Entreprise";
-import { Facture, FullFacture, objToFacture } from "./Facture";
+import { Facture, FullFacture, objToFacture, factureToObject, jsonStringToFacture } from "./Facture";
 import { Statut } from "./Statut";
 
 export type {
@@ -10,5 +10,8 @@ export type {
 }
 
 export {
-    objToFacture
+    // Facture
+    objToFacture,
+    factureToObject,
+    jsonStringToFacture
 }

@@ -67,7 +67,10 @@
                                 <td></td> <!-- Actions -->
                             </tr>
                         </template>
-
+                        
+                        <template #no-data>
+                            <p>Aucune facture enregistrée</p>
+                        </template>
 
                         <template v-slot:item.client="{ item }">
                             <p>{{ item.client.nom }}</p>
@@ -99,7 +102,7 @@
                         <template v-slot:item.statut="{ item }">
                             <StatutChip 
                                 :facture="item"
-                                @update-statut=""
+                                @update-statut="updatingFacture = item; updateFactureDialog = true"
                                 @add-date-payment="addDatePaiementFacture = item; addDatePaiementDialog = true"
                             />
                         </template>
@@ -130,10 +133,11 @@
                                     {{ mdiEyeOutline }}
                                 </v-icon>
                                 <!-- Bouton modifier -->
-                                <v-icon 
+                                <v-icon
+                                    v-if="item.statut.id !== 3"
                                     color="primary" 
                                     size="small" 
-                                    @click="updatingFacture = item"
+                                    @click="updatingFacture = item; updateFactureDialog = true;"
                                 >
                                     {{ mdiPencilOutline }}
                                 </v-icon>
@@ -161,8 +165,8 @@
             persistent
         >
             <FactureForm
-                form-title="Ajouter une facture"
                 :facture="null"
+                form-title="Ajouter une facture"   
                 @cancel="addFactureDialog = false"
                 @confirm="addFacture"
                 @save="saveFactureAsBrouillon"
@@ -176,8 +180,8 @@
             persistent
         >
             <FactureForm
-                form-title="Mettre à jour une facture"
                 :facture="updatingFacture"
+                form-title="Mettre à jour une facture"
                 @cancel="updateFactureDialog = false"
                 @confirm="updateFacture"
                 @save="saveFactureAsBrouillon"
@@ -225,7 +229,7 @@
 
     } from '@mdi/js';
     import { factureHeaders } from './headers';
-    import { formatDate } from '../../../plugins/dateFormatter';
+    import { formatDate, getCurrentYear } from '../../../plugins/dateFormatter';
     import FactureForm from '../forms/FactureForm.vue';
     import StatutChip from '../chips/StatutChip.vue';
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
@@ -245,7 +249,7 @@
     const updatingFacture : Ref<FullFactureType | null> = ref(null);
     
     /** Variable contenant l'id de la facture en attente de confirmation de sa suppression */
-    const deletingFacture: Ref<string | null> = ref(null)
+    const deletingFacture: Ref<FullFactureType | null> = ref(null)
     
     /** Variable contenant */
     const addDatePaiementFacture: Ref<FullFactureType | null> = ref(null)
@@ -273,12 +277,13 @@
 
     /** Ajoute une facture en tant que brouillon */
     async function saveFactureAsBrouillon(facture: FactureType): Promise<void> {
-        facture.statutId = 1;
+        facture.statutId = 1; // Statut n°1 : Brouillon
         if (facture.id !== ""){
-            await window.serviceElectron.updateFacture(Object.assign({}, facture));
+            await window.serviceElectron.updateFacture(JSON.stringify(facture));
+            updatingFacture.value = null
             updateFactureDialog.value = false;
         }else{
-            await window.serviceElectron.addFacture(Object.assign({}, facture));
+            await window.serviceElectron.addFacture(JSON.stringify(facture));
             addFactureDialog.value = false;
         }
         await getYears();
@@ -287,9 +292,10 @@
     
     /** Ajoute une nouvelle facture */
     async function addFacture(newFacture: FactureType): Promise<void> {
-        newFacture.statutId = 2
-        await window.serviceElectron.addFacture(Object.assign({}, newFacture));
-        actualYear.value = newFacture.date.getFullYear();
+        newFacture.statutId = 2 // Statut n°2 : 
+        await window.serviceElectron.addFacture(JSON.stringify(newFacture));
+        const date = new Date(newFacture.date)
+        actualYear.value = date.getFullYear()
         await getFullFacturesByYear(actualYear.value);
     }
 
@@ -307,13 +313,14 @@
                 tjm: fullFacture.tjm,
                 nbJours: fullFacture.nbJours,
                 entrepriseId: fullFacture.entreprise.id,
-                clientId: fullFacture.entreprise.id,
+                clientId: fullFacture.client.id,
                 tva: fullFacture.tva,
                 nbJoursPaiement: fullFacture.nbJoursPaiement,
-                statutId: fullFacture.statut.id,
-                datePaiement: fullFacture.datePaiement
+                statutId: 3, // Statut n°3 : Payée
+                datePaiement: datePaiement
             }
-            await window.serviceElectron.updateFacture(updatedFacture);
+            const json = JSON.stringify(updatedFacture)
+            await window.serviceElectron.updateFacture(json);
             await getFullFacturesByYear(actualYear.value)
             addDatePaiementFacture.value = null
             addDatePaiementDialog.value = false
@@ -321,9 +328,10 @@
     }
 
     /** Met à jour une facture */
-    async function updateFacture(updatedFacture: FactureType): Promise<void>{
+    async function updateFacture(updatedFacture: FactureType): Promise<void> {
         if (updatingFacture.value !== null){
-            await window.serviceElectron.updateFacture(Object.assign({}, updatedFacture));
+            updatedFacture.statutId = 2; // Statut n°2 : Impayée
+            await window.serviceElectron.updateFacture(JSON.stringify(updatedFacture));
             await getYears()
             await getFullFacturesByYear(actualYear.value);
             updatingFacture.value = null
@@ -332,7 +340,7 @@
     }
 
     /** Supprime un client */
-    async function deleteFacture(): Promise<void>{
+    async function deleteFacture(): Promise<void> {
         if (deletingFacture.value !== null){
             await getYears()
             await window.serviceElectron.deleteFacture(deletingFacture.value.id)
@@ -343,13 +351,13 @@
     }
 
     /** Récupère les factures */
-    async function getFullFacturesByYear(year: number){
+    async function getFullFacturesByYear(year: number) {
         fullFactures.value = (await window.serviceElectron.getFullFacturesByYear(year)) as FullFactureType[]
     }
 
     /** Récupère les années des factures */
-    async function getYears(){
+    async function getYears() {
         years.value = (await window.serviceElectron.getAllFacturesYears())
-        actualYear.value = Math.max(...years.value)
+        actualYear.value = years.value.length === 0 ? getCurrentYear() : Math.max(...years.value)
     }
 </script>

@@ -26,3 +26,11 @@ export function checkDateHour(date: Date): number {
 export function datesAreSame(date1: Date, date2: Date): boolean {
     return dayjs(date1).isSame(date2);
 }
+
+/**
+ * Retourne l'année actuelle
+ * @returns number
+ */
+export function getCurrentYear(): number {
+    return dayjs().year() 
+}
