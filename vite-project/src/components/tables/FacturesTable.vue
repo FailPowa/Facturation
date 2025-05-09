@@ -273,6 +273,7 @@
      */
     onUpdated( async () => {
         await getYears();
+        await getFullFacturesByYear(actualYear.value)
     })
 
     /** Ajoute une facture en tant que brouillon */

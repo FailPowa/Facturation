@@ -112,7 +112,10 @@ function addFacture(_event: any, newFacture: Facture){
     const year = newFacture.date.getFullYear().toString().slice(2);
 
     // Mois de création de la facture
-    const month = newFacture.date.getMonth().toString();
+    let month = newFacture.date.getMonth().toString();
+    if (month.length === 1){
+        month = '0' + month
+    }
 
     // Nouvel identifiant pour la facture
     newFacture.id = `${year}-${month}-${lastId + 1}`;
