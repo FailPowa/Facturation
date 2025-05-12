@@ -210,6 +210,10 @@
                 statutId: props.facture.statut.id,
                 datePaiement: null
             }
+        } else {
+            const lastFacture = await getLastFacture();
+            facture.value.clientId = lastFacture.clientId;
+            facture.value.nbJoursPaiement = lastFacture.nbJoursPaiement;
         }
     })
 
@@ -275,5 +279,10 @@
     async function getTjm(): Promise<void> {
         const tjm: Tjm = await window.serviceElectron.getTjm();
         facture.value.tjm = tjm.montant
+    }
+
+    async function getLastFacture(): Promise<FactureType> {
+        const facture: FactureType = await window.serviceElectron.getLastFacture();
+        return facture
     }
 </script>

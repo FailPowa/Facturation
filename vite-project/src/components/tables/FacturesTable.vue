@@ -1,191 +1,212 @@
 <template>
     <v-container>
         <v-row>
-            <v-col>
-                <v-container class="d-flex flex-column ga-4 ">
-
-                    <v-container class="d-flex justify-space-between">
-
-                        <v-select
-                                v-model="actualYear"
-                                :items="years"
-                                density="compact"
-                                label="Date"
-                                type="number"
-                                variant="outlined"
-                                @update:modelValue="getFullFacturesByYear"
-                                maxWidth="300"
-                        ></v-select>
-                        
-                        <!-- Bouton ajouter nouvelle facture -->
-                        <v-btn
-                            class="d-flex justify-end animate__animated animate__backInRight"
-                            color="success"
-                            @click="addFactureDialog = true"
-                        >
-                            <b class="me-2">Ajouter une facture</b>
-                            <v-icon
-                                variant="outlined"
-                                color="primary"
-                            >
-                                {{mdiReceiptTextPlusOutline}}
-                            </v-icon>
-                        </v-btn>
-                    </v-container>
-                    
-                    <!-- Tableau contenant les factures -->
-                    <v-data-table
-                        :items="fullFactures"
-                        :headers="factureHeaders"
-                        class="animate__animated animate__zoomIn"
+            <v-col class="d-flex flex-column ga-4 justify-space-between">
+                <v-select
+                    v-model="selectedYear"
+                    :items="years"
+                    density="compact"
+                    label="Date"
+                    type="number"
+                    variant="outlined"
+                    maxWidth="300"
+                    @update:modelValue="setSelectedYear"
+                />
+            </v-col>
+            <v-col offset="6" class="d-flex flex-column justify-space-between">
+                <v-btn
+                    class="d-flex justify-end animate__animated animate__backInRight"
+                    color="success"
+                    @click="addFactureDialog = true"
+                >
+                    <b class="me-2">Ajouter une facture</b>
+                    <v-icon
+                        variant="outlined"
+                        color="primary"
                     >
-                        <!-- Ajoute une ligne au début du body -->
-                        <template #body.prepend>
-                            <tr>
-                                <td class="font-weight-bold	">TOTAL</td> <!-- ID -->
-                                <td></td> <!-- Date -->
-                                <td></td> <!-- Client -->
-                                <td class="font-weight-bold	">
-                                    {{
-                                        fullFactures
-                                        .map(facture => facture.tjm * facture.nbJours)
-                                        .reduce((acc, curr) => acc + curr, 0)
-                                        .toFixed(2)
-                                    }} €
-                                </td> <!-- Montant HT -->
-                                <td></td> <!-- TVA -->
-                                <td class="font-weight-bold	">
-                                    {{
-                                        fullFactures
-                                        .map(facture => facture.tjm * facture.nbJours * 1.2)
-                                        .reduce((acc, curr) => acc + curr, 0)
-                                        .toFixed(2)
-                                    }} €
-                                </td> <!-- Montant TTC -->
-                                <td></td> <!-- Statut -->
-                                <td></td> <!-- Date paiement -->
-                                <td></td> <!-- Actions -->
-                            </tr>
-                        </template>
-                        
-                        <template #no-data>
-                            <p>Aucune facture enregistrée</p>
-                        </template>
-
-                        <template v-slot:item.client="{ item }">
-                            <p>{{ item.client.nom }}</p>
-                        </template>
-
-                        <template v-slot:item.date="{ item }">
-                            <p>{{ formatDate(item.date) }}</p>
-                        </template>
-                        
-                        <template v-slot:item.montantHt="{ item }">
-                            <p>{{ (item.tjm * item.nbJours).toFixed(2) }} €</p>
-                        </template>
-                        
-                        <template v-slot:item.tva="{ item }">
-                            <v-icon
-                                :color="item.tva ? 'green' : 'red'"
-                                variant="outlined"
-                            >
+                        {{ icons.mdiReceiptTextPlusOutline }}
+                    </v-icon>
+                </v-btn>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col class="d-flex flex-column ga-4">
+                <v-data-table
+                    :items="factures"
+                    :headers="factureHeaders"
+                >
+                    <!-- Override du no-data -->
+                    <template #no-data>
+                        <p>Aucune facture enregistrée</p>
+                    </template>
+                    <!-- Ajout d'une ligne TOTAL en entête -->
+                    <template 
+                        v-if="factures.length > 0"
+                        #body.prepend
+                    >
+                        <tr>
+                            <td>TOTAL</td>
+                            <td></td>
+                            <td></td>
+                            <td>
                                 {{
-                                    item.tva ? mdiCheckCircleOutline : mdiMinusCircleOutline
+                                    formatMontantEuro(
+                                        factures
+                                            .map(facture => {
+                                                return calculMontantHT(
+                                                    facture.tjm,
+                                                    facture.nbJours,
+                                                    facture.isAvoir                                                )
+                                            }).reduce((acc, curr) => acc + curr, 0)
+                                            
+                                    )
                                 }}
-                            </v-icon>   
-                        </template>
-
-                        <template v-slot:item.montantTTC="{ item }">
-                            <p>{{ (item.tjm * item.nbJours * 1.2).toFixed(2) }} €</p>
-                        </template>
-                        
-                        <template v-slot:item.statut="{ item }">
-                            <StatutChip 
-                                :facture="item"
-                                @update-statut="updatingFacture = item; updateFactureDialog = true"
-                                @add-date-payment="addDatePaiementFacture = item; addDatePaiementDialog = true"
-                            />
-                        </template>
-
-                        <template v-slot:item.datePaiement="{ item }">
-                            <p 
-                                v-if="item.datePaiement !== null"
+                            </td>
+                            <td></td>
+                            <td>
+                                {{
+                                    formatMontantEuro(
+                                        factures
+                                            .map(facture => {
+                                                return calculMontantTTC(
+                                                    facture.tjm,
+                                                    facture.nbJours,
+                                                    facture.isAvoir,
+                                                    facture.tva
+                                                )
+                                            }).reduce((acc, curr) => acc + curr, 0)
+                                            
+                                    )
+                                }}
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </template>
+                    <!-- Override des colonnes du tableau -->
+                    <template #item.client="{ item }">
+                        {{ item.client.nom }}
+                    </template>
+                    <template #item.date="{ item }">
+                        {{ formatDate(item.date) }}
+                    </template>
+                    <template #item.montantHt="{ item }">
+                        {{ 
+                            formatMontantEuro(
+                                calculMontantHT(
+                                    item.tjm,
+                                    item.nbJours,
+                                    item.isAvoir
+                                )
+                            ) 
+                        }}
+                    </template>
+                    <template #item.tva="{ item }">
+                        <v-icon
+                            v-if="item.tva"
+                            color="green"
+                            variant="outlined"
+                        >
+                            {{ icons.mdiCheckCircleOutline }}
+                        </v-icon>
+                        <v-icon
+                            v-else
+                            color="red"
+                            variant="outlined"
+                        >
+                            {{ icons.mdiMinusCircleOutline }}
+                        </v-icon>
+                    </template>
+                    <template #item.montantTTC="{ item }">
+                        {{ 
+                            formatMontantEuro(
+                                calculMontantTTC(
+                                    item.tjm,
+                                    item.nbJours,
+                                    item.isAvoir,
+                                    item.tva
+                                )
+                            )
+                        }}
+                    </template>
+                    <template #item.statut="{ item }">
+                        <StatutChip
+                            :statut="item.statut"
+                            @update-statut="updateStatut(item, $event)"
+                        />
+                    </template>
+                    <template #item.datePaiement="{ item }">
+                        <p v-if="item.datePaiement !== null">{{ formatDate(item.datePaiement) }}</p>
+                        <v-icon 
+                            v-else
+                            color="red"
+                        >
+                            {{ icons.mdiMinusCircleOutline }}
+                        </v-icon>
+                    </template>
+                    <template #item.actions="{ item }">
+                        <div class="d-flex ga-2 justify-center">
+                            <!-- Bouton Visualiser -->
+                            <v-icon
+                                color="info"
+                                size="small"
                             >
-                                {{ formatDate(item.datePaiement) }}
-                            </p>
-                            <v-icon 
-                                v-if="item.datePaiement === null"
-                                color="red"
-                            >
-                                {{ mdiMinusCircleOutline }}
+                                {{ icons.mdiEyeOutline }}
                             </v-icon>
-                        </template>
-
-                        <!-- Boutons actions (visualiser, modifier, supprimer) -->
-                        <template v-slot:item.actions="{ item }">
-                            <div class="d-flex ga-2 justify-center">
-                                <!-- Bouton Visualiser -->
-                                <v-icon 
-                                    color="info" 
-                                    size="small" 
-                                    @click=""
-                                >
-                                    {{ mdiEyeOutline }}
-                                </v-icon>
-                                <!-- Bouton modifier -->
-                                <v-icon
-                                    v-if="item.statut.id !== 3"
-                                    color="primary" 
-                                    size="small" 
-                                    @click="updatingFacture = item; updateFactureDialog = true;"
-                                >
-                                    {{ mdiPencilOutline }}
-                                </v-icon>
-
-                                <!-- Bouton supprimer -->
-                                <v-icon 
-                                    color="error" 
-                                    size="small" 
-                                    @click="deletingFacture = item; deleteConfirmDialog = true;"
-                                >
-                                    {{ mdiDeleteOutline }}
-                                </v-icon>
-                            </div>
-                        </template>
-                    </v-data-table>
-                </v-container>
+                            <!-- Bouton Modifier -->
+                            <v-icon
+                                v-if="item.statut.value !== 'PAYEE'"
+                                color="primary"
+                                size="small"
+                                @click="setFacture(item)"
+                            >
+                                {{ icons.mdiPencilOutline }}
+                            </v-icon>
+                            <!-- Bouton Supprimer -->
+                            <v-icon
+                                v-if="item.statut.value !== 'PAYEE'"
+                                color="error"
+                                size="small"
+                                @click="removeFacture(item)"
+                            >
+                                {{ icons.mdiDeleteOutline }}
+                            </v-icon>
+                        </div>
+                    </template>
+                </v-data-table>
             </v-col>
         </v-row>
     </v-container>
 
-    <!-- Boite de dialogue contenant le formulaire d'ajout d'une facture -->
+    <!-- Dialog d'ajout d'une facture -->
     <v-dialog
-            v-model="addFactureDialog"
-            width="75%"
-            persistent
-        >
-            <FactureForm
-                :facture="null"
-                form-title="Ajouter une facture"   
-                @cancel="addFactureDialog = false"
-                @confirm="addFacture"
-                @save="saveFactureAsBrouillon"
-            />
+        v-model="addFactureDialog"
+        width="75%"
+        persistent
+    >
+        <FactureForm
+            :facture="null"
+            form-title="Ajouter une facture"
+            @cancel="addFactureDialog = false"
+            @confirm="saveFacture($event, 'IMPAYEE')"
+            @save="saveFacture($event, 'BROUILLON')"
+        />
     </v-dialog>
 
-    <!-- Boite de dialogue contenant le formulaire de mise à jour d'une facture -->
+    <!-- Dialog de màj d'une facture -->
     <v-dialog
-            v-model="updateFactureDialog"
-            width="75%"
-            persistent
-        >
-            <FactureForm
-                :facture="updatingFacture"
-                form-title="Mettre à jour une facture"
-                @cancel="updateFactureDialog = false"
-                @confirm="updateFacture"
-                @save="saveFactureAsBrouillon"
-            />
+        v-model="updateFactureDialog"
+        width="75%"
+        persistent
+    >
+        <FactureForm
+            :facture="selectedFacture"
+            form-title="Modifier une facture"
+            @cancel="updateFactureDialog = false"
+            @confirm="saveFacture($event, 'IMPAYEE')"
+            @save="saveFacture($event, 'BROUILLON')"
+        />
     </v-dialog>
 
     <!-- Boite de dialogue pour valider le paiement d'une facture -->
@@ -195,7 +216,7 @@
         persistent
     >
         <AddPaymentDateDialog
-            :facture="addDatePaiementFacture"
+            :facture="selectedFacture"
             @cancel="addDatePaiementDialog = false"
             @confirm="addDatePaiement"
         />
@@ -203,22 +224,20 @@
 
     <!-- Boite de dialogue de confirmation de suppresion d'un client -->
     <v-dialog
-            v-model="deleteConfirmDialog"
+            v-model="deleteFactureDialog"
             max-width="800"
             persistent
         >
             <ConfirmDialog 
-                :question-title="`Êtes-vous certain de vouloir supprimer la facture n°${deletingFacture?.id} ?`"
-                @cancel="deleteConfirmDialog = false"
+                :question-title="`Êtes-vous certain de vouloir supprimer la facture n°${selectedFacture?.id} ?`"
+                @cancel="deleteFactureDialog = false"
                 @confirm="deleteFacture"
             />
     </v-dialog>
 </template>
-
-
 <script setup lang="ts">
-    import { FullFactureType, FactureType } from '../../../types';
-    import { Ref, ref, onMounted, onUpdated} from 'vue';
+    import { FullFactureType, FactureType, StatutType } from '../../../types';
+    import { Ref, ref, onMounted } from 'vue';
     import { 
         mdiReceiptTextPlusOutline, 
         mdiDeleteOutline, 
@@ -226,139 +245,167 @@
         mdiEyeOutline,
         mdiCheckCircleOutline,
         mdiMinusCircleOutline
-
     } from '@mdi/js';
     import { factureHeaders } from './headers';
     import { formatDate, getCurrentYear } from '../../../plugins/dateFormatter';
+    import { formatMontantEuro } from '../../../plugins/formatMontantEuro';
     import FactureForm from '../forms/FactureForm.vue';
     import StatutChip from '../chips/StatutChip.vue';
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
-    import ConfirmDialog from '../dialogs/ConfirmDialog.vue'
+    import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
 
+    /** Icones */
+    const icons = { 
+        mdiReceiptTextPlusOutline, 
+        mdiDeleteOutline, 
+        mdiPencilOutline, 
+        mdiEyeOutline,
+        mdiCheckCircleOutline,
+        mdiMinusCircleOutline
+    };
 
-    /** Variable contenant les factures enregistrées */
-    const fullFactures : Ref<FullFactureType[]> = ref([]);
+    /** Sélecteur d'année */
+    const selectedYear: Ref<number> = ref(getCurrentYear());
+    const years: Ref<number[]> = ref([getCurrentYear()]);
 
-    /** Variable contenant les années des factures */
-    const years : Ref<number[]> = ref([])
+    /** Tableau */
+    const factures: Ref<FullFactureType[]> = ref([]);
+    const selectedFacture: Ref<FullFactureType | null> = ref(null);
 
-    /** Variable contenant l'année des factures actuellement affichés dans le tableau */
-    const actualYear = ref()
-
-    /** Variable contenant la facture en cours de modication */
-    const updatingFacture : Ref<FullFactureType | null> = ref(null);
-    
-    /** Variable contenant l'id de la facture en attente de confirmation de sa suppression */
-    const deletingFacture: Ref<FullFactureType | null> = ref(null)
-    
-    /** Variable contenant */
-    const addDatePaiementFacture: Ref<FullFactureType | null> = ref(null)
-    
-    /** Variables des boites de dialogues */
+    /** Dialogs */
     const addFactureDialog: Ref<boolean> = ref(false);
     const updateFactureDialog: Ref<boolean> = ref(false);
-    const deleteConfirmDialog: Ref<boolean> = ref(false);
-    const addDatePaiementDialog: Ref<boolean> = ref(false)
+    const deleteFactureDialog: Ref<boolean> = ref(false);
+    const addDatePaiementDialog: Ref<boolean> = ref(false);
 
-    
-    /** Récupération des clients au chargement de la page */
-    onMounted( async () => {
+    /** Mounted */
+    onMounted(async () => {
+        /** On remplis le sélecteur d'année & on sélectionne l'année la plus récente */
         await getYears();
-        actualYear.value = Math.max(...years.value)
-        await getFullFacturesByYear(actualYear.value);
+        /** On remplis le tableau des factures de l'année sélectionnée */
+        await getFacturesByYear();
     });
 
-    /**
-     * Mise à jour des années
-     */
-    onUpdated( async () => {
-        await getYears();
-        await getFullFacturesByYear(actualYear.value)
-    })
+    /** Modification de l'année sélectionnée */
+    function setSelectedYear(value: number): void {
+        selectedYear.value = value;
+        getFacturesByYear();
+    }
 
-    /** Ajoute une facture en tant que brouillon */
-    async function saveFactureAsBrouillon(facture: FactureType): Promise<void> {
-        facture.statutId = 1; // Statut n°1 : Brouillon
-        if (facture.id !== ""){
+    /** Clic sur le bouton modifier d'une facture */
+    function setFacture(facture: FullFactureType): void {
+        selectedFacture.value = facture;
+        updateFactureDialog.value = true;
+    }
+
+    /** Clic sur le bouton supprimer d'une facture */
+    function removeFacture(facture: FullFactureType): void {
+        selectedFacture.value = facture;
+        deleteFactureDialog.value = true;
+    }
+
+    /** Calcul montant HT */
+    function calculMontantHT(value: number, nbJours: number, isAvoir: boolean = false): number {
+        const res = value * nbJours
+        if (isAvoir)
+            return -res
+        return res
+    }
+
+    /** Calcul montant TTC */
+    function calculMontantTTC(value: number, nbJours: number, isAvoir: boolean = false, tva: boolean = true): number{
+        const res = calculMontantHT(value, nbJours, isAvoir)
+        return tva ? res * 1.2 : res
+    }
+
+    /** Mise à jour du statut depuis le chip */
+    function updateStatut(facture: FullFactureType, statut: StatutType[]): void {
+        selectedFacture.value = facture;
+        switch(statut[0].value) {
+            case 'IMPAYEE':
+                updateFactureDialog.value = true;
+                break;
+            case 'PAYEE':
+                addDatePaiementDialog.value = true;
+                break;
+            default:
+                selectedFacture.value = null;
+        }
+    }
+
+    /** Sauvegarde d'une facture depuis le formulaire */
+    async function saveFacture(facture: FactureType, statutValue: 'BROUILLON' | 'IMPAYEE'): Promise<void> {
+        // Récupération du statut Impayée
+        const statut: StatutType = await window.serviceElectron.getStatutByValue(statutValue);
+        facture.statutId = statut.id;
+
+        if (facture.id !== '') { // MàJ d'une facture existante
             await window.serviceElectron.updateFacture(JSON.stringify(facture));
-            updatingFacture.value = null
             updateFactureDialog.value = false;
-        }else{
+        } else { // Création de la nouvelle facture
             await window.serviceElectron.addFacture(JSON.stringify(facture));
             addFactureDialog.value = false;
         }
+        
+        // Actualisation du tableau
         await getYears();
-        await getFullFacturesByYear(actualYear.value);
-    }
-    
-    /** Ajoute une nouvelle facture */
-    async function addFacture(newFacture: FactureType): Promise<void> {
-        newFacture.statutId = 2 // Statut n°2 : 
-        await window.serviceElectron.addFacture(JSON.stringify(newFacture));
-        const date = new Date(newFacture.date)
-        actualYear.value = date.getFullYear()
-        await getFullFacturesByYear(actualYear.value);
+        await getFacturesByYear();
     }
 
-    /**
-     * Ajoute la date de paiement à une facture
-     * @param datePaiement Date de paiement
-     */
-    async function addDatePaiement(datePaiement: Date) {
-        if (addDatePaiementFacture.value !== null){
-            const fullFacture = addDatePaiementFacture.value
-            const updatedFacture: FactureType = {
-                id: fullFacture.id,
-                isAvoir: fullFacture.isAvoir,
-                date: fullFacture.date,
-                tjm: fullFacture.tjm,
-                nbJours: fullFacture.nbJours,
-                entrepriseId: fullFacture.entreprise.id,
-                clientId: fullFacture.client.id,
-                tva: fullFacture.tva,
-                nbJoursPaiement: fullFacture.nbJoursPaiement,
-                statutId: 3, // Statut n°3 : Payée
-                datePaiement: datePaiement
-            }
-            const json = JSON.stringify(updatedFacture)
-            await window.serviceElectron.updateFacture(json);
-            await getFullFacturesByYear(actualYear.value)
-            addDatePaiementFacture.value = null
-            addDatePaiementDialog.value = false
-        }
-    }
-
-    /** Met à jour une facture */
-    async function updateFacture(updatedFacture: FactureType): Promise<void> {
-        if (updatingFacture.value !== null){
-            updatedFacture.statutId = 2; // Statut n°2 : Impayée
-            await window.serviceElectron.updateFacture(JSON.stringify(updatedFacture));
-            await getYears()
-            await getFullFacturesByYear(actualYear.value);
-            updatingFacture.value = null
-            updateFactureDialog.value = false
-        }
-    }
-
-    /** Supprime un client */
+    /** Confirmation de la suppression d'une facture */
     async function deleteFacture(): Promise<void> {
-        if (deletingFacture.value !== null){
-            await getYears()
-            await window.serviceElectron.deleteFacture(deletingFacture.value.id)
-            await getFullFacturesByYear(actualYear.value)
-            deleteConfirmDialog.value = false
-            deletingFacture.value = null
+        if (selectedFacture.value !== null) {
+            await window.serviceElectron.deleteFacture(selectedFacture.value.id);
+            await getYears();
+            await getFacturesByYear();
+        }
+        deleteFactureDialog.value = false;
+    }
+
+    /** Ajout de la date de paiement pour passer une facture impayée à payée */
+    async function addDatePaiement(date: Date): Promise<void> {
+        if (selectedFacture.value !== null) {
+            // Récupération du statut Payée
+            const statut: StatutType = await window.serviceElectron.getStatutByValue('PAYEE');
+            // MàJ de la facture
+            const updatedFacture: FactureType = {
+                id: selectedFacture.value.id,
+                date: selectedFacture.value.date,
+                tjm: selectedFacture.value.tjm,
+                nbJours: selectedFacture.value.nbJours,
+                entrepriseId: selectedFacture.value.entreprise.id,
+                clientId: selectedFacture.value.client.id,
+                tva: selectedFacture.value.tva,
+                nbJoursPaiement: selectedFacture.value.nbJoursPaiement,
+                isAvoir: selectedFacture.value.isAvoir,
+                statutId: statut.id,
+                datePaiement: date
+            };
+            await window.serviceElectron.updateFacture(JSON.stringify(updatedFacture));
+            addDatePaiementDialog.value = false;
+
+            // Actualisation du tableau
+            await getYears();
+            await getFacturesByYear();
         }
     }
 
-    /** Récupère les factures */
-    async function getFullFacturesByYear(year: number) {
-        fullFactures.value = (await window.serviceElectron.getFullFacturesByYear(year)) as FullFactureType[]
+    /** Récupères les factures de l'année sélectionnée */
+    async function getFacturesByYear(): Promise<void> {
+        factures.value = [];
+        factures.value = await window.serviceElectron.getFullFacturesByYear(selectedYear.value);
     }
 
-    /** Récupère les années des factures */
-    async function getYears() {
-        years.value = (await window.serviceElectron.getAllFacturesYears())
-        actualYear.value = years.value.length === 0 ? getCurrentYear() : Math.max(...years.value)
+    /** Récupère les différentes années des factures enregistrées */
+    async function getYears(): Promise<void> {
+        const res = await window.serviceElectron.getAllFacturesYears();
+        if (res.length > 0) {
+            years.value = res;
+            selectedYear.value = Math.max(...years.value);
+        } else {
+            const currentYear = getCurrentYear();
+            years.value = [currentYear];
+            selectedYear.value = currentYear;
+        }
     }
 </script>

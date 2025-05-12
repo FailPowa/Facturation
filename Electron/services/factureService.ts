@@ -112,7 +112,7 @@ function addFacture(_event: any, newFacture: Facture){
     const year = newFacture.date.getFullYear().toString().slice(2);
 
     // Mois de création de la facture
-    let month = newFacture.date.getMonth().toString();
+    let month = (newFacture.date.getMonth() + 1).toString();
     if (month.length === 1){
         month = '0' + month
     }
@@ -147,17 +147,49 @@ function updateFacture(_event: any, updatedFacture: Facture){
 }
 
 /**
+ * Récupère une facture selon son id
+ * @returns FullFacture
+ */
+
+
+/** 
+ * Récupère la derniere facture enregistrée 
+ * @returns FullFacture or null
+ */
+function getLastFacture(): Facture | null{
+    const factures = getFactures();
+    if ( factures.length === 0)
+        return null
+    const lastFacture = factures.reduce(
+        (last, current) =>{
+            /** Identifiant de la facture courante */
+            const id_current = Number(current.id.split('-')[2]);
+
+            /** Identifiant de la facture précédente */
+            const id_last = Number(last.id.split('-')[2]);
+
+            if (id_current > id_last)
+                return current
+            return last
+        }
+    )
+    return lastFacture
+}
+
+
+
+/**
  * Récupère l'identifiant aa-mm-XX de la derniere facture ajouté
  * sinon retourne null si aucune facture n'a déjà été créée
  * @returns number or null
  */
-function getLastId() : number | null{
+function getLastId(): number | null{
     const factures = getFactures();
   
     // On extrait les parties "numérotés" de chaque ID
     const numeros = factures
         .map(f => {
-            const match = f.id?.match(/^\d{2}-\d{2}-(\d{2})$/);
+            const match = f.id.match(/^\d{2}-\d{2}-(\d{2})$/);
             return match ? parseInt(match[1], 10) : null;
         })
         .filter(n => n !== null);
@@ -190,6 +222,7 @@ export {
     getAllFacturesYears,
     getFullFactures,
     getFullFacturesByYear,
+    getLastFacture,
     addFacture,
     updateFacture,
     deleteFacture

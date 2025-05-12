@@ -12,6 +12,7 @@ import {
     getFactures,
     getFullFacturesByYear,
     getAllFacturesYears,
+    getLastFacture,
     addFacture,
     updateFacture,
     deleteFacture
@@ -33,6 +34,7 @@ export {
     getFactures,
     getFullFacturesByYear,
     getAllFacturesYears,
+    getLastFacture,
     addFacture,
     updateFacture,
     deleteFacture,

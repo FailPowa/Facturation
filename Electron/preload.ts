@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     /** Facture */
     getFullFacturesByYear: (year: number) => ipcRenderer.invoke('getFullFacturesByYear', year),
     getAllFacturesYears: () => ipcRenderer.invoke('getAllFacturesYears'),
+    getLastFacture: () => ipcRenderer.invoke('getLastFacture'),
     addFacture: (facture: Facture) => ipcRenderer.invoke('addFacture', facture),
     updateFacture: (updatedFacture: Facture) => ipcRenderer.invoke('updateFacture', updatedFacture),
     deleteFacture: (id: string) => ipcRenderer.invoke('deleteFacture', id),

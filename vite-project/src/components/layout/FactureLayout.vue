@@ -12,7 +12,7 @@
         <v-row>
             <v-col>
                 <!-- <FacturesTable /> -->
-                <NewFacturesTable />
+                <FacturesTable />
             </v-col>
         </v-row>
        
@@ -20,6 +20,5 @@
 </template>
 
 <script setup lang="ts">
-    // import FacturesTable from '../tables/FacturesTable.vue';
-    import NewFacturesTable from '../tables/NewFacturesTable.vue';
+    import FacturesTable from '../tables/FacturesTable.vue';
 </script>

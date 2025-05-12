@@ -17,6 +17,7 @@ import {
     // Facture
     getFullFacturesByYear,
     getAllFacturesYears,
+    getLastFacture,
     addFacture,
     updateFacture,
     deleteFacture,
@@ -85,6 +86,7 @@ ipcMain.handle('getMonEntreprise', getMyEntreprise);
 // Facture
 ipcMain.handle('getFullFacturesByYear', getFullFacturesByYear);
 ipcMain.handle('getAllFacturesYears', getAllFacturesYears);
+ipcMain.handle('getLastFacture', getLastFacture)
 ipcMain.handle('addFacture', withJsonParsing(addFacture, jsonStringToFacture));
 ipcMain.handle('updateFacture', withJsonParsing(updateFacture, jsonStringToFacture));
 ipcMain.handle('deleteFacture', deleteFacture);
