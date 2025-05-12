@@ -1,5 +1,5 @@
 import { getTjm, updateTjm } from "./tjmService";
-import { getStatuts, getStatutById } from "./statutService";
+import { getStatuts, getStatutById, getStatutByValue } from "./statutService";
 import { 
     getClients,
     getClientById,
@@ -38,5 +38,6 @@ export {
     deleteFacture,
     // Statut
     getStatuts,
-    getStatutById
+    getStatutById,
+    getStatutByValue
 }

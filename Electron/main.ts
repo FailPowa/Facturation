@@ -22,6 +22,7 @@ import {
     deleteFacture,
     // Statut
     getStatuts,
+    getStatutByValue
 } from './services';
 import { jsonStringToFacture } from "./types";
 
@@ -89,6 +90,7 @@ ipcMain.handle('updateFacture', withJsonParsing(updateFacture, jsonStringToFactu
 ipcMain.handle('deleteFacture', deleteFacture);
 // Statut
 ipcMain.handle('getStatuts', getStatuts);
+ipcMain.handle('getStatutByValue', getStatutByValue);
 // Versions
 ipcMain.handle('versions', () => {
     return {

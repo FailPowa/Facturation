@@ -167,13 +167,17 @@
     /** Variable contenant les entreprises clientes */
     const clients : Ref<EntrepriseType[]> = ref([]);
 
+    // Par défaut, la date de facturation correspond au dernier jour du mois 
+    const date = new Date();
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
     /** Variable contenant les informations 
      * sur la facture en cours de création ou de modification 
      */
     const facture : Ref<FactureType> = ref({
         id: "",
         isAvoir: false,
-        date: new Date(Date.now()),
+        date: lastDay,
         tjm: 0,
         nbJours: 0,
         entrepriseId: 1,
@@ -183,11 +187,6 @@
         statutId: 1,
         datePaiement: null
     });
-
-    // Par défaut, la date de facturation correspond au dernier jour du mois 
-    const date = new Date();
-    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    facture.value.date = lastDay
 
     /**
      * Récupération des clients et du TJM
@@ -242,7 +241,6 @@
             facture.value.nbJoursPaiement = Number(facture.value.nbJoursPaiement)
             facture.value.tjm = Number(facture.value.tjm)
             emit('confirm', facture.value);
-            return
         }else{
             console.log('Formulaire invalide', errors)
         }

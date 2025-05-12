@@ -24,5 +24,6 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     updateFacture: (updatedFacture: Facture) => ipcRenderer.invoke('updateFacture', updatedFacture),
     deleteFacture: (id: string) => ipcRenderer.invoke('deleteFacture', id),
     /** Statut */
-    getStatuts: () => ipcRenderer.invoke('getStatuts')
+    getStatuts: () => ipcRenderer.invoke('getStatuts'),
+    getStatutByValue: (value: string) => ipcRenderer.invoke('getStatutByValue', value)
 });

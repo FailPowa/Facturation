@@ -24,7 +24,19 @@ function getStatutById(id : number):  Statut | null {
     return statut
 }
 
+/**
+ * Renvoie un statut trouvé par sa value, renvoie null si aucun statut ne correspond
+ * @param value La value recherchée
+ * @returns Statut | null
+ */
+function getStatutByValue(_event: any, value: string): Statut | null {
+    const statuts = getStatuts();
+    const res = statuts.find(s => s.value === value) || null;
+    return res;
+}
+
 export { 
     getStatuts,
-    getStatutById
+    getStatutById,
+    getStatutByValue
 }
