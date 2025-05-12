@@ -48,7 +48,7 @@
                             <td>TOTAL</td>
                             <td></td>
                             <td></td>
-                            <td>
+                            <td class="text-end">
                                 {{
                                     formatMontantEuro(
                                         factures
@@ -63,7 +63,7 @@
                                 }}
                             </td>
                             <td></td>
-                            <td>
+                            <td class="text-end">
                                 {{
                                     formatMontantEuro(
                                         factures
@@ -92,15 +92,17 @@
                         {{ formatDate(item.date) }}
                     </template>
                     <template #item.montantHt="{ item }">
-                        {{ 
-                            formatMontantEuro(
-                                calculMontantHT(
-                                    item.tjm,
-                                    item.nbJours,
-                                    item.isAvoir
-                                )
-                            ) 
-                        }}
+                        <p>
+                            {{ 
+                                formatMontantEuro(
+                                    calculMontantHT(
+                                        item.tjm,
+                                        item.nbJours,
+                                        item.isAvoir
+                                    )
+                                ) 
+                            }}
+                        </p>
                     </template>
                     <template #item.tva="{ item }">
                         <v-icon
@@ -119,16 +121,18 @@
                         </v-icon>
                     </template>
                     <template #item.montantTTC="{ item }">
-                        {{ 
-                            formatMontantEuro(
-                                calculMontantTTC(
-                                    item.tjm,
-                                    item.nbJours,
-                                    item.isAvoir,
-                                    item.tva
+                        <p>
+                            {{ 
+                                formatMontantEuro(
+                                    calculMontantTTC(
+                                        item.tjm,
+                                        item.nbJours,
+                                        item.isAvoir,
+                                        item.tva
+                                    )
                                 )
-                            )
-                        }}
+                            }}
+                        </p>
                     </template>
                     <template #item.statut="{ item }">
                         <StatutChip

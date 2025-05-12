@@ -19,9 +19,9 @@ const factureHeaders: Record<string, any>[] = [
     { title: 'ID', key: 'id', align: 'center'},
     { title: 'Date', key: 'date', align: 'center'},
     { title: 'Client', key: 'client', align: 'center'},
-    { title: 'Montant HT', key: 'montantHt', align: 'center'},
+    { title: 'Montant HT', key: 'montantHt', align: 'end'},
     { title: 'TVA', key: 'tva', align: 'center'},
-    { title: 'Montant TTC', key: 'montantTTC', align: 'center'},
+    { title: 'Montant TTC', key: 'montantTTC', align: 'end'},
     { title: 'Statut', key: 'statut', align: 'center'},
     { title: 'Date paiement', key: 'datePaiement', align: 'center'},
     { title: 'Actions', key: 'actions', align: 'center', sortable: false}
