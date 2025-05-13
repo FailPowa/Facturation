@@ -1,7 +1,10 @@
 <template>
     <v-container>
-        <v-row>
-            <v-col class="d-flex flex-column ga-4 justify-space-between">
+        <v-row justify="space-between">
+            <v-col 
+                cols="2"
+                class="d-flex flex-column ga-4 justify-space-between"
+            >
                 <v-select
                     v-model="selectedYear"
                     :items="years"
@@ -13,10 +16,15 @@
                     @update:modelValue="setSelectedYear"
                 />
             </v-col>
-            <v-col offset="6" class="d-flex flex-column justify-space-between">
+            <v-col 
+                cols="auto"
+                
+                class="d-flex flex-column justify-space-between"
+            >
                 <v-btn
-                    class="d-flex justify-end animate__animated animate__backInRight"
+                    class="d-flex animate__animated animate__backInRight"
                     color="success"
+                    width="auto"
                     @click="addFactureDialog = true"
                 >
                     <b class="me-2">Ajouter une facture</b>
@@ -55,8 +63,8 @@
                                             .map(facture => {
                                                 return calculMontantHT(
                                                     facture.tjm,
-                                                    facture.nbJours,
-                                                    facture.isAvoir                                                )
+                                                    facture.nbJours
+                                                )
                                             }).reduce((acc, curr) => acc + curr, 0)
                                             
                                     )
@@ -71,7 +79,6 @@
                                                 return calculMontantTTC(
                                                     facture.tjm,
                                                     facture.nbJours,
-                                                    facture.isAvoir,
                                                     facture.tva
                                                 )
                                             }).reduce((acc, curr) => acc + curr, 0)
@@ -97,8 +104,7 @@
                                 formatMontantEuro(
                                     calculMontantHT(
                                         item.tjm,
-                                        item.nbJours,
-                                        item.isAvoir
+                                        item.nbJours
                                     )
                                 ) 
                             }}
@@ -127,7 +133,6 @@
                                     calculMontantTTC(
                                         item.tjm,
                                         item.nbJours,
-                                        item.isAvoir,
                                         item.tva
                                     )
                                 )
@@ -309,16 +314,14 @@
     }
 
     /** Calcul montant HT */
-    function calculMontantHT(value: number, nbJours: number, isAvoir: boolean = false): number {
+    function calculMontantHT(value: number, nbJours: number): number {
         const res = value * nbJours
-        if (isAvoir)
-            return -res
         return res
     }
 
     /** Calcul montant TTC */
-    function calculMontantTTC(value: number, nbJours: number, isAvoir: boolean = false, tva: boolean = true): number{
-        const res = calculMontantHT(value, nbJours, isAvoir)
+    function calculMontantTTC(value: number, nbJours: number, tva: boolean = true): number{
+        const res = calculMontantHT(value, nbJours)
         return tva ? res * 1.2 : res
     }
 

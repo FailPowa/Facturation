@@ -12,6 +12,9 @@
                 
                 <!-- Infos entreprise -->
                 <monEntrepriseDetails :entreprise="monEntreprise" />
+
+                <!-- TJM -->
+                <TjmLayout scrollable/>
                 
                 <!-- Boutons -->
                 <v-container class="mt-auto d-flex justify-center ga-16 ">
@@ -93,6 +96,7 @@
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
+    import TjmLayout from '../layout/TjmLayout.vue';
     import { EntrepriseType } from '../../../types';
     import { 
         mdiPencil, 

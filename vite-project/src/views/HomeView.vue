@@ -11,5 +11,4 @@
     </v-container>
 </template>
 <script setup lang="ts">
-    import TjmLayout from '../components/layout/TjmLayout.vue';
 </script>

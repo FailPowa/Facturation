@@ -202,7 +202,7 @@
                 isAvoir: props.facture.isAvoir,
                 date: props.facture.date,
                 tjm: props.facture.tjm,
-                nbJours: props.facture.nbJours,
+                nbJours: props.facture.isAvoir ? -1 * props.facture.nbJours : props.facture.nbJours,
                 entrepriseId: props.facture.entreprise.id,
                 clientId: props.facture.client.id,
                 tva: props.facture.tva,
@@ -241,7 +241,8 @@
             /** Convertit les valeurs numériques en type number 
              *  car elles sont renvoyés au format string par le formulaire.
              */
-            facture.value.nbJours = Number(facture.value.nbJours)
+            facture.value.nbJours = facture.value.isAvoir ? -1 * Number(facture.value.nbJours) : Number(facture.value.nbJours)
+            // facture.value.nbJours = Number(facture.value.nbJours)
             facture.value.nbJoursPaiement = Number(facture.value.nbJoursPaiement)
             facture.value.tjm = Number(facture.value.tjm)
             emit('confirm', facture.value);
