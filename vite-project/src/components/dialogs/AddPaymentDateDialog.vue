@@ -12,8 +12,9 @@
             </v-row>
             <v-row>
                 <v-col offset="0" cols="12">
-                    <v-date-input 
-                        label="Date de paiement" 
+                    <v-date-input
+                        label="Date de paiement"
+                        placeholder="JJ/MM/AAAA"
                         variant="outlined"
                     ></v-date-input>
                 </v-col>
