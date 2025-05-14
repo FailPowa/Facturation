@@ -56,6 +56,11 @@
                 <v-container>
                     <SettingThemes />
                 </v-container>
+
+                <!-- Imports/Exports -->
+                <v-container>
+                    <FileTransferSettings />
+                </v-container>
                 <!-- Bouton retour à la page précédente-->
                 <v-container class="mt-auto d-flex justify-center ga-16 ">
                     <v-btn 
@@ -96,6 +101,7 @@
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
+    import FileTransferSettings from '../settings/FileTransferSettings.vue';
     import TjmLayout from '../layout/TjmLayout.vue';
     import { EntrepriseType } from '../../../types';
     import { 

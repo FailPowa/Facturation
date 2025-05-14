@@ -59,17 +59,17 @@
             <v-row justify="center">
                 <v-col cols="5">
                     <v-btn 
-                        type="submit" 
-                        color="success" 
-                        block 
+                        type="submit"
+                        color="success"
+                        block
                     >
                         Valider
                     </v-btn>
                 </v-col>
                 <v-col cols="5">
                     <v-btn 
-                        color="error" 
-                        block 
+                        color="error"
+                        block
                         @click="cancelForm"
                     >
                         Annuler
@@ -139,6 +139,7 @@
      * Clic sur le bouton Annuler
      */
     function cancelForm(): void {
+        console.log("Passe ici");
         emit('cancel');
     }
 

@@ -1,5 +1,6 @@
-import { readJson, updateJson } from './jsonService';
-import { Entreprise } from '../types';
+import { readJson, updateJson, createJson } from './jsonService';
+import { Entreprise, isEntrepriseArray, validateEntreprise } from '../types';
+import { dialog } from 'electron';
 
 
 /** Variable stockant le nom du fichier json stockant les entreprises */
@@ -126,6 +127,93 @@ function getMyEntreprise(): Entreprise {
     return provider
 }
 
+/**
+ * Exporte les clients 
+ * @param _event 
+ */
+function exportClients(_event: any) {
+    // La liste clients avec leurs ids retirés
+    const clients = getClients().map( client => {
+        let result: Record<string, any> = Object.assign({}, client)
+        delete result.id
+        return result
+    });
+    // Fenetre d'export des clients
+    dialog.showSaveDialog({
+        title: "Exporter clients",
+        filters: [
+            { name: 'Json', extensions: ['json']}
+        ]
+    }).then( result => {
+        // Si l'utilisateur annule l'export, on retourne rien
+        if (result.canceled)
+            return
+        // Chemin absolu vers le fichier exporter
+        const filePath = result.filePath
+        // Création du fichier json
+        createJson(clients, filePath)
+    })
+}
+
+/**
+ * Importe les clients
+ * @param _event 
+ */
+function importClients(_event: any) {
+    // La liste des clients
+    const clients = getClients();
+
+    // Fenêtre d'import des clients
+    dialog.showOpenDialog({
+        // Propriétés de la fenêtre d'import de fichier
+        properties: [ 'openFile' ],
+        // Filtre les fichier en afficahnt seulement les fichiers '*.json'
+        filters: [
+            { name: 'json', extensions: ['json']}
+        ]
+    }).then( result => {
+        // Si l'utilisateur annule l'import, on retourne rien
+        if (result.canceled)
+            return ;
+        // Chemin absolu du fichier importé
+        const filePath = result.filePaths[0];
+        // La liste des clients importés
+        const uploadedClients = readJson(filePath, false);
+
+
+        // Verifier si le json est bien une liste d'entreprise
+        if (isEntrepriseArray(uploadedClients)){
+            /**
+             * Verifie si les entreprises sont au formats valide et 
+             * qu'il n'y est pas de doublon d'entreprise présent.
+             * */
+            const isUploadedClientsValid = uploadedClients.every(value => {
+                return validateEntreprise(value) &&
+                    clients.every(client => {
+                        return client.siret !== value.siret &&
+                            client.numTva.length === 0 || client.numTva !== value.numTva
+                    })
+            })
+            if (!isUploadedClientsValid)
+                return
+            // Variable contenant le dernier id de la liste des clients déjà sauvegardés
+            let lastId = Math.max(...clients.map((client) => client.id))
+            // Un map des clients avec l'ajout des ids
+            const mappedUploadedClients = uploadedClients.map( entreprise => {
+                lastId = lastId + 1
+                entreprise.id = lastId
+                entreprise.isMe = true
+                return entreprise
+            })
+            // Jointure des deux listes : clients déjà sauvegardé + clients importés
+            const finalClientsList = clients.concat(...mappedUploadedClients);
+            // Mise à jour des clients dans 'entreprise.json'
+            updateJson(finalClientsList, jsonFile);
+        }
+        
+    });
+}
+
 export { 
     getCompanies, 
     getClients, 
@@ -133,5 +221,7 @@ export {
     addCompany, 
     updateClient, 
     deleteClient, 
-    getMyEntreprise 
+    getMyEntreprise,
+    exportClients,
+    importClients
 }

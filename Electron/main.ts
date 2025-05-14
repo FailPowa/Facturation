@@ -14,10 +14,13 @@ import {
     updateClient,
     deleteClient,
     getMyEntreprise,
+    exportClients,
+    importClients,
     // Facture
     getFullFacturesByYear,
     getAllFacturesYears,
     getLastFacture,
+    isClientInFactures,
     addFacture,
     updateFacture,
     deleteFacture,
@@ -90,9 +93,13 @@ ipcMain.handle('getLastFacture', getLastFacture)
 ipcMain.handle('addFacture', withJsonParsing(addFacture, jsonStringToFacture));
 ipcMain.handle('updateFacture', withJsonParsing(updateFacture, jsonStringToFacture));
 ipcMain.handle('deleteFacture', deleteFacture);
+ipcMain.handle('isClientInFactures', isClientInFactures);
 // Statut
 ipcMain.handle('getStatuts', getStatuts);
 ipcMain.handle('getStatutByValue', getStatutByValue);
+// Import et Exports de données
+ipcMain.handle('exportClients', exportClients);
+ipcMain.handle('importClients', importClients);
 // Versions
 ipcMain.handle('versions', () => {
     return {

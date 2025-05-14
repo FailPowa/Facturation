@@ -82,45 +82,55 @@
             <v-card-actions
                 class="d-flex flex-wrap justify-center mb-2 "
             >
-                <!-- Bouton valider formulaire -->
-                <v-btn
-                    color="success"
-                    variant="flat"
-                    width="auto"
-                    @click="validateForm"
-                >
-                    Valider
-                </v-btn>
+                <v-row>
+                    <!-- Bouton valider formulaire -->
+                    <v-col>
+                        <v-btn
+                            color="success"
+                            variant="flat"
+                            block
+                            @click="validateForm"
+                        >
+                            Valider
+                        </v-btn>
+                    </v-col>
+                    
+                    <!-- Bouton enregistrer brouillon -->
+                    <v-col>
+                        <v-btn
+                            color="warning"
+                            variant="flat"
+                            block
+                            @click="saveBrouillon"
+                        >
+                            Sauvegarder Brouillon
+                        </v-btn>
+                    </v-col>
 
-                <!-- Bouton enregistrer brouillon -->
-                <v-btn
-                    color="warning"
-                    variant="flat"
-                    width="auto"
-                    @click="saveBrouillon"
-                >
-                    Sauvegarder Brouillon
-                </v-btn>
+                    <!-- Bouton générer le pdf du formulaire -->
+                    <v-col>
+                        <v-btn
+                            color="info"
+                            variant="flat"
+                            block
+                            @click="generatePDF"
+                        >
+                            Générer un pdf
+                        </v-btn>
+                    </v-col>
 
-                <!-- Bouton générer le pdf du formulaire -->
-                <v-btn
-                    color="info"
-                    variant="flat"
-                    width="auto"
-                    @click="generatePDF"
-                >
-                    Générer un pdf
-                </v-btn>
-
-                <!-- Bouton annuler-->
-                <v-btn
-                    color="error"
-                    variant="flat"
-                    width="auto"
-                    @click="cancelForm"
-                >
-                    Annuler
-                </v-btn>
+                    <!-- Bouton annuler-->
+                    <v-col>
+                        <v-btn
+                            color="error"
+                            variant="flat"
+                            block
+                            @click="cancelForm"
+                        >
+                            Annuler
+                        </v-btn>
+                    </v-col>
+                </v-row>
             </v-card-actions>
         </v-card>
     </v-form>

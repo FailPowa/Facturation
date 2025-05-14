@@ -199,6 +199,19 @@ function getLastId(): number | null{
 }
 
 /**
+ * Retourne un boolean true/false si le client recherché est présent dans une des factures
+ * @param id_client Identifiant du client recherché
+ * @returns Boolean
+ */
+function isClientInFactures(_event: any, id_client: number): boolean {
+    const factures = getFactures();
+    const isClientIn = factures.findIndex( facture => {
+        return facture.clientId === id_client
+    }) !== -1
+    return isClientIn
+}
+
+/**
  * Supprime une facture
  * @param _event 
  * @param id Identifiant de la facture à supprimer
@@ -223,6 +236,7 @@ export {
     getFullFactures,
     getFullFacturesByYear,
     getLastFacture,
+    isClientInFactures,
     addFacture,
     updateFacture,
     deleteFacture

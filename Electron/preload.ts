@@ -22,9 +22,13 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     getAllFacturesYears: () => ipcRenderer.invoke('getAllFacturesYears'),
     getLastFacture: () => ipcRenderer.invoke('getLastFacture'),
     addFacture: (facture: Facture) => ipcRenderer.invoke('addFacture', facture),
+    isClientInFactures: (id_client: number) => ipcRenderer.invoke('isClientInFactures', id_client),
     updateFacture: (updatedFacture: Facture) => ipcRenderer.invoke('updateFacture', updatedFacture),
     deleteFacture: (id: string) => ipcRenderer.invoke('deleteFacture', id),
     /** Statut */
     getStatuts: () => ipcRenderer.invoke('getStatuts'),
-    getStatutByValue: (value: string) => ipcRenderer.invoke('getStatutByValue', value)
+    getStatutByValue: (value: string) => ipcRenderer.invoke('getStatutByValue', value),
+    /** Import et Exports de données*/
+    exportClients: () => ipcRenderer.invoke('exportClients'),
+    importClients: () => ipcRenderer.invoke('importClients')
 });

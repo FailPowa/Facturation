@@ -6,13 +6,16 @@ import {
     addCompany, 
     updateClient, 
     deleteClient, 
-    getMyEntreprise 
+    getMyEntreprise,
+    exportClients,
+    importClients
 } from "./entrepriseService";
 import { 
     getFactures,
     getFullFacturesByYear,
     getAllFacturesYears,
     getLastFacture,
+    isClientInFactures,
     addFacture,
     updateFacture,
     deleteFacture
@@ -30,11 +33,14 @@ export {
     updateClient,
     deleteClient,
     getMyEntreprise,
+    exportClients,
+    importClients,
     // Facture
     getFactures,
     getFullFacturesByYear,
     getAllFacturesYears,
     getLastFacture,
+    isClientInFactures,
     addFacture,
     updateFacture,
     deleteFacture,
