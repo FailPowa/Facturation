@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { Entreprise } from "./types/Entreprise";
-import { getFullFacturesByYear } from "./services";
 import { Facture } from "./types";
 
 /**
@@ -30,5 +29,6 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     getStatutByValue: (value: string) => ipcRenderer.invoke('getStatutByValue', value),
     /** Import et Exports de données*/
     exportClients: () => ipcRenderer.invoke('exportClients'),
-    importClients: () => ipcRenderer.invoke('importClients')
+    importClients: () => ipcRenderer.invoke('importClients'),
+    exportFactures: () => ipcRenderer.invoke('exportFactures')
 });

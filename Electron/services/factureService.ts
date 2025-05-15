@@ -1,12 +1,16 @@
-import { readJson, updateJson } from "./jsonService";
+import { readJson, updateJson, createJson } from './jsonService';
+import { dialog } from 'electron';
 import { 
     Facture, 
     FullFacture,
     objToFacture, 
-    factureToObject 
+    factureToObject, 
+    CallbackMessage,
+    isFactureArray
 } from "../types";
 import { getClientById, getMyEntreprise } from "./entrepriseService";
 import { getStatutById } from "./statutService";
+import { formatDate } from '../utils/parseDate';
 
 /** Variable stockant le nom du fichier json stockant les factures */
 const jsonFile = 'facture.json'
@@ -146,11 +150,6 @@ function updateFacture(_event: any, updatedFacture: Facture){
     return updatedFacture;
 }
 
-/**
- * Récupère une facture selon son id
- * @returns FullFacture
- */
-
 
 /** 
  * Récupère la derniere facture enregistrée 
@@ -175,8 +174,6 @@ function getLastFacture(): Facture | null{
     )
     return lastFacture
 }
-
-
 
 /**
  * Récupère l'identifiant aa-mm-XX de la derniere facture ajouté
@@ -228,7 +225,47 @@ function deleteFacture(_event: any, id: string) {
     updateJson(mappedFactures, jsonFile)
     return deletedFacture;
 }
-  
+
+/**
+ * Exporte les factures complètes et retourne le message d'echec/succès de l'opération
+ * @param _event
+ * @returns Promise<CallbackMessage>
+ */
+function exportFactures(_event: any): Promise<CallbackMessage> {
+    // La liste factures avec leurs ids retirés
+    const factures = getFullFactures().map( facture => {
+        let result: Record<string, any> = Object.assign({}, facture);
+        result.date = formatDate(result.date);
+        result.datePaiement = result.datePaiement ? formatDate(result.datePaiement) : null;
+        delete result.entreprise.id;
+        delete result.client.id;
+        return result;
+    });
+    
+    // Variable contenant la reponse concernant l'echec/succès de l'opération
+    const response : CallbackMessage = { code: 0, message: "Export réussi avec succès.", details: [] }
+
+    // Fenetre d'export des factures
+    return dialog.showSaveDialog({
+        title: "Exporter factures",
+        filters: [
+            { name: 'Json', extensions: ['json']}
+        ]
+    }).then( (result) : CallbackMessage => {
+        // Si l'utilisateur annule l'export, on retourne rien
+        if (result.canceled){
+            response.code = 2
+            response.message = "Export annulé."
+            return response
+        }
+        // Chemin absolu vers le fichier exporter
+        const filePath = result.filePath
+        // Création du fichier json
+        createJson(factures, filePath)
+        return response
+    })
+}
+
 
 export { 
     getFactures,
@@ -239,5 +276,6 @@ export {
     isClientInFactures,
     addFacture,
     updateFacture,
-    deleteFacture
+    deleteFacture,
+    exportFactures
 }

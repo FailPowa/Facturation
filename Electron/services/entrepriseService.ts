@@ -1,6 +1,12 @@
 import { readJson, updateJson, createJson } from './jsonService';
-import { Entreprise, isEntrepriseArray, validateEntreprise } from '../types';
 import { dialog } from 'electron';
+import { 
+    Entreprise, 
+    isEntrepriseArray, 
+    validateEntreprise,
+    CallbackMessage
+} from '../types';
+
 
 
 /** Variable stockant le nom du fichier json stockant les entreprises */
@@ -128,53 +134,66 @@ function getMyEntreprise(): Entreprise {
 }
 
 /**
- * Exporte les clients 
- * @param _event 
+ * Exporte les clients et retourne le message d'echec/succès de l'opération
+ * @param _event
+ * @returns Promise<CallbackMessage>
  */
-function exportClients(_event: any) {
+function exportClients(_event: any): Promise<CallbackMessage> {
     // La liste clients avec leurs ids retirés
     const clients = getClients().map( client => {
         let result: Record<string, any> = Object.assign({}, client)
         delete result.id
         return result
     });
+    
+    // Variable contenant la reponse concernant l'echec/succès de l'opération
+    const response : CallbackMessage = { code: 0, message: "Export réussi avec succès.", details: [] }
+
     // Fenetre d'export des clients
-    dialog.showSaveDialog({
+    return dialog.showSaveDialog({
         title: "Exporter clients",
         filters: [
             { name: 'Json', extensions: ['json']}
         ]
-    }).then( result => {
+    }).then( (result) : CallbackMessage => {
         // Si l'utilisateur annule l'export, on retourne rien
-        if (result.canceled)
-            return
+        if (result.canceled){
+            response.code = 2
+            response.message = "Export annulé."
+            return response
+        }
         // Chemin absolu vers le fichier exporter
         const filePath = result.filePath
         // Création du fichier json
         createJson(clients, filePath)
+        return response
     })
 }
 
 /**
- * Importe les clients
- * @param _event 
+ * Importe les clients et retourne le message d'echec/succès de l'opération
+ * @param _event
+ * @returns Promise<CallbackMessage>
  */
-function importClients(_event: any) {
-    // La liste des clients
-    const clients = getClients();
+function importClients(_event: any) : Promise<CallbackMessage>{
+    // La liste des entreprises
+    const entreprises = getCompanies();
+
+    // Variable contenant la reponse concernant l'echec/succès de l'opération
+    const response : CallbackMessage = { code: 0, message: "Import réussi avec succès.", details: [] }
 
     // Fenêtre d'import des clients
-    dialog.showOpenDialog({
+    return dialog.showOpenDialog({
         // Propriétés de la fenêtre d'import de fichier
         properties: [ 'openFile' ],
         // Filtre les fichier en afficahnt seulement les fichiers '*.json'
         filters: [
             { name: 'json', extensions: ['json']}
         ]
-    }).then( result => {
+    }).then( (result) : CallbackMessage => {
         // Si l'utilisateur annule l'import, on retourne rien
         if (result.canceled)
-            return ;
+            return { code: 2, message: "Import annulé.", details: []}
         // Chemin absolu du fichier importé
         const filePath = result.filePaths[0];
         // La liste des clients importés
@@ -187,28 +206,58 @@ function importClients(_event: any) {
              * Verifie si les entreprises sont au formats valide et 
              * qu'il n'y est pas de doublon d'entreprise présent.
              * */
-            const isUploadedClientsValid = uploadedClients.every(value => {
-                return validateEntreprise(value) &&
-                    clients.every(client => {
-                        return client.siret !== value.siret &&
-                            client.numTva.length === 0 || client.numTva !== value.numTva
-                    })
+            let isUploadedClientsValid = true 
+            uploadedClients.forEach(uploadedClient => {
+                const currentClientErrors: string[] = []
+                const nomClient = uploadedClient.nom.trim().length !== 0 ? uploadedClient.nom 
+                    : `index n°${uploadedClients.findIndex((value) => value === uploadedClient)}`
+                
+                if (!validateEntreprise(uploadedClient)){
+                    const message = `Le client ${nomClient} comporte des champs non valides, tous les champs doit être remplis et 
+                        les numéros de tva et de siret doit être au bon format et valide.`
+                    currentClientErrors.push(message)
+                }
+                
+                const isEntrepriseNotDuplicated = entreprises.every( entreprise => {
+                    return entreprise.siret !== uploadedClient.siret &&
+                        entreprise.numTva.length === 0 || entreprise.numTva !== uploadedClient.numTva                    
+                })
+                
+                if (!isEntrepriseNotDuplicated)
+                    currentClientErrors.push(`Duplication: Les numéros de siret et/ou de siret du client ${nomClient} sont déjà présents.`)
+                
+                if (currentClientErrors.length !== 0){
+                    response.details.push(...currentClientErrors)
+                    isUploadedClientsValid = false
+                }
             })
-            if (!isUploadedClientsValid)
-                return
+            if (!isUploadedClientsValid){
+                response.code = 1
+                response.message = "Echec de l'import.";
+                return response
+            }
             // Variable contenant le dernier id de la liste des clients déjà sauvegardés
-            let lastId = Math.max(...clients.map((client) => client.id))
+            let lastId = Math.max(...entreprises.map((entreprise) => entreprise.id));
             // Un map des clients avec l'ajout des ids
             const mappedUploadedClients = uploadedClients.map( entreprise => {
                 lastId = lastId + 1
-                entreprise.id = lastId
-                entreprise.isMe = true
-                return entreprise
+                entreprise.nom = entreprise.nom.toUpperCase();
+                entreprise.mail = entreprise.mail.toLowerCase();
+                entreprise.ville = entreprise.ville.toUpperCase();
+                entreprise.id = lastId;
+                entreprise.isMe = false;
+                return entreprise;
             })
             // Jointure des deux listes : clients déjà sauvegardé + clients importés
-            const finalClientsList = clients.concat(...mappedUploadedClients);
+            const finalClientsList = entreprises.concat(...mappedUploadedClients);
             // Mise à jour des clients dans 'entreprise.json'
             updateJson(finalClientsList, jsonFile);
+            return response
+        } else {
+            response.code = 1;
+            response.message = "Echec de l'import.";
+            response.details.push("Certaines entreprises ne respectent pas le format d'entreprise voulus.");
+            return response
         }
         
     });

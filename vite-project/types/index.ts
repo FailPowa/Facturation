@@ -1,7 +1,8 @@
 import { Tjm } from './Tjm';
 import { EntrepriseType, Entreprise } from './Entreprise';
 import { FactureType, FullFactureType, FullFacture } from './Facture';
-import { StatutType } from './Statut'
+import { StatutType } from './Statut';
+import { CallbackMessage } from './CallbackMessage';
 
 export type {
     // TJM
@@ -12,7 +13,9 @@ export type {
     FactureType,
     FullFactureType,
     // Statut
-    StatutType
+    StatutType,
+    // CallbackMessage
+    CallbackMessage
 }
 
 export {

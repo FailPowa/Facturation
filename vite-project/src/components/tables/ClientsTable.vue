@@ -112,6 +112,9 @@
         >
             <AlertDialog
                 v-model="warningDeleteClientDialog"
+                :text="`Le client ne peut pas être supprimé car il est lié à plusieurs factures.`"
+                type="warning"
+                title="Attention! Suppression client impossible"
             />
         </v-dialog>
     </v-container>

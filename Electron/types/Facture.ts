@@ -100,6 +100,53 @@ function jsonStringToFacture(json: string) : Facture {
     return facture
 }
 
+
+/**
+ * Vérifie si un objet correspond à la structure d'une facture.
+ *
+ * Cette fonction vérifie que l'objet possède toutes les propriétés obligatoires du type Facture
+ * avec les bons types. Elle accepte également un champ supplémentaire facultatif 'id' de type string.
+ *
+ * @param obj - L'objet à vérifier.
+ * @returns True si l'objet est une Facture valide, false sinon.
+ */
+function isFacture(obj: any): obj is Facture {
+    const expectedKeys = [
+        "id", "isAvoir", "date", "tjm", "nbJours", "entrepriseId",
+        "clientId", "tva", "nbJoursPaiement", "statutId", "datePaiement"
+    ]
+
+    return typeof obj === 'object' &&
+        obj !== null &&
+        Object.keys(obj).every(key => expectedKeys.includes(key)) &&
+        typeof obj.id === 'string' &&
+        typeof obj.isAvoir === 'boolean' &&
+        obj.date instanceof Date &&
+        typeof obj.tjm === 'number' &&
+        typeof obj.nbJours === 'number' &&
+        typeof obj.entrepriseId === 'number' &&
+        typeof obj.clientId === 'number' &&
+        typeof obj.tva === 'boolean' &&
+        typeof obj.nbJoursPaiement === 'number' &&
+        typeof obj.statutId === 'number' &&
+        (obj.datePaiement === null || obj.datePaiement instanceof Date);
+}
+
+/**
+ * Vérifie si une donnée est un tableau d'objets de type Facture.
+ *
+ * Cette fonction s'assure que la donnée est un tableau et que
+ * chaque élément respecte la structure attendue d'une facture,
+ * en utilisant la fonction `isFacture`.
+ *
+ * @param data - La donnée à vérifier.
+ * @returns True si c'est un tableau de factures valides, false sinon.
+ */
+function isFactureArray(data: any): data is Facture[] {
+    return Array.isArray(data) && data.every(isFacture);
+}
+
+
 export type {
     Facture,
     FullFacture
@@ -108,5 +155,7 @@ export type {
 export {
     objToFacture,
     factureToObject,
-    jsonStringToFacture
+    jsonStringToFacture,
+    isFacture,
+    isFactureArray
 }

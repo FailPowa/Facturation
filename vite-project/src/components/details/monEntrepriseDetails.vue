@@ -17,11 +17,11 @@
             </v-list-item>
 
             <v-list-item>
-                <v-list-item-subtitle>SIRET : {{ monEntreprise.siret }}</v-list-item-subtitle>
+                <v-list-item-subtitle>SIRET : {{ monEntreprise.siret.length !== 0 ? siretFormatter(monEntreprise.siret) : ""}}</v-list-item-subtitle>
             </v-list-item>
 
             <v-list-item>
-                <v-list-item-subtitle>TVA : {{ monEntreprise.numTva }}</v-list-item-subtitle>
+                <v-list-item-subtitle>TVA : {{ monEntreprise.numTva ? numTvaFormatter(monEntreprise.numTva) : ""}}</v-list-item-subtitle>
             </v-list-item>
         </v-list>
     </v-container>
@@ -29,8 +29,9 @@
 
 
 <script setup lang="ts">
-    import { Entreprise } from '../../../types';
     import { onUpdated, ref, Ref } from 'vue';
+    import { Entreprise } from '../../../types';
+    import { siretFormatter, numTvaFormatter } from '../../../plugins/entrepriseFormatter';
 
     /** Paramètres du composant */
     const props = defineProps({

@@ -26,7 +26,8 @@ import {
     deleteFacture,
     // Statut
     getStatuts,
-    getStatutByValue
+    getStatutByValue,
+    exportFactures
 } from './services';
 import { jsonStringToFacture } from "./types";
 
@@ -100,6 +101,7 @@ ipcMain.handle('getStatutByValue', getStatutByValue);
 // Import et Exports de données
 ipcMain.handle('exportClients', exportClients);
 ipcMain.handle('importClients', importClients);
+ipcMain.handle('exportFactures', exportFactures);
 // Versions
 ipcMain.handle('versions', () => {
     return {

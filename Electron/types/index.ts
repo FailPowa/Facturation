@@ -4,15 +4,19 @@ import {
     FullFacture, 
     objToFacture, 
     factureToObject, 
-    jsonStringToFacture 
+    jsonStringToFacture,
+    isFacture,
+    isFactureArray
 } from "./Facture";
 import { Statut } from "./Statut";
+import { CallbackMessage } from './CallbackMessage';
 
 export type {
     Entreprise,
     Facture,
     FullFacture,
-    Statut
+    Statut,
+    CallbackMessage
 }
 
 export {
@@ -23,5 +27,7 @@ export {
     // Facture
     objToFacture,
     factureToObject,
-    jsonStringToFacture
+    jsonStringToFacture,
+    isFacture,
+    isFactureArray
 }

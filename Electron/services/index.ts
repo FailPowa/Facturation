@@ -18,7 +18,8 @@ import {
     isClientInFactures,
     addFacture,
     updateFacture,
-    deleteFacture
+    deleteFacture,
+    exportFactures
 } from "./factureService";
 
 
@@ -44,6 +45,7 @@ export {
     addFacture,
     updateFacture,
     deleteFacture,
+    exportFactures,
     // Statut
     getStatuts,
     getStatutById,
