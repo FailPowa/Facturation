@@ -1,5 +1,5 @@
 import { formatDate, parseDateDDMMYYYY } from "../utils/parseDate"
-import { Entreprise, Statut } from "./"
+import { Entreprise, isEntreprise, Statut } from "./"
 
 /**
  * Type de l'objet Facture
@@ -147,6 +147,51 @@ function isFactureArray(data: any): data is Facture[] {
 }
 
 
+/**
+ * Vérifie si un objet correspond à la structure d'une FullFacture.
+ *
+ * Cela inclut les objets `entreprise`, `client` (de type Entreprise) et `statut` (de type Statut).
+ *
+ * @param obj - L'objet à vérifier.
+ * @returns True si l'objet est une FullFacture valide, false sinon.
+ */
+function isFullFacture(obj: any): obj is FullFacture {
+    const expectedKeys = [
+        "id", "isAvoir", "date", "tjm", "nbJours", "entreprise",
+        "client", "tva", "nbJoursPaiement", "statut", "datePaiement"
+    ]
+    const isValidFrDate = (d: any): boolean => {
+        return d instanceof Date || (
+            typeof d === 'string' &&
+            !isNaN(parseDateDDMMYYYY(d).getTime())
+        )
+    }
+
+
+    return typeof obj === 'object' &&
+        obj !== null &&
+        Object.keys(obj).every(key => expectedKeys.includes(key)) &&
+        typeof obj.id === 'string' &&
+        typeof obj.isAvoir === 'boolean' &&
+        isValidFrDate(obj.date) &&
+        typeof obj.tjm === 'number' &&
+        typeof obj.nbJours === 'number' &&
+        typeof obj.tva === 'boolean' &&
+        typeof obj.nbJoursPaiement === 'number' &&
+        (obj.datePaiement === null || isValidFrDate(obj.datePaiement))
+}
+
+/**
+ * Vérifie si une donnée est un tableau d'objets de type FullFacture.
+ *
+ * @param data - La donnée à vérifier.
+ * @returns True si c'est un tableau de FullFactures valides, false sinon.
+ */
+function isFullFactureArray(data: any): data is FullFacture[] {
+  return Array.isArray(data) && data.every(isFullFacture)
+}
+
+
 export type {
     Facture,
     FullFacture
@@ -157,5 +202,7 @@ export {
     factureToObject,
     jsonStringToFacture,
     isFacture,
-    isFactureArray
+    isFactureArray,
+    isFullFacture,
+    isFullFactureArray
 }

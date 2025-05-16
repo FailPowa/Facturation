@@ -30,5 +30,6 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     /** Import et Exports de données*/
     exportClients: () => ipcRenderer.invoke('exportClients'),
     importClients: () => ipcRenderer.invoke('importClients'),
-    exportFactures: () => ipcRenderer.invoke('exportFactures')
+    exportFactures: () => ipcRenderer.invoke('exportFactures'),
+    importFactures: () => ipcRenderer.invoke('importFactures')
 });

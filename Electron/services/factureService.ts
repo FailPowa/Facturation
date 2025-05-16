@@ -6,11 +6,12 @@ import {
     objToFacture, 
     factureToObject, 
     CallbackMessage,
-    isFactureArray
+    isFactureArray,
+    isFullFactureArray
 } from "../types";
-import { getClientById, getMyEntreprise } from "./entrepriseService";
-import { getStatutById } from "./statutService";
-import { formatDate } from '../utils/parseDate';
+import { getClientById, getClientBySiret, getMyEntreprise } from "./entrepriseService";
+import { getStatutById, getStatuts } from "./statutService";
+import { formatDate, parseDateDDMMYYYY } from '../utils/parseDate';
 
 /** Variable stockant le nom du fichier json stockant les factures */
 const jsonFile = 'facture.json'
@@ -54,7 +55,7 @@ function factureToFullFacture(facture: Facture): FullFacture{
     if (statut === null){
         throw new Error(`Le statut n°${facture.statutId} n'existe pas. Facture n°${facture.id}`)
     }
-    const fullFacture : FullFacture= {
+    const fullFacture : FullFacture = {
         id: facture.id,
         isAvoir: facture.isAvoir,
         date: facture.date,
@@ -68,6 +69,29 @@ function factureToFullFacture(facture: Facture): FullFacture{
         datePaiement: facture.datePaiement
     }
     return fullFacture
+}
+
+
+function fullFactureToFacture(fullFacture: FullFacture): Facture{
+    if (typeof fullFacture.date === "string"){
+        fullFacture.date = parseDateDDMMYYYY(fullFacture.date)
+    }
+    if (fullFacture.datePaiement !== null && typeof fullFacture.datePaiement === "string"){
+        fullFacture.datePaiement = parseDateDDMMYYYY(fullFacture.datePaiement)
+    }
+    return {
+        id: fullFacture.id,
+        isAvoir: fullFacture.isAvoir,
+        date: fullFacture.date,
+        tjm: fullFacture.tjm,
+        nbJours: fullFacture.nbJours,
+        entrepriseId: fullFacture.entreprise.id,
+        clientId: fullFacture.client.id,
+        tva: fullFacture.tva,
+        nbJoursPaiement: fullFacture.nbJoursPaiement,
+        statutId: fullFacture.statut.id,
+        datePaiement: fullFacture.datePaiement
+    }
 }
 
 /**
@@ -110,7 +134,7 @@ function addFacture(_event: any, newFacture: Facture){
     const factures = getFactures();
 
     // Dernier id ajouter
-    const lastId = getLastId() || 1;
+    const id = (getLastId() || 0) + 1;
 
     // Année de création de la facture
     const year = newFacture.date.getFullYear().toString().slice(2);
@@ -121,8 +145,10 @@ function addFacture(_event: any, newFacture: Facture){
         month = '0' + month
     }
 
+    let idString = id.toString().length === 1 ? '0' + id.toString() : id
+
     // Nouvel identifiant pour la facture
-    newFacture.id = `${year}-${month}-${lastId + 1}`;
+    newFacture.id = `${year}-${month}-${idString}`;
     factures.push(newFacture);
     
     // Un map de la liste des factures 
@@ -266,6 +292,142 @@ function exportFactures(_event: any): Promise<CallbackMessage> {
     })
 }
 
+/**
+ * Importe les factures et retourne le message d'echec/succès de l'opération
+ * @param _event
+ * @returns Promise<CallbackMessage>
+ */
+function importFactures(_event: any) : Promise<CallbackMessage>{
+    // La liste des factures
+    const factures = getFactures();
+
+    // Variable contenant la reponse concernant l'echec/succès de l'opération
+    const response : CallbackMessage = { code: 0, message: "Import réussi avec succès.", details: [] }
+
+    // Fenêtre d'import des factures
+    return dialog.showOpenDialog({
+        // Propriétés de la fenêtre d'import de fichier
+        properties: [ 'openFile' ],
+        // Filtre les fichier en afficahnt seulement les fichiers '*.json'
+        filters: [
+            { name: 'json', extensions: ['json']}
+        ]
+    }).then( (result) : CallbackMessage => {
+        // Si l'utilisateur annule l'import, on retourne rien
+        if (result.canceled)
+            return { code: 2, message: "Import annulé.", details: []}
+        // Chemin absolu du fichier importé
+        const filePath = result.filePaths[0];
+        // La liste des factures importés
+        const uploadedFactures = readJson(filePath, false);
+
+        // Verifier si le json est bien une liste de facture complètes
+        if (isFullFactureArray(uploadedFactures)){
+            /**
+             * Variable contenant les informations de l'entreprise de l'utilisateur
+             */
+            const myEntreprise = getMyEntreprise();
+            /**
+             * Verifie si les entreprises sont au formats valide et 
+             * qu'il n'y est pas de doublon d'entreprise présent.
+             * */
+            let isUploadedFacturesValid = true;
+            uploadedFactures.forEach(uploadedFacture => {
+                // Variable contenant les erreurs rencontré pour la facture courante
+                const currentFactureErrors: string[] = []
+                const numeroFacture = uploadedFacture.id.trim().length !== 0 ? uploadedFacture.id 
+                    : `index n°${uploadedFactures.findIndex((value) => value === uploadedFacture)}`;
+                
+                /** 
+                 * Variable contenant le boolean verifiant si la facture est 
+                 * un duplicata d'une facture déjà présente dans les factures
+                 */
+                const isFactureNotDuplicated = factures.every( facture => {
+                    return facture.id !== uploadedFacture.id;
+                })
+                
+                if (!isFactureNotDuplicated)
+                    currentFactureErrors.push(`Duplication: La facture n°${numeroFacture} sont déjà présents.`);
+
+                const uploadedFactureClient = getClientBySiret(uploadedFacture.client.siret)
+                if (uploadedFactureClient === null){
+                    currentFactureErrors.push(`Le client de la facture n°${numeroFacture} n'est pas présent dans la liste des clients actuels.`);
+                }else{
+                    /**
+                     * Ajouter l'id du client dans la facture
+                     */
+                    uploadedFacture.client.id = uploadedFactureClient.id
+                }
+
+                /**
+                 * Vérifie si le numero de siret de l'entreprise de l'utilisateur correspond à celle inscrit sur la facture.
+                 */
+                if (myEntreprise.siret !== uploadedFacture.entreprise.siret){
+                    currentFactureErrors.push(`L'entreprise prestataire de la facture n°${numeroFacture} ne correspond pas à l'entreprise stocké appartenant à l'utilisateur.`);
+                }else{
+                    /** Ajoute l'id de l'entreprise de l'utilisateur dans la facture */
+                    uploadedFacture.entreprise.id = myEntreprise.id
+                }
+
+                /**
+                 * Si des erreurs ont été trouvés, on les ajoute dans le détail du CallbackMessage
+                 */
+                if (currentFactureErrors.length !== 0){
+                    response.details.push(...currentFactureErrors);
+                    isUploadedFacturesValid = false;
+                }
+            })
+            // Vérifie si les factures sont toutes valides
+            if (!isUploadedFacturesValid){
+                // Code : 1, pour l'echec de l'import
+                response.code = 1;
+                response.message = "Echec de l'import.";
+                return response;
+            }
+            // Variable contenant le dernier id de la liste des factures déjà sauvegardés
+            let lastId = (getLastId() || 0) + 1;
+            
+            // Un map des factures avec l'ajout des ids
+            const mappeduploadedFactures = uploadedFactures.map(facture => {
+                // La facture complète transformé en facture simple
+                const newFacture = fullFactureToFacture(facture);
+                
+                // Dernier id ajouter
+                const id = lastId;
+
+                // Année de création de la facture
+                const year = newFacture.date.getFullYear().toString().slice(2);
+
+                // Mois de création de la facture
+                let month = (newFacture.date.getMonth() + 1).toString();
+                if (month.length === 1){
+                    month = '0' + month
+                }
+
+                let idString = id.toString().length === 1 ? '0' + id.toString() : id
+
+                // Nouvel identifiant pour la facture
+                newFacture.id = `${year}-${month}-${idString}`;
+                // Incrémente le dernier id de la derniere facture ajouté
+                lastId++
+                return newFacture
+            })
+            // Jointure des deux listes : clients déjà sauvegardé + clients importés
+            const finalFacturesList = factures.concat(...mappeduploadedFactures);
+            // Mise à jour des clients dans 'entreprise.json'
+            updateJson(finalFacturesList.map(factureToObject), jsonFile);
+            return response
+        } else {
+            response.code = 1;
+            response.message = "Echec de l'import.";
+            response.details.push("Certaines factures ne respectent pas le format de facture voulus.");
+            return response;
+        }
+        
+    });
+}
+
+
 
 export { 
     getFactures,
@@ -277,5 +439,6 @@ export {
     addFacture,
     updateFacture,
     deleteFacture,
-    exportFactures
+    exportFactures,
+    importFactures
 }

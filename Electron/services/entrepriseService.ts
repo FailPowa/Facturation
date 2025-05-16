@@ -46,6 +46,19 @@ function getClientById(id: number): Entreprise | null {
     const client = clients.find( entreprise => entreprise.id === id) || null
     return client
 }
+
+/**
+ * Récupère un client selon son numero de siret mais retourne null si aucun client n'a été trouvé
+ * @param siret Siret de l'entreprise recherché
+ * @returns Entreprise or null
+ */
+function getClientBySiret(siret: string): Entreprise | null {
+    const clients = getClients();
+    
+    // Variable contenant le client trouvé ou null
+    const findedClient = clients.find(client => client.siret === siret) || null
+    return findedClient 
+}
 /**
  * Ajoute une nouvelle entreprises cliente à la liste des entreprises 
  * stockés dans le fichier entreprise.json.
@@ -56,13 +69,19 @@ function getClientById(id: number): Entreprise | null {
 function addCompany(_event: any, newCompany: Entreprise, isMe?: boolean): Entreprise {
     const companies = getCompanies()
 
-    /** Récupère l'id (attribut de type number) le plus grand parmi ceux existant, 
-     * l'incrémente de 1 et associe le résultat à l'id de la nouvelle entreprise enregistré */
-    newCompany.id = Math.max(...companies.map((company) => company.id)) + 1
+    /** 
+     * Récupère l'id (attribut de type number) le plus grand parmi ceux existant, 
+     * l'incrémente de 1 et associe le résultat à l'id de la nouvelle entreprise enregistré 
+     * Si la nouvelle entreprise n'est pas votre entreprise, alors l'id sera 'id votre entreprise' + 1
+     */
+    newCompany.id = Math.max(...companies.map((company) => company.id).concat([1])) + 1    
 
     if (isMe === true){
         const index = companies.findIndex((company) => company.isMe === true)
-        if (index !== -1) throw new Error(`Echec de l'ajout d'une nouvelle entreprise, votre entreprise est déjà créée: Voir l'option modifier si vous voulez apportez des modifications`)
+        if (index !== -1) 
+            throw new Error(`Echec de l'ajout d'une nouvelle entreprise, votre entreprise est déjà créée: Voir l'option modifier si vous voulez apportez des modifications`);
+        /** L'id de votre entreprise sera toujours 1 */
+        newCompany.id = 1
         newCompany.isMe = true
     }else{
         newCompany.isMe = false
@@ -266,7 +285,8 @@ function importClients(_event: any) : Promise<CallbackMessage>{
 export { 
     getCompanies, 
     getClients, 
-    getClientById, 
+    getClientById,
+    getClientBySiret,
     addCompany, 
     updateClient, 
     deleteClient, 

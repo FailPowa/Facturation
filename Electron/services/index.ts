@@ -3,6 +3,7 @@ import { getStatuts, getStatutById, getStatutByValue } from "./statutService";
 import { 
     getClients,
     getClientById,
+    getClientBySiret,
     addCompany, 
     updateClient, 
     deleteClient, 
@@ -19,7 +20,8 @@ import {
     addFacture,
     updateFacture,
     deleteFacture,
-    exportFactures
+    exportFactures,
+    importFactures
 } from "./factureService";
 
 
@@ -30,6 +32,7 @@ export {
     // Entreprise
     getClients,
     getClientById,
+    getClientBySiret,
     addCompany,
     updateClient,
     deleteClient,
@@ -46,6 +49,7 @@ export {
     updateFacture,
     deleteFacture,
     exportFactures,
+    importFactures,
     // Statut
     getStatuts,
     getStatutById,

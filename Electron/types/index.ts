@@ -6,7 +6,9 @@ import {
     factureToObject, 
     jsonStringToFacture,
     isFacture,
-    isFactureArray
+    isFactureArray,
+    isFullFacture,
+    isFullFactureArray
 } from "./Facture";
 import { Statut } from "./Statut";
 import { CallbackMessage } from './CallbackMessage';
@@ -29,5 +31,7 @@ export {
     factureToObject,
     jsonStringToFacture,
     isFacture,
-    isFactureArray
+    isFactureArray,
+    isFullFacture,
+    isFullFactureArray
 }

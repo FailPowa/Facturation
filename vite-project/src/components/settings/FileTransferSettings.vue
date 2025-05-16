@@ -49,7 +49,7 @@
                 <v-btn
                     color="secondary"
                     block
-                    @click=""
+                    @click="importFactures"
                 >
                     Importer les factures
                 </v-btn>
@@ -84,10 +84,8 @@
     // Variable contenant la reponse des imports/exports
     const response: Ref<CallbackMessage | null> = ref(null);
     
-    
-    async function exportClients() {
-        response.value = await window.serviceElectron.exportClients();
-        switch(response.value?.code){
+    function changeDialogType(code: number) {
+        switch(code){
             case 0:
                 typeRef.value = 'success';
                 alertDialog.value = true;
@@ -99,38 +97,26 @@
             case 2:
                 break
         }
+    }
+
+    async function exportClients() {
+        response.value = await window.serviceElectron.exportClients();
+        changeDialogType(response.value?.code || 2)
     }
 
     async function exportFactures() {
         response.value = await window.serviceElectron.exportFactures()
-        switch(response.value?.code){
-            case 0:
-                typeRef.value = 'success';
-                alertDialog.value = true;
-                break
-            case 1:
-                typeRef.value = 'warning';
-                alertDialog.value = true;
-                break
-            case 2:
-                break
-        }
+        changeDialogType(response.value?.code || 2)
     }
 
     async function importClients() {
         response.value = await window.serviceElectron.importClients()
-        switch(response.value?.code){
-            case 0:
-                typeRef.value = 'success';
-                alertDialog.value = true;
-                break
-            case 1:
-                typeRef.value = 'warning';
-                alertDialog.value = true;
-                break
-            case 2:
-                break
-        }
+        changeDialogType(response.value?.code || 2)
+    }
+
+    async function importFactures() {
+        response.value = await window.serviceElectron.importFactures()
+        changeDialogType(response.value?.code || 2)
     }
 
 </script>
