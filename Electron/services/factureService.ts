@@ -71,7 +71,11 @@ function factureToFullFacture(facture: Facture): FullFacture{
     return fullFacture
 }
 
-
+/**
+ * Convertit une facture complète en facture simple
+ * @param fullFacture La facture complète
+ * @returns 
+ */
 function fullFactureToFacture(fullFacture: FullFacture): Facture{
     if (typeof fullFacture.date === "string"){
         fullFacture.date = parseDateDDMMYYYY(fullFacture.date)

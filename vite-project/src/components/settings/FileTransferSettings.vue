@@ -62,8 +62,8 @@
     >
         <AlertDialog
             v-model="alertDialog"
-            :title="response ? response.message : 'Aucun message'"
-            :details="response?.details"
+            :title="messageRef"
+            :details="detailsRef"
             :type="typeRef"
         />
     </v-dialog>    
@@ -80,43 +80,77 @@
     
     // Le type de la boite de dialogue ne peut prendre que les valeurs suivantes ("success" | "info" | "warning" | "error" | undefined)
     const typeRef: Ref<string> = ref("");
+    const messageRef: Ref<string> = ref("");
+    const detailsRef: Ref<string[]> = ref([]);
 
-    // Variable contenant la reponse des imports/exports
-    const response: Ref<CallbackMessage | null> = ref(null);
-    
-    function changeDialogType(code: number) {
+    // Enumération contenant les different code de retour
+    enum ResultCode {
+        Success = 0,
+        Warning = 1,
+        Cancel = 2
+    }
+
+    /**
+     * Affiche une boîte de dialogue en fonction du code de retour reçu.
+     * @param code Code de retour 
+     * @param message Message de retour
+     * @param details Informations supplémentaires sur le message de retour
+     */
+    function showAlertDialog(code: number, message: string, details: string[]) {
+        messageRef.value = message
+        detailsRef.value = details
         switch(code){
-            case 0:
-                typeRef.value = 'success';
+            case ResultCode.Success:
+                typeRef.value = 'success';  // Code 0 : succès
+                alertDialog.value = true;   // Affiche la boite de dialogue
+                break
+            case ResultCode.Warning:
+                typeRef.value = 'warning';  // Code 1 : echec
+                alertDialog.value = true;   // Affiche la boite de dialogue
+                break
+            case ResultCode.Cancel:
+                // Code 2 : Annulation de la transaction
+                break
+            default: 
+                typeRef.value = 'error'; // 
                 alertDialog.value = true;
-                break
-            case 1:
-                typeRef.value = 'warning';
-                alertDialog.value = true;
-                break
-            case 2:
-                break
+                detailsRef.value = [`Code de retour inconnu : ${code}`, `Message de retour: ${message}`, ...details] 
+                messageRef.value = "Erreur inconnu"
+                
         }
     }
-
+    
+    /**
+     * Exporte les données des clients
+     */
     async function exportClients() {
-        response.value = await window.serviceElectron.exportClients();
-        changeDialogType(response.value?.code || 2)
+        const response: CallbackMessage = await window.serviceElectron.exportClients();
+        showAlertDialog(response.code, response.message, response.details);
     }
 
+    /**
+     * Exporte les données des factures
+     */
     async function exportFactures() {
-        response.value = await window.serviceElectron.exportFactures()
-        changeDialogType(response.value?.code || 2)
+        const response: CallbackMessage = await window.serviceElectron.exportFactures();
+        showAlertDialog(response.code, response.message, response.details);
     }
 
+    /**
+     * Importe les données des clients
+     */
     async function importClients() {
-        response.value = await window.serviceElectron.importClients()
-        changeDialogType(response.value?.code || 2)
+        const response: CallbackMessage = await window.serviceElectron.importClients();
+        showAlertDialog(response.code, response.message, response.details);
     }
 
+    /**
+     * Importe les données des factures
+     */
     async function importFactures() {
-        response.value = await window.serviceElectron.importFactures()
-        changeDialogType(response.value?.code || 2)
+        const response: CallbackMessage = await window.serviceElectron.importFactures();
+        showAlertDialog(response.code, response.message, response.details);
     }
+
 
 </script>
