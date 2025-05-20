@@ -8,6 +8,7 @@ import { fr } from 'vuetify/locale';
 import { darkTheme, greenTheme, retroTheme, lightTheme, blueTheme } from '../src/themes';
 
 
+
 const vuetify = createVuetify({
     ssr: true,
     components: {

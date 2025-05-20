@@ -27,7 +27,6 @@ const factureHeaders: Record<string, any>[] = [
     { title: 'Actions', key: 'actions', align: 'center', sortable: false}
 ]
 
-
 export { 
     clientHeaders, 
     factureHeaders 

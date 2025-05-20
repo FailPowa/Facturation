@@ -123,23 +123,22 @@
      * Si l'entreprise est null alors, la variable prend un comme valeur 
      * un objet de type EntrepriseType avec des attributs non remplis
      */
-    const entrepriseForm : Ref<EntrepriseType> = props.entreprise !== null ? ref(props.entreprise) : ref({
-        id: -1,
-        nom: "",
-        adresse: "",
-        codePostal: "",
-        ville: "",
-        mail: "",
-        numTva: "",
-        siret: "",
-        isMe: false
+    const entrepriseForm : Ref<EntrepriseType> = ref({
+        id: props.entreprise?.id ||-1,
+        nom: props.entreprise?.nom || "",
+        adresse: props.entreprise?.adresse || "",
+        codePostal: props.entreprise?.codePostal || "",
+        ville: props.entreprise?.ville || "",
+        mail: props.entreprise?.mail || "",
+        numTva: props.entreprise?.mail || "",
+        siret: props.entreprise?.siret || "",
+        isMe: props.entreprise?.isMe || false
     });
 
     /**
      * Clic sur le bouton Annuler
      */
     function cancelForm(): void {
-        console.log("Passe ici");
         emit('cancel');
     }
 

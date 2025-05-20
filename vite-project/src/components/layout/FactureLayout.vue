@@ -11,8 +11,8 @@
         </v-row>
         <v-row>
             <v-col>
-                <!-- <FacturesTable /> -->
-                <FacturesTable />
+                <!-- Table des factures -->
+                <FacturesTable :no-action="false" />
             </v-col>
         </v-row>
        

@@ -2,13 +2,13 @@
     <v-container>
         <v-row>
             <v-col
-                offset="8"
-                cols="2"
+                cols="12"
             >
-                <TjmLayout />
+                <HomeLayout />
             </v-col>
         </v-row>
     </v-container>
 </template>
 <script setup lang="ts">
+import HomeLayout from '../components/layout/HomeLayout.vue';
 </script>
