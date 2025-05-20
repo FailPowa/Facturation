@@ -131,6 +131,7 @@
     /** Variable contenant la partie à afficher pour le composant window : { 1: MonEntreprise, 2: Paramètres } */
     const windowPart = ref(1)
     
+    /** Récupère votre entrerpise */
     onMounted(async () => {
         await getMonEntreprise();
     })

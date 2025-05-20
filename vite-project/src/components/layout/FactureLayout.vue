@@ -12,7 +12,10 @@
         <v-row>
             <v-col>
                 <!-- Table des factures -->
-                <FacturesTable :no-action="false" />
+                <FacturesTable 
+                    :no-action="false" 
+                    :no-select-year="false"
+                />
             </v-col>
         </v-row>
        

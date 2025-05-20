@@ -6,6 +6,7 @@
                 class="d-flex flex-column ga-4 justify-space-between"
             >
                 <v-select
+                    v-if="!props.noSelectYear"
                     v-model="selectedYear"
                     :items="years"
                     density="compact"
@@ -267,8 +268,9 @@
      * Paramètres du composant
      */
     const props = defineProps({
-        noAction: { type: Boolean, required: true}
-    })
+        noAction: { type: Boolean, required: true}, // Désactive les actions (delete, update) pouvant être effectué sur un client.
+        noSelectYear: { type: Boolean, required: true} // Désactive la selection d'année, seule l'année la plus récente est selectionné.
+    });
 
     /** Evènement */
     const emits = defineEmits(['update:factures']);
@@ -290,7 +292,7 @@
     /** Tableau */
     const factures: Ref<FullFactureType[]> = ref([]);
     const selectedFacture: Ref<FullFactureType | null> = ref(null);
-    const headers: Ref<Record<string, any>[]> = ref([])
+    const headers: Ref<Record<string, any>[]> = ref([]);
 
     /** Dialogs */
     const addFactureDialog: Ref<boolean> = ref(false);
@@ -314,7 +316,7 @@
 
     watch(factures, () => {
         emits('update:factures', factures.value)
-    }, { deep: true})
+    }, { deep: true});
 
     /** Modification de l'année sélectionnée */
     function setSelectedYear(value: number): void {
