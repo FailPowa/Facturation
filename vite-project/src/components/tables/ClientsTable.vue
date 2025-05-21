@@ -45,7 +45,7 @@
                                 <v-icon 
                                     color="primary" 
                                     size="small" 
-                                    @click="updateClientDialog = true; updatingClient = item"
+                                    @click="setClient(item)"
                                 >
                                     {{ mdiPencilOutline }}
                                 </v-icon>
@@ -54,7 +54,7 @@
                                 <v-icon 
                                     color="error" 
                                     size="small" 
-                                    @click="deleteConfirmDialog = true; deletingClient = item"
+                                    @click="removeClient(item)"
                                 >
                                     {{ mdiDeleteOutline }}
                                 </v-icon>
@@ -87,8 +87,8 @@
         >
             <EntrepriseForm
                 :formTitle="'Modifier client'"
-                :entreprise="updatingClient"
-                @cancel="updateClientDialog = false"
+                :entreprise="selectedClient"
+                @cancel="updateClientDialog = false;"
                 @confirm="updateClient"
             />
         </v-dialog>
@@ -100,9 +100,21 @@
             persistent
         >
             <ConfirmDialog 
-                :question-title="`Êtes-vous certain de vouloir supprimer le client ${deletingClient?.nom} ?`"
+                :question-title="`Êtes-vous certain de vouloir supprimer le client ${selectedClient?.nom} ?`"
                 @cancel="deleteConfirmDialog = false"
                 @confirm="deleteClient"
+            />
+        </v-dialog>
+
+        <!-- Boite de dialoge : Alerte suppression client -->
+        <v-dialog
+            v-model="warningDeleteClientDialog"
+        >
+            <AlertDialog
+                v-model="warningDeleteClientDialog"
+                :text="`Le client ne peut pas être supprimé car il est lié à plusieurs factures.`"
+                type="warning"
+                title="Attention! Suppression client impossible"
             />
         </v-dialog>
     </v-container>
@@ -110,11 +122,12 @@
 
 
 <script setup lang="ts">
-    import {EntrepriseType} from '../../../types';
+    import { EntrepriseType } from '../../../types';
     import { numTvaFormatter, siretFormatter } from '../../../plugins/entrepriseFormatter'
     import { Ref, ref, onMounted} from 'vue';
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
+    import AlertDialog from '../dialogs/AlertDialog.vue';
     import { mdiAccountPlus, mdiDeleteOutline, mdiPencilOutline } from '@mdi/js';
     import { clientHeaders } from './headers'
 
@@ -122,22 +135,38 @@
     /** Variable contenant les entreprises clientes enregistrés */
     const clients : Ref<EntrepriseType[]> = ref([]);
 
-    /** Variable contenant l'entreprise cliente en cours de modication */
-    const updatingClient : Ref<EntrepriseType | null> = ref(null);
-    
-    /** Variable contenant l'id de l'entreprise en attente de confirmation de sa suppression */
-    const deletingClient: Ref<EntrepriseType | null> = ref(null)
+    /** Variable contenant l'entreprise cliente selectionné pour appliquer une suppression/modification dessus */
+    const selectedClient : Ref<EntrepriseType | null> = ref(null);
     
     /** Variables des boites de dialogues */
     const addClientDialog: Ref<boolean> = ref(false);
     const updateClientDialog: Ref<boolean> = ref(false);
     const deleteConfirmDialog: Ref<boolean> = ref(false);
+    const warningDeleteClientDialog: Ref<boolean> = ref(false);
 
     
     /** Récupération des clients au chargement de la page */
     onMounted( async () => {
         await getClients()
     });
+
+    /** Clic sur le bouton supprimer client */
+    function setClient(client: EntrepriseType){
+        updateClientDialog.value = true; 
+        selectedClient.value = client;
+    }
+
+    /** Clic sur le bouton modifier client */
+    async function removeClient(client: EntrepriseType){
+        const canClientBeDeleted = !(await isClientInFactures(client.id))
+        if (canClientBeDeleted){
+            selectedClient.value = client;
+            deleteConfirmDialog.value = true; 
+        }else{
+            selectedClient.value = null
+            warningDeleteClientDialog.value = true
+        }
+    }
 
     
     /** Ajoute un nouveau client */
@@ -149,26 +178,31 @@
 
     /** Met à jour un client */
     async function updateClient(updatedClient: EntrepriseType): Promise<void>{
-        if (updatingClient.value !== null){
-            await window.serviceElectron.updateClient(updatingClient.value.id, updatedClient)
+        if (selectedClient.value !== null){
+            await window.serviceElectron.updateClient(selectedClient.value.id, updatedClient)
             await getClients()
             updateClientDialog.value = false
-            updatingClient.value = null
+            selectedClient.value = null
         }
     }
 
     /** Supprime un client */
     async function deleteClient(): Promise<void>{
-        if (deletingClient.value !== null){
-            await window.serviceElectron.deleteClient(deletingClient.value.id)
+        if (selectedClient.value !== null){
+            await window.serviceElectron.deleteClient(selectedClient.value.id)
             await getClients()
             deleteConfirmDialog.value = false
-            deletingClient.value = null
+            selectedClient.value = null
         }
     }
 
     /** Récupère les clients */
     async function getClients(){
         clients.value = (await window.serviceElectron.getClients()) as EntrepriseType[]
+    }
+
+    /** Vérifie si un client est présent dans une des factures existantes */
+    async function isClientInFactures(id_client: number): Promise<boolean> {
+        return await window.serviceElectron.isClientInFactures(id_client);   
     }
 </script>

@@ -59,17 +59,17 @@
             <v-row justify="center">
                 <v-col cols="5">
                     <v-btn 
-                        type="submit" 
-                        color="success" 
-                        block 
+                        type="submit"
+                        color="success"
+                        block
                     >
                         Valider
                     </v-btn>
                 </v-col>
                 <v-col cols="5">
                     <v-btn 
-                        color="error" 
-                        block 
+                        color="error"
+                        block
                         @click="cancelForm"
                     >
                         Annuler
@@ -91,7 +91,7 @@
         mailRules,
         siretRules,
         numTvaRules
-    } from './rules'
+    } from '../../rules'
 
     /** Définition d'un paramètre du composant */
     const props = defineProps({
@@ -135,13 +135,11 @@
         isMe: false
     });
 
-
-    
-
     /**
      * Clic sur le bouton Annuler
      */
     function cancelForm(): void {
+        console.log("Passe ici");
         emit('cancel');
     }
 

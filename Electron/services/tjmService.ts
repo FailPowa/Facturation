@@ -1,11 +1,14 @@
 import { readJson, updateJson } from './jsonService';
 
+/** Variable stockant le nom du fichier json stockant le TJM */
+const jsonFile = 'tjm.json'
+
 /**
  * Retourne le montant sauvegardé dans le fichier tjm.json
  * @returns 
  */
 function getTjm(): any {
-    return readJson('tjm.json')
+    return readJson(jsonFile)
 }
 
 /**
@@ -16,7 +19,7 @@ function getTjm(): any {
 function updateTjm(_event: any, montant: number): any {
     const tjm = getTjm()
     tjm.montant = montant;
-    updateJson(tjm, 'tjm.json');
+    updateJson(tjm, jsonFile);
     return tjm;
 }
 

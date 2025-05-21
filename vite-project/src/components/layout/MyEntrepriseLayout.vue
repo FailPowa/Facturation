@@ -12,6 +12,9 @@
                 
                 <!-- Infos entreprise -->
                 <monEntrepriseDetails :entreprise="monEntreprise" />
+
+                <!-- TJM -->
+                <TjmLayout scrollable/>
                 
                 <!-- Boutons -->
                 <v-container class="mt-auto d-flex justify-center ga-16 ">
@@ -44,29 +47,43 @@
             :value="2" 
             class="fill-height"
         >
-            <v-container class="d-flex flex-column justify-space-between fill-height pa-4">
-                <v-container>
-                    <p class="text-h4">Paramètres</p>
-                </v-container>
+            <v-container>
+                <v-row>
+                    <v-container>
+                        <p class="text-h4">Paramètres</p>
+                    </v-container>
+                </v-row>
                 
-                <!-- Paramètres des thèmes -->
-                <v-container>
-                    <SettingThemes />
-                </v-container>
-                <!-- Bouton retour à la page précédente-->
-                <v-container class="mt-auto d-flex justify-center ga-16 ">
-                    <v-btn 
-                        color="primary" 
-                        class="mb-2" 
-                        icon 
-                        @click="windowPart=1"
-                    >
-                        <v-icon 
-                            :icon="mdiArrowULeftBottom" 
-                            size="large" 
-                        />        
-                    </v-btn>
-                </v-container>
+                <v-row>
+                    <!-- Paramètres des thèmes -->
+                    <v-container>
+                        <SettingThemes />
+                    </v-container>
+                </v-row>
+
+                <v-row>
+                    <!-- Imports/Exports -->
+                    <v-container>
+                        <FileTransferSettings />
+                    </v-container>
+                </v-row>
+
+                <v-row>
+                    <!-- Bouton retour à la page précédente-->
+                    <v-container class="mt-auto d-flex justify-center ga-16 ">
+                        <v-btn 
+                            color="primary" 
+                            class="mb-2" 
+                            icon 
+                            @click="windowPart=1"
+                        >
+                            <v-icon 
+                                :icon="mdiArrowULeftBottom" 
+                                size="large" 
+                            />        
+                        </v-btn>
+                    </v-container>
+                </v-row>                
             </v-container>
             
         </v-window-item>
@@ -93,6 +110,8 @@
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
+    import FileTransferSettings from '../settings/FileTransferSettings.vue';
+    import TjmLayout from '../layout/TjmLayout.vue';
     import { EntrepriseType } from '../../../types';
     import { 
         mdiPencil, 

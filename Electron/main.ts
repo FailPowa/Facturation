@@ -3,6 +3,7 @@ import path from "path";
 import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
+import { withJsonParsing } from "./middlewares/withJsonParsing"
 import {
     // TJM
     getTjm,
@@ -12,8 +13,24 @@ import {
     addCompany,
     updateClient,
     deleteClient,
-    getMyEntreprise
+    getMyEntreprise,
+    exportClients,
+    importClients,
+    // Facture
+    getFullFacturesByYear,
+    getAllFacturesYears,
+    getLastFacture,
+    isClientInFactures,
+    addFacture,
+    updateFacture,
+    deleteFacture,
+    exportFactures,
+    importFactures,
+    // Statut
+    getStatuts,
+    getStatutByValue,
 } from './services';
+import { jsonStringToFacture } from "./types";
 
 
 /**
@@ -70,7 +87,23 @@ ipcMain.handle('getClients', getClients);
 ipcMain.handle('addClient', addCompany);
 ipcMain.handle('updateClient', updateClient),
 ipcMain.handle('deleteClient', deleteClient);
-ipcMain.handle('getMonEntreprise', getMyEntreprise)
+ipcMain.handle('getMonEntreprise', getMyEntreprise);
+// Facture
+ipcMain.handle('getFullFacturesByYear', getFullFacturesByYear);
+ipcMain.handle('getAllFacturesYears', getAllFacturesYears);
+ipcMain.handle('getLastFacture', getLastFacture)
+ipcMain.handle('addFacture', withJsonParsing(addFacture, jsonStringToFacture));
+ipcMain.handle('updateFacture', withJsonParsing(updateFacture, jsonStringToFacture));
+ipcMain.handle('deleteFacture', deleteFacture);
+ipcMain.handle('isClientInFactures', isClientInFactures);
+// Statut
+ipcMain.handle('getStatuts', getStatuts);
+ipcMain.handle('getStatutByValue', getStatutByValue);
+// Import et Exports de données
+ipcMain.handle('exportClients', exportClients);
+ipcMain.handle('importClients', importClients);
+ipcMain.handle('exportFactures', exportFactures);
+ipcMain.handle('importFactures', importFactures);
 // Versions
 ipcMain.handle('versions', () => {
     return {

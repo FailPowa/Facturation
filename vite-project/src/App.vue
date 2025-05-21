@@ -60,7 +60,8 @@
     import { 
         mdiHelpCircleOutline, 
         mdiAccountGroupOutline, 
-        mdiHomeOutline 
+        mdiHomeOutline,
+        mdiInvoiceMultipleOutline
     } from '@mdi/js';
 
     /** Variable contenant les différentes routes */
@@ -70,6 +71,7 @@
     const icons: Ref<Record<string, string>>= ref({
         '/': mdiHomeOutline,
         '/clients': mdiAccountGroupOutline,
+        '/factures': mdiInvoiceMultipleOutline,
         '/help': mdiHelpCircleOutline
     });
 

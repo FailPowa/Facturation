@@ -13,7 +13,7 @@ export const darkTheme: ThemeDefinition = {
         error: '#b59991',
         info: '#9ea2bc',
         success: '#9fc1b8',
-        warning: '#c1d1a9'
+        warning: '#fcb700'
     },
     variables: {
         'border': '1px',
