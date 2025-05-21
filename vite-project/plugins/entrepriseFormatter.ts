@@ -20,14 +20,13 @@ function numTvaFormatter(numTva: string): string {
     return numTvaFormated
 }
 
-89825053500017
 /**
  * Formate un numero de SIRET au format suivant : XXX XXX XXX XXXXX
  * @param siret le numéro de siret
  * @returns string
  */
 function siretFormatter(siret: string): string {
-    if (siret.length !== 14) throw new Error("Le numero de SIRET donné est invalide.")
+    if (siret.length !== 14) return "Error"
     let siretFormated = ""
     for(let index = 0; index < 14; index++){
         siretFormated += siret[index]

@@ -74,7 +74,7 @@
             <EntrepriseForm
                 :formTitle="'Créer un client'"
                 :entreprise="null"
-                @cancel="addClientDialog = false"
+                @cancel="cancelAddClientDialog"
                 @confirm="addClient"
             />
         </v-dialog>
@@ -88,7 +88,7 @@
             <EntrepriseForm
                 :formTitle="'Modifier client'"
                 :entreprise="selectedClient"
-                @cancel="updateClientDialog = false;"
+                @cancel="cancelUpdateDialog"
                 @confirm="updateClient"
             />
         </v-dialog>
@@ -101,7 +101,7 @@
         >
             <ConfirmDialog 
                 :question-title="`Êtes-vous certain de vouloir supprimer le client ${selectedClient?.nom} ?`"
-                @cancel="deleteConfirmDialog = false"
+                @cancel="cancelDeleteDialog"
                 @confirm="deleteClient"
             />
         </v-dialog>
@@ -168,7 +168,21 @@
         }
     }
 
-    
+    /** Fermer boite de dialogue de modification du client selectionné */
+    function cancelUpdateDialog(){
+        updateClientDialog.value = false;
+    }
+
+    /** Fermer boite de dialogue d'ajout d'un client */
+    function cancelAddClientDialog(){
+        addClientDialog.value = false;
+    }
+
+    /** Fermer boite de dialogue de suppression du client selectionné */
+    function cancelDeleteDialog(){
+        deleteConfirmDialog.value = false;
+    }
+
     /** Ajoute un nouveau client */
     async function addClient(newClient: EntrepriseType): Promise<void> {
         await window.serviceElectron.addClient(newClient)

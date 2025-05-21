@@ -6,6 +6,7 @@
                 class="d-flex flex-column ga-4 justify-space-between"
             >
                 <v-select
+                    v-if="!props.noSelectYear"
                     v-model="selectedYear"
                     :items="years"
                     density="compact"
@@ -41,7 +42,7 @@
             <v-col class="d-flex flex-column ga-4">
                 <v-data-table
                     :items="factures"
-                    :headers="factureHeaders"
+                    :headers="headers"
                 >
                     <!-- Override du no-data -->
                     <template #no-data>
@@ -246,7 +247,7 @@
 </template>
 <script setup lang="ts">
     import { FullFactureType, FactureType, StatutType } from '../../../types';
-    import { Ref, ref, onMounted } from 'vue';
+    import { Ref, ref, onMounted, watch } from 'vue';
     import { 
         mdiReceiptTextPlusOutline, 
         mdiDeleteOutline, 
@@ -262,6 +263,17 @@
     import StatutChip from '../chips/StatutChip.vue';
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
+
+    /**
+     * Paramètres du composant
+     */
+    const props = defineProps({
+        noAction: { type: Boolean, required: true}, // Désactive les actions (delete, update) pouvant être effectué sur un client.
+        noSelectYear: { type: Boolean, required: true} // Désactive la selection d'année, seule l'année la plus récente est selectionné.
+    });
+
+    /** Evènement */
+    const emits = defineEmits(['update:factures']);
 
     /** Icones */
     const icons = { 
@@ -280,6 +292,7 @@
     /** Tableau */
     const factures: Ref<FullFactureType[]> = ref([]);
     const selectedFacture: Ref<FullFactureType | null> = ref(null);
+    const headers: Ref<Record<string, any>[]> = ref([]);
 
     /** Dialogs */
     const addFactureDialog: Ref<boolean> = ref(false);
@@ -293,7 +306,17 @@
         await getYears();
         /** On remplis le tableau des factures de l'année sélectionnée */
         await getFacturesByYear();
+        /** Supprime la colonne actions si le props noAction est vrai */
+        if (props.noAction){
+            headers.value = factureHeaders.filter(item => item.key !== "actions");
+        }else{
+            headers.value = factureHeaders
+        }
     });
+
+    watch(factures, () => {
+        emits('update:factures', factures.value)
+    }, { deep: true});
 
     /** Modification de l'année sélectionnée */
     function setSelectedYear(value: number): void {
