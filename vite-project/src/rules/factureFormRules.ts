@@ -1,5 +1,6 @@
 const nbJoursRules = [
-    (value: number) => value > 0 || 'Le nombre de jours travaillés doit être supérieur à 0.'
+    (value: number) => value > 0 || 'Le nombre de jours travaillés doit être supérieur à 0.',
+    (value: number) => value < 31 || 'Le nombre de jours travaillés doit être inférieur ou égal à 30.'
 ]
 
 const clientRules = [

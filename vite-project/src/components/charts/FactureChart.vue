@@ -20,7 +20,7 @@
 
 
 <script setup lang="ts">
-    import { ref, Ref, computed, onMounted, onUpdated } from 'vue';
+    import { ref, Ref, computed, onMounted, onUpdated, onBeforeUnmount } from 'vue';
     import { Line } from 'vue-chartjs';
     import {
         Chart as ChartJS,
@@ -45,6 +45,8 @@
 
     /** Active les composants nécessaires pour afficher le graphique */
     ChartJS.register(Title, Tooltip, Legend, Colors, LineElement, PointElement, CategoryScale, LinearScale)
+    
+    const chartRef = ref()
 
     /** Variable contenant l'année des factures */
     const year = ref(NaN);
@@ -55,24 +57,11 @@
         'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
     ]
 
-    /**
-     * Initialise la liste des factures et définit l’année affichée 
-     * à partir de la première facture lors du montage du composant.
-     */
-    onMounted(() => {
-        factures.value = props.factures;
-        if (factures.value.length > 0){
-            year.value = factures.value[0].date.getFullYear();
-        }
-    });
-
-    /** Met à jour les factures et l'année selectionné */
-    onUpdated(() => {
-        factures.value = props.factures;
-        if (factures.value.length > 0){
-            year.value = factures.value[0].date.getFullYear();
-        }
-    });
+    /** Options d'affichage du graphique */
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false
+    }
 
     /**
      * Configuration du graphique linéaire
@@ -118,13 +107,42 @@
         };
     });
 
-    const options = {
-        responsive: true,
-        
+
+    /** Ajoute à l'évènement 'resize' la fonction onResize pour mettre à jour la taille du graphique */
+    onMounted(() => {
+        window.addEventListener('resize', onResize)
+    })
+
+    /** Retire l'évènement lorsque le composant est démonté */
+    onBeforeUnmount(() => {
+        window.removeEventListener('resize', onResize)
+    })
+
+    /**
+     * Initialise la liste des factures et définit l’année affichée 
+     * à partir de la première facture lors du montage du composant.
+     */
+    onMounted(() => {
+        factures.value = props.factures;
+        if (factures.value.length > 0){
+            year.value = factures.value[0].date.getFullYear();
+        }
+    });
+
+    /** Met à jour les factures et l'année selectionné */
+    onUpdated(() => {
+        factures.value = props.factures;
+        if (factures.value.length > 0){
+            year.value = factures.value[0].date.getFullYear();
+        }
+    });
+
+    /** Met à jour la taille du graphique lorsque la fenetre change de taille */
+    function onResize() {
+        if(chartRef.value) {
+            chartRef.value.chartInstance.update()
+        }
     }
-
-
-
 
 </script>
 

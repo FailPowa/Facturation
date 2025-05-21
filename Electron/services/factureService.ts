@@ -149,10 +149,8 @@ function addFacture(_event: any, newFacture: Facture){
         month = '0' + month
     }
 
-    let idString = id.toString().length === 1 ? '0' + id.toString() : id
-
     // Nouvel identifiant pour la facture
-    newFacture.id = `${year}-${month}-${idString}`;
+    newFacture.id = `${year}-${month}-${id}`;
     factures.push(newFacture);
     
     // Un map de la liste des factures 
@@ -206,7 +204,7 @@ function getLastFacture(): Facture | null{
 }
 
 /**
- * Récupère l'identifiant aa-mm-XX de la derniere facture ajouté
+ * Récupère l'identifiant aa-mm-Nombre de la derniere facture ajouté
  * sinon retourne null si aucune facture n'a déjà été créée
  * @returns number or null
  */
@@ -216,7 +214,7 @@ function getLastId(): number | null{
     // On extrait les parties "numérotés" de chaque ID
     const numeros = factures
         .map(f => {
-            const match = f.id.match(/^\d{2}-\d{2}-(\d{2})$/);
+            const match = f.id.match(/^\d{2}-\d{2}-(\d+)$/);
             return match ? parseInt(match[1], 10) : null;
         })
         .filter(n => n !== null);
@@ -389,7 +387,7 @@ function importFactures(_event: any) : Promise<CallbackMessage>{
                 return response;
             }
             // Variable contenant le dernier id de la liste des factures déjà sauvegardés
-            let lastId = (getLastId() || 0) + 1;
+            let lastId = (getLastId() || 0);
             
             // Un map des factures avec l'ajout des ids
             const mappeduploadedFactures = uploadedFactures.map(facture => {
@@ -397,7 +395,7 @@ function importFactures(_event: any) : Promise<CallbackMessage>{
                 const newFacture = fullFactureToFacture(facture);
                 
                 // Dernier id ajouter
-                const id = lastId;
+                const id = lastId + 1;
 
                 // Année de création de la facture
                 const year = newFacture.date.getFullYear().toString().slice(2);
@@ -408,10 +406,8 @@ function importFactures(_event: any) : Promise<CallbackMessage>{
                     month = '0' + month
                 }
 
-                let idString = id.toString().length === 1 ? '0' + id.toString() : id
-
                 // Nouvel identifiant pour la facture
-                newFacture.id = `${year}-${month}-${idString}`;
+                newFacture.id = `${year}-${month}-${id}`;
                 // Incrémente le dernier id de la derniere facture ajouté
                 lastId++
                 return newFacture

@@ -1,11 +1,10 @@
 <template>
     <!-- Test 1-->
     <v-container
-        v-if="false"
         fluid 
-        class="d-flex flex-md-column ga-4"
+        class="d-flex flex-md-column ga-12"
     >
-        <p class="text-h3 text-center font-weight-bold">Bienvenue {{ monEntreprise.nom }} !</p>
+        <p class="text-h3 text-center">Bienvenue {{ monEntreprise.nom }} !</p>
 
         <!-- Onglets -->
         <v-tabs
@@ -30,45 +29,14 @@
 
             <!-- Onglet 2 : Graphique -->
             <v-tabs-window-item :value="2">
-                <FactureChart :factures="factures"/>
+                <v-container  class="d-flex justify-center">
+                    <v-card width="70%">
+                        <FactureChart :factures="factures"/>
+                    </v-card>
+                </v-container>
             </v-tabs-window-item>
         </v-tabs-window>
     </v-container>
-
-    <!-- Test 2-->
-<v-container v-if="true" fluid>
-    <v-row justify-md="center" class="mb-8">
-        <p class="text-h3 text-center font-weight-bold" style="letter-spacing: 0.05em;">
-            Bienvenue {{ monEntreprise.nom }} !
-        </p>
-    </v-row>
-
-    <!-- Carte avec ombre et arrondi contenant tableau + graphique -->
-    <v-row justify-md="center">
-        <v-card
-            elevation="6"
-            style="width: 90%; padding: 24px; border-radius: 12px;"
-        >
-            <v-row>
-                <FacturesTable 
-                    :no-action="false"
-                    :no-select-year="true"
-                    @update:factures="onFactureUpdate"
-                />
-            </v-row>
-
-            <v-divider class="my-8" />
-
-            <v-row>
-                <FactureChart :factures="factures"/>
-            </v-row>
-        </v-card>
-    </v-row>
-</v-container>
-
-
-
-
 </template>
 
 <script setup lang="ts">
