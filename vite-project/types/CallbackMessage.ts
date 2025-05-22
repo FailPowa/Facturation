@@ -8,6 +8,18 @@ interface CallbackMessage {
     details: string[] // Contient les détails sur ce qui a mis en échec l'opération réalisé
 }
 
+// Enumération contenant les different code de retour
+enum ResultCode {
+    Success = 0,
+    Warning = 1,
+    Cancel = 2
+}
+
+
 export type {
     CallbackMessage
+}
+
+export {
+    ResultCode
 }

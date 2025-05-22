@@ -2,7 +2,7 @@
     <!-- Test 1-->
     <v-container
         fluid 
-        class="d-flex flex-md-column ga-12"
+        class="d-flex flex-column ga-12"
     >
         <p class="text-h3 text-center">Bienvenue {{ monEntreprise.nom }} !</p>
 

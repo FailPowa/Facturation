@@ -164,6 +164,15 @@
                             >
                                 {{ icons.mdiEyeOutline }}
                             </v-icon>
+                            <!-- Bouton Générer PDF -->
+                            <v-icon
+                                v-if="item.statut.value === 'PAYEE'"
+                                color="red"
+                                size="small"
+                                @click="generatePDF(item.id)"
+                            >
+                                {{ icons.mdiFileDownloadOutline }}
+                            </v-icon>
                             <!-- Bouton Modifier -->
                             <v-icon
                                 v-if="item.statut.value !== 'PAYEE'"
@@ -244,9 +253,21 @@
                 @confirm="deleteFacture"
             />
     </v-dialog>
+
+    <!-- Boite de dialoge : Alerte dialog -->
+    <v-dialog
+        v-model="alertDialog"
+    >
+        <AlertDialog
+            v-model="alertDialog"
+            :title="messageRef"
+            :details="detailsRef"
+            :type="typeRef"
+        />
+    </v-dialog>    
 </template>
 <script setup lang="ts">
-    import { FullFactureType, FactureType, StatutType } from '../../../types';
+    import { FullFactureType, FactureType, StatutType, ResultCode, CallbackMessage } from '../../../types';
     import { Ref, ref, onMounted, watch } from 'vue';
     import { 
         mdiReceiptTextPlusOutline, 
@@ -254,7 +275,8 @@
         mdiPencilOutline, 
         mdiEyeOutline,
         mdiCheckCircleOutline,
-        mdiMinusCircleOutline
+        mdiMinusCircleOutline,
+        mdiFileDownloadOutline
     } from '@mdi/js';
     import { factureHeaders } from './headers';
     import { formatDate, getCurrentYear } from '../../../plugins/dateFormatter';
@@ -263,6 +285,7 @@
     import StatutChip from '../chips/StatutChip.vue';
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
+    import AlertDialog from '../dialogs/AlertDialog.vue';
 
     /**
      * Paramètres du composant
@@ -282,7 +305,8 @@
         mdiPencilOutline, 
         mdiEyeOutline,
         mdiCheckCircleOutline,
-        mdiMinusCircleOutline
+        mdiMinusCircleOutline,
+        mdiFileDownloadOutline
     };
 
     /** Sélecteur d'année */
@@ -299,6 +323,12 @@
     const updateFactureDialog: Ref<boolean> = ref(false);
     const deleteFactureDialog: Ref<boolean> = ref(false);
     const addDatePaiementDialog: Ref<boolean> = ref(false);
+    const alertDialog: Ref<boolean> = ref(false);
+    
+    // Le type de la boite de dialogue ne peut prendre que les valeurs suivantes ("success" | "info" | "warning" | "error" | undefined)
+    const typeRef: Ref<string> = ref("");
+    const messageRef: Ref<string> = ref("");
+    const detailsRef: Ref<string[]> = ref([]);
 
     /** Mounted */
     onMounted(async () => {
@@ -360,6 +390,36 @@
                 break;
             default:
                 selectedFacture.value = null;
+        }
+    }
+
+    /**
+     * Affiche une boîte de dialogue en fonction du code de retour reçu.
+     * @param code Code de retour 
+     * @param message Message de retour
+     * @param details Informations supplémentaires sur le message de retour
+     */
+    function showAlertDialog(code: number, message: string, details: string[]) {
+        messageRef.value = message
+        detailsRef.value = details
+        switch(code){
+            case ResultCode.Success:
+                typeRef.value = 'success';  // Code 0 : succès
+                alertDialog.value = true;   // Affiche la boite de dialogue
+                break
+            case ResultCode.Warning:
+                typeRef.value = 'warning';  // Code 1 : echec
+                alertDialog.value = true;   // Affiche la boite de dialogue
+                break
+            case ResultCode.Cancel:
+                // Code 2 : Annulation de la transaction
+                break
+            default: 
+                typeRef.value = 'error'; // 
+                alertDialog.value = true;
+                detailsRef.value = [`Code de retour inconnu : ${code}`, `Message de retour: ${message}`, ...details] 
+                messageRef.value = "Erreur inconnu"
+                
         }
     }
 
@@ -437,5 +497,10 @@
             years.value = [currentYear];
             selectedYear.value = currentYear;
         }
+    }
+
+    async function generatePDF(id: string){
+        const response : CallbackMessage = await window.serviceElectron.generatePdfFromFacture(id);
+        showAlertDialog(response.code, response.message, response.details);
     }
 </script>

@@ -40,7 +40,8 @@
     "electron-json-storage": "^4.6.0",
     "electron-log": "^5.2.0",
     "electron-store": "8.2.0",
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.3.9",
+    "puppeteer": "^24.9.0"
   },
   "build": {
     "appId": "com.official-electron-vue.app",

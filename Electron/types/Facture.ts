@@ -1,5 +1,5 @@
-import { formatDate, parseDateDDMMYYYY } from "../utils/parseDate"
-import { Entreprise, isEntreprise, Statut } from "./"
+import { formatDate, parseDateDDMMYYYY } from "../utils/dateUtils"
+import { Entreprise, Statut } from "./"
 
 /**
  * Type de l'objet Facture

@@ -31,5 +31,7 @@ contextBridge.exposeInMainWorld("serviceElectron", {
     exportClients: () => ipcRenderer.invoke('exportClients'),
     importClients: () => ipcRenderer.invoke('importClients'),
     exportFactures: () => ipcRenderer.invoke('exportFactures'),
-    importFactures: () => ipcRenderer.invoke('importFactures')
+    importFactures: () => ipcRenderer.invoke('importFactures'),
+    /** Générer pdf */
+    generatePdfFromFacture: (id: string) => ipcRenderer.invoke('generatePdfFromFacture', id)
 });

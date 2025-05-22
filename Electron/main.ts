@@ -29,6 +29,8 @@ import {
     // Statut
     getStatuts,
     getStatutByValue,
+    // Générer PDF
+    generatePdfFromFacture,
 } from './services';
 import { jsonStringToFacture } from "./types";
 
@@ -104,6 +106,8 @@ ipcMain.handle('exportClients', exportClients);
 ipcMain.handle('importClients', importClients);
 ipcMain.handle('exportFactures', exportFactures);
 ipcMain.handle('importFactures', importFactures);
+// Générer PDF
+ipcMain.handle('generatePdfFromFacture', generatePdfFromFacture);
 // Versions
 ipcMain.handle('versions', () => {
     return {
