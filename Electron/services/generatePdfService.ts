@@ -11,35 +11,49 @@ import { calculMontantHT, calculTVA, calculMontantTTC } from '../utils/factureUt
 
 const templatesPath = isDev ? './Electron/templates' : path.join(process.resourcesPath, 'Electron/templates');
 
-
-async function generatePdfFromFacture(_event: any, id: string): Promise<CallbackMessage> {
+/**
+ * 
+ * @param _event 
+ * @param id 
+ * @returns 
+ */
+async function generatePdfFromFacture(_event: any, id: string): Promise<{ response : CallbackMessage, url: string }> {
     const fullFacture = getFullFactureById(id);
     
-    if (!fullFacture){
-        return {
-            code: 1,
-            message: "Conversion de la facture en PDF échouée.",
-            details: []
-        };
+    // Si la facture n'est pas trouvé alors on retourne un echec
+    if (!fullFacture){        
+        return { 
+            response:{
+                code: 1,
+                message: "Conversion de la facture en PDF échouée.",
+                details: [`Facture ${id} introuvable.`]
+            },
+            url: ''
+        }
     }
-
+    // Nom par défaut du fichier
     const fileName = `${fullFacture.isAvoir ? "AVOIR" : "FACTURE"}-` + `${fullFacture.id}-` + `${fullFacture.client.nom.toUpperCase().replaceAll(' ', '-')}` 
+    // Fenêtre de dialogue pour choisir l'emplacement de sauvegarde de la facture
     const result = await dialog.showSaveDialog({
         title: "Exporter facture en PDF",
         defaultPath: fileName,
         filters: [{ name: 'PDF', extensions: ['pdf'] }]
     });
 
+    // Si l'opération a été annulé
     if (result.canceled) {
-        return {
-            code: 2,
-            message: "Export annulé.",
-            details: []
+        return{ 
+            response:{
+                code: 2,
+                message: "Export annulé.",
+                details: []
+            },
+            url: ''
         };
     }
 
-    const filePath = result.filePath;
-    const html = renderTemplate(fullFacture)
+    const filePath = result.filePath; // Chemin absolu vers le fichier pdf
+    const html = renderTemplate(fullFacture); // le template facture en html modifié
     const header = getHeaderTemplate();
     const footer = getFooterTemplate();
 
@@ -49,14 +63,14 @@ async function generatePdfFromFacture(_event: any, id: string): Promise<Callback
     // Injecte le HTML brut au lieu de charger une URL
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    //  Génère un PDF propre sans en-têtes/pieds du navigateur
+    //  Génère un PDF propre avec en-têtes/pieds de page personnalisé
     await page.pdf({
         path: filePath,
-        format: 'A4',
+        format: 'A4', // Le format du pdf
         printBackground: true, // Pour inclure couleurs de fond
-        displayHeaderFooter: true,
+        displayHeaderFooter: true, // Autorise l'affichage des en-têtes/pieds de page
         headerTemplate: header, // Header du PDF
-        footerTemplate: footer, // Footer du PDF : page/totalPages ex: Page 1 / 1
+        footerTemplate: footer, // Footer du PDF
         margin: {
             top: "60px",
             bottom: "40px"
@@ -66,10 +80,13 @@ async function generatePdfFromFacture(_event: any, id: string): Promise<Callback
     await browser.close();
 
     return {
-        code: 0,
-        message: "Export de la facture en PDF réussi.",
-        details: []
-    };
+        response: {
+            code: 0,
+            message: "Export de la facture en PDF réussi.",
+            details: []
+        },
+        url: filePath
+    }
 }
 
 /**

@@ -213,7 +213,7 @@
         />
     </v-dialog>
 
-    <!-- Dialog de màj d'une facture -->
+    <!-- Dialogue de màj d'une facture -->
     <v-dialog
         v-model="updateFactureDialog"
         width="75%"
@@ -254,9 +254,10 @@
             />
     </v-dialog>
 
-    <!-- Boite de dialoge : Alerte dialog -->
+    <!-- Boite de dialogue : Alerte dialog -->
     <v-dialog
         v-model="alertDialog"
+        :max-width="600"
     >
         <AlertDialog
             v-model="alertDialog"
@@ -264,7 +265,19 @@
             :details="detailsRef"
             :type="typeRef"
         />
-    </v-dialog>    
+    </v-dialog>
+    
+    <!-- Boite de dialogue : Visualiser pdf -->
+    <v-dialog
+        v-model="pdfDialog"
+        persistent
+        v-if="urlPdf.length !== 0"
+    >
+        <ViewerPDF 
+            :url-pdf="urlPdf"
+            @cancel="pdfDialog = false"
+        />
+    </v-dialog>
 </template>
 <script setup lang="ts">
     import { FullFactureType, FactureType, StatutType, ResultCode, CallbackMessage } from '../../../types';
@@ -286,6 +299,7 @@
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
     import AlertDialog from '../dialogs/AlertDialog.vue';
+    import ViewerPDF from '../viewer/ViewerPDF.vue';
 
     /**
      * Paramètres du composant
@@ -324,11 +338,15 @@
     const deleteFactureDialog: Ref<boolean> = ref(false);
     const addDatePaiementDialog: Ref<boolean> = ref(false);
     const alertDialog: Ref<boolean> = ref(false);
+    const pdfDialog: Ref<boolean> = ref(false);
     
     // Le type de la boite de dialogue ne peut prendre que les valeurs suivantes ("success" | "info" | "warning" | "error" | undefined)
     const typeRef: Ref<string> = ref("");
     const messageRef: Ref<string> = ref("");
     const detailsRef: Ref<string[]> = ref([]);
+
+    /** Variable contenant l'url du pdf */
+    const urlPdf: Ref<string> = ref('');
 
     /** Mounted */
     onMounted(async () => {
@@ -507,8 +525,13 @@
      * @param {string} id - Identifiant de la facture à exporter en PDF.
      */
     async function generatePDF(id: string) {
-        const response: CallbackMessage = await window.serviceElectron.generatePdfFromFacture(id);
+        const { response, url } = await window.serviceElectron.generatePdfFromFacture(id) as { response: CallbackMessage, url: string }
         showAlertDialog(response.code, response.message, response.details);
+        if (response.code == ResultCode.Success){
+            alertDialog.value = false;
+            urlPdf.value = url;
+            pdfDialog.value = true;
+        }
     }
 
 </script>

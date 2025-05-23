@@ -48,6 +48,7 @@ async function createWindow() {
         minHeight: 600,
 
         webPreferences: {
+            webSecurity: false, // Temporaire
             preload: __dirname + "/preload.js",
             devTools: isDev,
         },
