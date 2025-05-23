@@ -499,8 +499,16 @@
         }
     }
 
-    async function generatePDF(id: string){
-        const response : CallbackMessage = await window.serviceElectron.generatePdfFromFacture(id);
+    /**
+     * Génère un fichier PDF à partir de l'identifiant d'une facture.
+     * Utilise le service Electron pour effectuer l'export, puis affiche les informations
+     * sur le résultat de l'opération.
+     *
+     * @param {string} id - Identifiant de la facture à exporter en PDF.
+     */
+    async function generatePDF(id: string) {
+        const response: CallbackMessage = await window.serviceElectron.generatePdfFromFacture(id);
         showAlertDialog(response.code, response.message, response.details);
     }
+
 </script>

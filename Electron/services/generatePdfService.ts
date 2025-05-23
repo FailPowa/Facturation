@@ -72,55 +72,76 @@ async function generatePdfFromFacture(_event: any, id: string): Promise<Callback
     };
 }
 
+/**
+ * Lit et retourne le contenu HTML du template d'en-tête à insérer dans le PDF.
+ *
+ * @returns {string} - Le HTML du header, prêt à être injecté dans Puppeteer.
+ */
 function getHeaderTemplate(): string {
     const headerTemplatePath = path.join(templatesPath, 'headerTemplate.html');
     const headerTemplateHtml = fs.readFileSync(headerTemplatePath, 'utf-8');
     return headerTemplateHtml
 }
 
+/**
+ * Lit et retourne le contenu HTML du template de pied de page à insérer dans le PDF.
+ *
+ * @returns {string} - Le HTML du footer, prêt à être injecté dans Puppeteer.
+ */
 function getFooterTemplate(): string {
     const footerTemplatePath = path.join(templatesPath, 'footerTemplate.html');
     const footerTemplateHtml = fs.readFileSync(footerTemplatePath, 'utf-8');
     return footerTemplateHtml
 }
 
-
+/**
+ * Génère une chaîne HTML à partir d'un template de facture et des données d'une facture complète.
+ * Remplace dynamiquement les balises personnalisées dans le fichier HTML par les valeurs réelles.
+ *
+ * @param {FullFacture} fullFacture - L'objet contenant toutes les informations de la facture.
+ * @returns {string} - Le contenu HTML final prêt à être rendu ou converti en PDF.
+ */
 function renderTemplate(fullFacture: FullFacture): string {
     const templatePath = path.join(templatesPath, 'factureTemplate.html');
     const templateContent = fs.readFileSync(templatePath, 'utf8');
 
-    const formatterEuro = new Intl.NumberFormat("fr-FR", {
+    // Formatage des nombres pour afficher les nombres avec 2 décimales (ex: 122 => 122,00)
+    const formater = new Intl.NumberFormat("fr-FR", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     })
 
+    // Calcul des dates de début et de fin du mois de la facture
     const startDate = new Date(fullFacture.date.getFullYear(), fullFacture.date.getMonth(), 1);
     const endDate = new Date(fullFacture.date.getFullYear(), fullFacture.date.getMonth() + 1, 0);
+
+    // Calcul des montants
     const montantHt = calculMontantHT(fullFacture.tjm, fullFacture.nbJours);
     const montantTva = calculTVA(montantHt, fullFacture.tva);
     const montantTTC = calculMontantTTC(fullFacture.tjm, fullFacture.nbJours, fullFacture.tva);
 
-    const datePaiementMax =new Date(fullFacture.date.getDate());
+    // Date limite de paiement = date de facture + nombre de jours pour payer
+    const datePaiementMax = new Date(fullFacture.date.getDate());
     datePaiementMax.setDate(datePaiementMax.getDate() + fullFacture.nbJoursPaiement)
 
 
     // Remplacer les balises dynamiques du template par les valeurs
     const html = templateContent
-        // Remplacer les balises de la facture
+        // Remplace les balises de la facture
         .replace(/\[FACTURE-ID]/g, fullFacture.id)
         .replace(/\[FACTURE-TYPE]/g, `${fullFacture.isAvoir ? "AVOIR" : "FACTURE"}`)
         .replace(/\[FACTURE-DATE]/, `${formatDateWithWeekday(fullFacture.date)}`)
-        .replace(/\[FACTURE-TJM]/g, `${formatterEuro.format(fullFacture.tjm).replace(/\u202F/, ' ')}`)
+        .replace(/\[FACTURE-TJM]/g, `${formater.format(fullFacture.tjm).replace(/\u202F/, ' ')}`)
         .replace(/\[FACTURE-START-DATE]/g, `${formatDate(startDate)}`)
         .replace(/\[FACTURE-END-DATE]/g, `${formatDate(endDate)}`)
         .replace(/\[FACTURE-DATE-PAIEMENT-MAX]/g, `${formatDate(datePaiementMax)}`)
         .replace(/\[FACTURE-NB-JOURS-PAIEMENT]/g, `${fullFacture.nbJoursPaiement}`)
-        .replace(/\[FACTURE-NB-JOURS]/g, `${formatterEuro.format(fullFacture.nbJours)}`)
+        .replace(/\[FACTURE-NB-JOURS]/g, `${formater.format(fullFacture.nbJours)}`)
         .replace(/\[FACTURE-TVA]/g, `${fullFacture.tva ? "20" : "0"}`)
-        .replace(/\[FACTURE-MONTANT-HT]/g, `${formatterEuro.format(montantHt).replace(/\u202F/, ' ')}`)
-        .replace(/\[FACTURE-MONTANT-TVA]/g, `${formatterEuro.format(montantTva).replace(/\u202F/, ' ')}`)
-        .replace(/\[FACTURE-MONTANT-TTC]/g, `${formatterEuro.format(montantTTC).replace(/\u202F/, ' ')}`)
-        // Remplacer les balises de l'entreprise prestataire
+        .replace(/\[FACTURE-MONTANT-HT]/g, `${formater.format(montantHt).replace(/\u202F/, ' ')}`)
+        .replace(/\[FACTURE-MONTANT-TVA]/g, `${formater.format(montantTva).replace(/\u202F/, ' ')}`)
+        .replace(/\[FACTURE-MONTANT-TTC]/g, `${formater.format(montantTTC).replace(/\u202F/, ' ')}`)
+        // Remplace les balises de l'entreprise prestataire
         .replace(/\[ENTREPRISE-NOM]/g, fullFacture.entreprise.nom)
         .replace(/\[ENTREPRISE-MAIL]/g, fullFacture.entreprise.mail)
         .replace(/\[ENTREPRISE-ADRESSE]/g, fullFacture.entreprise.adresse)
@@ -133,7 +154,7 @@ function renderTemplate(fullFacture: FullFacture): string {
                 'N° TVA Intracommunautaire : ' + fullFacture.entreprise.numTva : ""
             }`
         )
-        // Remplacer les balises de l'entreprise cliente
+        // Remplace les balises de l'entreprise cliente
         .replace(/\[CLIENT-NOM]/g, fullFacture.client.nom)
         .replace(/\[CLIENT-ADRESSE]/g, fullFacture.client.adresse)
         .replace(/\[CLIENT-CP]/g, fullFacture.client.codePostal)
