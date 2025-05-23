@@ -15,17 +15,19 @@ const templatesPath = isDev ? './Electron/templates' : path.join(process.resourc
 async function generatePdfFromFacture(_event: any, id: string): Promise<CallbackMessage> {
     const fullFacture = getFullFactureById(id);
     
-    
-    if (!fullFacture)
+    if (!fullFacture){
         return {
             code: 1,
             message: "Conversion de la facture en PDF échouée.",
             details: []
         };
+    }
 
+    const fileName = `${fullFacture.isAvoir ? "AVOIR" : "FACTURE"}-` + `${fullFacture.id}-` + `${fullFacture.client.nom.toUpperCase().replaceAll(' ', '-')}` 
     const result = await dialog.showSaveDialog({
         title: "Exporter facture en PDF",
-        filters: [{ name: 'pdf', extensions: ['pdf'] }]
+        defaultPath: fileName,
+        filters: [{ name: 'PDF', extensions: ['pdf'] }]
     });
 
     if (result.canceled) {
@@ -55,6 +57,10 @@ async function generatePdfFromFacture(_event: any, id: string): Promise<Callback
         displayHeaderFooter: true,
         headerTemplate: header, // Header du PDF
         footerTemplate: footer, // Footer du PDF : page/totalPages ex: Page 1 / 1
+        margin: {
+            top: "60px",
+            bottom: "40px"
+        }
     });
 
     await browser.close();
@@ -82,25 +88,27 @@ function getFooterTemplate(): string {
 function renderTemplate(fullFacture: FullFacture): string {
     const templatePath = path.join(templatesPath, 'factureTemplate.html');
     const templateContent = fs.readFileSync(templatePath, 'utf8');
-    
+
     const formatterEuro = new Intl.NumberFormat("fr-FR", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     })
 
     const startDate = new Date(fullFacture.date.getFullYear(), fullFacture.date.getMonth(), 1);
-    const endDate = new Date(fullFacture.date.getFullYear(), fullFacture.date.getMonth() + 1, -1);
+    const endDate = new Date(fullFacture.date.getFullYear(), fullFacture.date.getMonth() + 1, 0);
     const montantHt = calculMontantHT(fullFacture.tjm, fullFacture.nbJours);
     const montantTva = calculTVA(montantHt, fullFacture.tva);
     const montantTTC = calculMontantTTC(fullFacture.tjm, fullFacture.nbJours, fullFacture.tva);
 
-    const datePaiementMax =new Date(fullFacture.date.setDate(fullFacture.date.getDate() + fullFacture.nbJoursPaiement));
+    const datePaiementMax =new Date(fullFacture.date.getDate());
+    datePaiementMax.setDate(datePaiementMax.getDate() + fullFacture.nbJoursPaiement)
+
 
     // Remplacer les balises dynamiques du template par les valeurs
     const html = templateContent
         // Remplacer les balises de la facture
         .replace(/\[FACTURE-ID]/g, fullFacture.id)
-        .replace(/\[FACTURE-TYPE]/g, `${fullFacture.isAvoir ? "Avoir" : "Facture"}`)
+        .replace(/\[FACTURE-TYPE]/g, `${fullFacture.isAvoir ? "AVOIR" : "FACTURE"}`)
         .replace(/\[FACTURE-DATE]/, `${formatDateWithWeekday(fullFacture.date)}`)
         .replace(/\[FACTURE-TJM]/g, `${formatterEuro.format(fullFacture.tjm).replace(/\u202F/, ' ')}`)
         .replace(/\[FACTURE-START-DATE]/g, `${formatDate(startDate)}`)
