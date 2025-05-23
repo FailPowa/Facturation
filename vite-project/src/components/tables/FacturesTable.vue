@@ -166,7 +166,7 @@
                             </v-icon>
                             <!-- Bouton Générer PDF -->
                             <v-icon
-                                v-if="item.statut.value === 'PAYEE'"
+                                v-if="item.statut.value !== 'BROUILLON'"
                                 color="red"
                                 size="small"
                                 @click="generatePDF(item.id)"

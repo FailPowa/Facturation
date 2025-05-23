@@ -36,6 +36,7 @@ function formatDateWithWeekday(date: Date): string {
 
 
 
+
 export {
     parseDateDDMMYYYY,
     formatDate,
