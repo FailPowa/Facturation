@@ -69,37 +69,50 @@
     const chartData = computed(() => {
         const sortedFactures = factures.value.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-        // Récupérer les mois (abrégés) pour chaque facture
-        const monthsLabels = sortedFactures.map(facture =>
-            months[facture.date.getMonth()]
+        // Récupérer les mois pour chaque facture
+        const monthsLabels: string[] = []
+        sortedFactures.forEach( (facture: FullFactureType) =>{
+            if (!monthsLabels.includes(months[facture.date.getMonth()])) 
+                monthsLabels.push(months[facture.date.getMonth()])
+        }
         );
 
         // Factures payés et impayés
-        const dataFactures = sortedFactures.map(facture => {
-            const montantHT = facture.tjm * facture.nbJours;
-            return facture.tva ? montantHT * 1.2 : montantHT;
+        const dataFactures: Record<string, number> = {}
+        sortedFactures.forEach(facture => {
+            const month = months[facture.date.getMonth()]
+            if (dataFactures[month]){
+                dataFactures[month] += calculMontantTTC(facture)
+            }else{
+                dataFactures[month] = calculMontantTTC(facture);
+            }
         })
 
         // Factures payés seulement
-        const dataFacturesSansImpayes = sortedFactures
-        .filter(facture => facture.statut.value === "PAYEE")
-        .map(facture => {
-            const montantHT = facture.tjm * facture.nbJours;
-            return facture.tva ? montantHT * 1.2 : montantHT;
-        });
+        const dataFacturesSansImpayes: Record<string, number> = {}
+        sortedFactures.forEach(facture => {
+            const month = months[facture.date.getMonth()]
+            if (dataFacturesSansImpayes[month] && facture.statut.value === 'PAYEE'){
+                dataFacturesSansImpayes[month] += calculMontantTTC(facture)
+            }else if (!dataFacturesSansImpayes[month] && facture.statut.value === 'PAYEE'){
+                dataFacturesSansImpayes[month] = calculMontantTTC(facture);
+            }else if (!dataFacturesSansImpayes[month] && facture.statut.value === 'IMPAYEE'){
+                dataFacturesSansImpayes[month] = 0;
+            }
+        })
 
         return {
             labels: monthsLabels,
             datasets: [
                 {
                     label: `Factures ${year.value} (Sans les factures impayés)`,
-                    data: dataFacturesSansImpayes,
+                    data: Object.values(dataFacturesSansImpayes),
                     fill: false,
                     tension: 0.3
                 },
                 {
                     label: `Factures ${year.value} (Avec les factures impayés)`,
-                    data: dataFactures,
+                    data: Object.values(dataFactures),
                     fill: false,
                     tension: 0.3
                 }
@@ -142,6 +155,12 @@
         if(chartRef.value) {
             chartRef.value.chartInstance.update()
         }
+    }
+
+    /** Calcul le montant TTC d'une facture */
+    function calculMontantTTC(facture: FullFactureType): number {
+        const montantHT = facture.tjm * facture.nbJours;
+        return facture.tva ? montantHT * 1.2 : montantHT;
     }
 
 </script>

@@ -138,7 +138,7 @@ function renderTemplate(fullFacture: FullFacture): string {
     const montantTTC = calculMontantTTC(fullFacture.tjm, fullFacture.nbJours, fullFacture.tva);
 
     // Date limite de paiement = date de facture + nombre de jours pour payer
-    const datePaiementMax = new Date(fullFacture.date.getDate());
+    const datePaiementMax = new Date(fullFacture.date.getTime());
     datePaiementMax.setDate(datePaiementMax.getDate() + fullFacture.nbJoursPaiement)
 
 
