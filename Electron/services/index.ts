@@ -16,6 +16,7 @@ import {
     getFullFacturesByYear,
     getAllFacturesYears,
     getLastFacture,
+    getFullFactureById,
     isClientInFactures,
     addFacture,
     updateFacture,
@@ -23,6 +24,9 @@ import {
     exportFactures,
     importFactures
 } from "./factureService";
+import {
+    generatePdfFromFacture
+} from "./generatePdfService";
 
 
 export {
@@ -44,6 +48,7 @@ export {
     getFullFacturesByYear,
     getAllFacturesYears,
     getLastFacture,
+    getFullFactureById,
     isClientInFactures,
     addFacture,
     updateFacture,
@@ -53,5 +58,7 @@ export {
     // Statut
     getStatuts,
     getStatutById,
-    getStatutByValue
+    getStatutByValue,
+    // Génération de PDF
+    generatePdfFromFacture
 }

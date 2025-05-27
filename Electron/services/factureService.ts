@@ -6,12 +6,11 @@ import {
     objToFacture, 
     factureToObject, 
     CallbackMessage,
-    isFactureArray,
     isFullFactureArray
 } from "../types";
 import { getClientById, getClientBySiret, getMyEntreprise } from "./entrepriseService";
-import { getStatutById, getStatuts } from "./statutService";
-import { formatDate, parseDateDDMMYYYY } from '../utils/parseDate';
+import { getStatutById } from "./statutService";
+import { formatDate, parseDateDDMMYYYY } from '../utils/dateUtils';
 
 /** Variable stockant le nom du fichier json stockant les factures */
 const jsonFile = 'facture.json'
@@ -127,6 +126,17 @@ function getAllFacturesYears(): number[]{
     return years;   
 }
 
+/**
+ * Récupère un id et renvoie la facture retrouvé ou null
+ * 
+ * @param {String} id : Identifiant de la facture recherché
+ * @returns FullFacture or null
+ */
+function getFullFactureById(id: string): FullFacture | null {
+    const fullFactures = getFullFactures();
+    const factureFinded = fullFactures.find((facture) => facture.id === id) || null
+    return factureFinded
+}
 
 /**
  * Ajoute une nouvelle facture
@@ -435,6 +445,7 @@ export {
     getFullFactures,
     getFullFacturesByYear,
     getLastFacture,
+    getFullFactureById,
     isClientInFactures,
     addFacture,
     updateFacture,

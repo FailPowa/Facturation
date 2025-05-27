@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
     import { Ref, ref } from 'vue';
-    import { CallbackMessage } from '../../../types';
+    import { CallbackMessage, ResultCode } from '../../../types';
     import AlertDialog from '../dialogs/AlertDialog.vue';
 
     // Variable des boites de dialogues
@@ -82,13 +82,6 @@
     const typeRef: Ref<string> = ref("");
     const messageRef: Ref<string> = ref("");
     const detailsRef: Ref<string[]> = ref([]);
-
-    // Enumération contenant les different code de retour
-    enum ResultCode {
-        Success = 0,
-        Warning = 1,
-        Cancel = 2
-    }
 
     /**
      * Affiche une boîte de dialogue en fonction du code de retour reçu.

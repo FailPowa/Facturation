@@ -164,6 +164,15 @@
                             >
                                 {{ icons.mdiEyeOutline }}
                             </v-icon>
+                            <!-- Bouton Générer PDF -->
+                            <v-icon
+                                v-if="item.statut.value !== 'BROUILLON'"
+                                color="red"
+                                size="small"
+                                @click="generatePDF(item.id)"
+                            >
+                                {{ icons.mdiFileDownloadOutline }}
+                            </v-icon>
                             <!-- Bouton Modifier -->
                             <v-icon
                                 v-if="item.statut.value !== 'PAYEE'"
@@ -204,7 +213,7 @@
         />
     </v-dialog>
 
-    <!-- Dialog de màj d'une facture -->
+    <!-- Dialogue de màj d'une facture -->
     <v-dialog
         v-model="updateFactureDialog"
         width="75%"
@@ -244,9 +253,34 @@
                 @confirm="deleteFacture"
             />
     </v-dialog>
+
+    <!-- Boite de dialogue : Alerte dialog -->
+    <v-dialog
+        v-model="alertDialog"
+        :max-width="600"
+    >
+        <AlertDialog
+            v-model="alertDialog"
+            :title="messageRef"
+            :details="detailsRef"
+            :type="typeRef"
+        />
+    </v-dialog>
+    
+    <!-- Boite de dialogue : Visualiser pdf -->
+    <v-dialog
+        v-model="pdfDialog"
+        persistent
+        v-if="urlPdf.length !== 0"
+    >
+        <ViewerPDF 
+            :url-pdf="urlPdf"
+            @cancel="pdfDialog = false"
+        />
+    </v-dialog>
 </template>
 <script setup lang="ts">
-    import { FullFactureType, FactureType, StatutType } from '../../../types';
+    import { FullFactureType, FactureType, StatutType, ResultCode, CallbackMessage } from '../../../types';
     import { Ref, ref, onMounted, watch } from 'vue';
     import { 
         mdiReceiptTextPlusOutline, 
@@ -254,7 +288,8 @@
         mdiPencilOutline, 
         mdiEyeOutline,
         mdiCheckCircleOutline,
-        mdiMinusCircleOutline
+        mdiMinusCircleOutline,
+        mdiFileDownloadOutline
     } from '@mdi/js';
     import { factureHeaders } from './headers';
     import { formatDate, getCurrentYear } from '../../../plugins/dateFormatter';
@@ -263,6 +298,8 @@
     import StatutChip from '../chips/StatutChip.vue';
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
+    import AlertDialog from '../dialogs/AlertDialog.vue';
+    import ViewerPDF from '../viewer/ViewerPDF.vue';
 
     /**
      * Paramètres du composant
@@ -282,7 +319,8 @@
         mdiPencilOutline, 
         mdiEyeOutline,
         mdiCheckCircleOutline,
-        mdiMinusCircleOutline
+        mdiMinusCircleOutline,
+        mdiFileDownloadOutline
     };
 
     /** Sélecteur d'année */
@@ -299,6 +337,16 @@
     const updateFactureDialog: Ref<boolean> = ref(false);
     const deleteFactureDialog: Ref<boolean> = ref(false);
     const addDatePaiementDialog: Ref<boolean> = ref(false);
+    const alertDialog: Ref<boolean> = ref(false);
+    const pdfDialog: Ref<boolean> = ref(false);
+    
+    // Le type de la boite de dialogue ne peut prendre que les valeurs suivantes ("success" | "info" | "warning" | "error" | undefined)
+    const typeRef: Ref<string> = ref("");
+    const messageRef: Ref<string> = ref("");
+    const detailsRef: Ref<string[]> = ref([]);
+
+    /** Variable contenant l'url du pdf */
+    const urlPdf: Ref<string> = ref('');
 
     /** Mounted */
     onMounted(async () => {
@@ -360,6 +408,36 @@
                 break;
             default:
                 selectedFacture.value = null;
+        }
+    }
+
+    /**
+     * Affiche une boîte de dialogue en fonction du code de retour reçu.
+     * @param code Code de retour 
+     * @param message Message de retour
+     * @param details Informations supplémentaires sur le message de retour
+     */
+    function showAlertDialog(code: number, message: string, details: string[]) {
+        messageRef.value = message
+        detailsRef.value = details
+        switch(code){
+            case ResultCode.Success:
+                typeRef.value = 'success';  // Code 0 : succès
+                alertDialog.value = true;   // Affiche la boite de dialogue
+                break
+            case ResultCode.Warning:
+                typeRef.value = 'warning';  // Code 1 : echec
+                alertDialog.value = true;   // Affiche la boite de dialogue
+                break
+            case ResultCode.Cancel:
+                // Code 2 : Annulation de la transaction
+                break
+            default: 
+                typeRef.value = 'error'; // 
+                alertDialog.value = true;
+                detailsRef.value = [`Code de retour inconnu : ${code}`, `Message de retour: ${message}`, ...details] 
+                messageRef.value = "Erreur inconnu"
+                
         }
     }
 
@@ -438,4 +516,22 @@
             selectedYear.value = currentYear;
         }
     }
+
+    /**
+     * Génère un fichier PDF à partir de l'identifiant d'une facture.
+     * Utilise le service Electron pour effectuer l'export, puis affiche les informations
+     * sur le résultat de l'opération.
+     *
+     * @param {string} id - Identifiant de la facture à exporter en PDF.
+     */
+    async function generatePDF(id: string) {
+        const { response, url } = await window.serviceElectron.generatePdfFromFacture(id) as { response: CallbackMessage, url: string }
+        showAlertDialog(response.code, response.message, response.details);
+        if (response.code == ResultCode.Success){
+            alertDialog.value = false;
+            urlPdf.value = url;
+            pdfDialog.value = true;
+        }
+    }
+
 </script>
