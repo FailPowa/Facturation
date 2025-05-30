@@ -10,7 +10,7 @@
                         color="success"
                         @click="addClientDialog = true"
                     >
-                        <b class="me-2">Ajouter client</b>
+                        <b class="me-2">Ajouter un client</b>
                         <v-icon
                             variant="outlined"
                             color="primary"

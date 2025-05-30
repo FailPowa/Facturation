@@ -32,9 +32,9 @@
 <script setup lang="ts">
     import { ref, Ref, shallowRef } from 'vue';
     import {
-        HelpTabAddEvent,
-        HelpTabUpdateEvent,
-        HelpTabDeleteEvent,
+        HelpTabAddClientEvent,
+        HelpTabUpdateClientEvent,
+        HelpTabDeleteClientEvent,
         HelpTabUpdateDurationEvent,
         HelpTabUpdateTrancheEvent,
         HelpTabUpdateStatutEvent,
@@ -44,14 +44,19 @@
 
     const tabs = shallowRef([
         {
-            text: 'Comment ajouter une tâche ?',
+            text: 'Comment ajouter un client ?',
             value: 'add-event',
-            component: HelpTabAddEvent
+            component: HelpTabAddClientEvent
         },
         {
-            text: 'Comment modifier une tâche ?',
+            text: 'Comment modifier un client ?',
             value: 'update-event',
-            component: HelpTabUpdateEvent
+            component: HelpTabUpdateClientEvent
+        },
+        {
+            text: 'Comment supprimer un client ?',
+            value: 'delete-event',
+            component: HelpTabDeleteClientEvent
         },
         {
             text: 'Comment modifier la durée d\'une tâche ?',
@@ -69,11 +74,6 @@
             component: HelpTabUpdateStatutEvent
         },
         {
-            text: 'Comment supprimer une tâche ?',
-            value: 'delete-event',
-            component: HelpTabDeleteEvent
-        },
-        {
             text: 'Comment filtrer mes tâches ?',
             value: 'filter-event',
             component: HelpTabFilterEvent
@@ -85,5 +85,4 @@
         }
     ]);
     const activeTab: Ref<string> = ref('add-event');
-    const delay = ref(1)
 </script>
