@@ -10,10 +10,10 @@ export const greenTheme: ThemeDefinition = {
         primary: '#b7d6ce',
         secondary: '#b7d6ce',
         accent: '#bad8d8',
-        error: '#917d6d',
-        info: '#746789',
-        success: '#82a388',
-        warning: '#a3977e'
+        error: '#D32F2F',
+        info: '#0288D1',
+        success: '#388E3C',
+        warning: '#F57C00'
     },
     variables: {
         'border': '2px',

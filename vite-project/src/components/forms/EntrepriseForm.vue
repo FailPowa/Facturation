@@ -130,7 +130,7 @@
         codePostal: props.entreprise?.codePostal || "",
         ville: props.entreprise?.ville || "",
         mail: props.entreprise?.mail || "",
-        numTva: props.entreprise?.mail || "",
+        numTva: props.entreprise?.numTva || "",
         siret: props.entreprise?.siret || "",
         isMe: props.entreprise?.isMe || false
     });

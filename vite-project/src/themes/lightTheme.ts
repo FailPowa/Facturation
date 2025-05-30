@@ -10,10 +10,10 @@ export const lightTheme: ThemeDefinition = {
         primary: '#9ea2bc',
         secondary: '#000000',
         accent: '#9e8baa',
-        error: '#917d6d',
-        info: '#858b99',
-        success: '#82a388',
-        warning: '#a8a78a'
+        error: '#D32F2F',
+        info: '#0288D1',
+        success: '#388E3C',
+        warning: '#F57C00'
     },
     variables: {
         'border': '1px',

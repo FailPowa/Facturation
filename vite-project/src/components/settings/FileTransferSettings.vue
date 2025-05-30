@@ -56,32 +56,15 @@
             </v-col>
         </v-row>
     </v-container>
-    <!-- Boite de dialoge : Alerte suppression client -->
-    <v-dialog
-        v-model="alertDialog"
-    >
-        <AlertDialog
-            v-model="alertDialog"
-            :title="messageRef"
-            :details="detailsRef"
-            :type="typeRef"
-        />
-    </v-dialog>    
 </template>
 
 
 <script setup lang="ts">
-    import { Ref, ref } from 'vue';
     import { CallbackMessage, ResultCode } from '../../../types';
-    import AlertDialog from '../dialogs/AlertDialog.vue';
-
-    // Variable des boites de dialogues
-    const alertDialog = ref(false);
+    import { useUiStore } from '../../stores/ui';
     
-    // Le type de la boite de dialogue ne peut prendre que les valeurs suivantes ("success" | "info" | "warning" | "error" | undefined)
-    const typeRef: Ref<string> = ref("");
-    const messageRef: Ref<string> = ref("");
-    const detailsRef: Ref<string[]> = ref([]);
+    /** Stores  */
+    const uiStore = useUiStore();
 
     /**
      * Affiche une boîte de dialogue en fonction du code de retour reçu.
@@ -89,26 +72,19 @@
      * @param message Message de retour
      * @param details Informations supplémentaires sur le message de retour
      */
-    function showAlertDialog(code: number, message: string, details: string[]) {
-        messageRef.value = message
-        detailsRef.value = details
+    function showAlertDialog(code: number, message: string) {
         switch(code){
             case ResultCode.Success:
-                typeRef.value = 'success';  // Code 0 : succès
-                alertDialog.value = true;   // Affiche la boite de dialogue
+                uiStore.showMessage(message, 'success')
                 break
             case ResultCode.Warning:
-                typeRef.value = 'warning';  // Code 1 : echec
-                alertDialog.value = true;   // Affiche la boite de dialogue
+                uiStore.showMessage(message, 'warning')
                 break
             case ResultCode.Cancel:
                 // Code 2 : Annulation de la transaction
                 break
             default: 
-                typeRef.value = 'error'; // 
-                alertDialog.value = true;
-                detailsRef.value = [`Code de retour inconnu : ${code}`, `Message de retour: ${message}`, ...details] 
-                messageRef.value = "Erreur inconnu"
+                uiStore.showMessage("Erreur inconnu : " + `${code}`, 'error')
                 
         }
     }
@@ -118,7 +94,7 @@
      */
     async function exportClients() {
         const response: CallbackMessage = await window.serviceElectron.exportClients();
-        showAlertDialog(response.code, response.message, response.details);
+        showAlertDialog(response.code, response.message);
     }
 
     /**
@@ -126,7 +102,7 @@
      */
     async function exportFactures() {
         const response: CallbackMessage = await window.serviceElectron.exportFactures();
-        showAlertDialog(response.code, response.message, response.details);
+        showAlertDialog(response.code, response.message);
     }
 
     /**

@@ -1,56 +1,60 @@
 <template>
-    <v-container>
-        <v-alert
-            v-model="model"
-            :type="type"
-            :title="props.title"
-            :text="props.text"
-            closable
-        >
-            <!-- Affichage des détails si fournis -->
-            
-            <template v-if="props.details?.length">
-                <v-divider class="my-2" />
-
-                <v-expansion-panels :color="props.type" variant="accordion" class="mt-2">
-                    <v-expansion-panel :color="props.type">
-                        <v-expansion-panel-title :color="props.type">
-                            Afficher les détails ({{ props.details.length }})
-                        </v-expansion-panel-title>
-
-                        <v-expansion-panel-text>
-                            <v-virtual-scroll
-                                :items="props.details"
-                                height="200"
-                                item-height="30"
-                                
-                            >
-                                <template #default="{ item }">
-                                    <v-list-item class="text-caption py-1">{{ item }}</v-list-item>
-                                </template>
-                            </v-virtual-scroll>
-                        </v-expansion-panel-text>
-                    </v-expansion-panel>
-                </v-expansion-panels>
-            </template>
-        </v-alert>
-    </v-container>
+    <v-alert
+        v-model="model"
+        :type="props.intent"
+        class=""
+        elevation="10"
+        closable
+        width="600"
+        @click:close="emits('close')"
+        @vue:mounted="displayTemporarily"
+    >
+        <slot></slot>
+    </v-alert>
 </template>
 
 
 <script setup lang="ts">
+    import { onBeforeUnmount } from 'vue';
+    import { useUiStore } from '../../stores/ui';
 
+    
     // Variable contenant le v-model du composant
     const model = defineModel({ type: Boolean})
 
     // Variable contenant les props du composant
     const props = defineProps({
-        title: { type: String, required: true },
-        type: { type: String, required: true },
-        text: { type: String, required: false },
-        details: { type: Array<String>, required: false }
+        intent: {
+            type: String,
+            default: 'info',
+            validator(value: string): boolean {
+                return ['info', 'success', 'warning', 'error'].includes(value);
+            }
+        },
+        duration: { // En seconde
+            type: Number,
+            required: false
+        }
     })
 
-    // Variable contenant le type de la boite de dialogue
-    const type = props.type as ("success" | "info" | "warning" | "error" | undefined)
+    // Evenement
+    const emits = defineEmits(['close'])
+
+    // Identifiant de la fonction timeout lancé au montage de l'alerte
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    // Terminer la fonction displayTemporarily avant le démontage
+    onBeforeUnmount(() => {
+        clearTimeout(timeoutId);
+    })
+
+    // Permet de fermer l'alerte automatiquement après une certaine durée
+    async function displayTemporarily(){
+        if (props.duration){
+            timeoutId = setTimeout(() => {
+                model.value = false;
+            }, props.duration * 1000)
+        }
+    }
 </script>
+

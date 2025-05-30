@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref, Ref } from 'vue';
+    import { onMounted, onUpdated, ref, Ref } from 'vue';
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
@@ -118,6 +118,10 @@
         mdiCog, 
         mdiArrowULeftBottom  
     } from '@mdi/js';
+    import { useMonEntreprise } from '../../stores/monEntreprise';
+    
+    /** Stores */
+    const monEntrepriseStore = useMonEntreprise();
 
     /** Variable contenant les informations de votre entreprise */
     const monEntreprise: Ref<EntrepriseType> = ref({} as EntrepriseType);
@@ -136,18 +140,18 @@
         await getMonEntreprise();
     })
 
+
     /** Récupère votre entreprise */
     async function getMonEntreprise() {
-        const result = await window.serviceElectron.getMonEntreprise();
-        monEntreprise.value = Object.assign({}, result)
-        updatingMonEntreprise.value = Object.assign({}, result)
+        await monEntrepriseStore.update();
+        monEntreprise.value = monEntrepriseStore.infos
+        updatingMonEntreprise.value = Object.assign({}, monEntrepriseStore.infos)
     }
 
     /** Met à jour les informations de votre entreprise */
-    async function updateMonEntreprise() {
-        const updatedMonEntreprise = Object.assign({}, updatingMonEntreprise.value)
+    async function updateMonEntreprise(updatedMonEntreprise: EntrepriseType) {
         await window.serviceElectron.updateClient(updatedMonEntreprise)
-        getMonEntreprise()
+        await getMonEntreprise()
         updateDialog.value = false
     }
 </script>

@@ -10,10 +10,10 @@ export const blueTheme: ThemeDefinition = {
         primary: '#bad0da',
         secondary: '#9a8a98',
         accent: '#e0eed5',
-        error: '#bca998',
-        info: '#786d8b',
-        success: '#849f92',
-        warning: '#a9a98f'
+        error: '#D32F2F',
+        info: '#0288D1',
+        success: '#388E3C',
+        warning: '#F57C00'
     },
     variables: {
         'border': '1px',

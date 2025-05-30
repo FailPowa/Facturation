@@ -10,10 +10,10 @@ export const darkTheme: ThemeDefinition = {
         primary: '#867193',
         secondary: '#a57d81',
         accent: '#a6c3c4',
-        error: '#b59991',
-        info: '#9ea2bc',
-        success: '#9fc1b8',
-        warning: '#fcb700'
+        error: '#D32F2F',
+        info: '#0288D1',
+        success: '#388E3C',
+        warning: '#F57C00'
     },
     variables: {
         'border': '1px',
