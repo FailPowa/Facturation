@@ -1,19 +1,41 @@
+// client
 import HelpTabAddClientEvent from "./HelpTabAddClientEvent.vue";
 import HelpTabUpdateClientEvent from "./HelpTabUpdateClientEvent.vue";
 import HelpTabDeleteClientEvent from "./HelpTabDeleteClientEvent.vue";
-import HelpTabUpdateDurationEvent from './HelpTabUpdateDurationEvent.vue';
-import HelpTabUpdateTrancheEvent from './HelpTabUpdateTrancheEvent.vue';
-import HelpTabUpdateStatutEvent from './HelpTabUpdateStatutEvent.vue';
-import HelpTabFilterEvent from './HelpTabFilterEvent.vue';
-import HelpTabExportImportEvent from './HelpTabExportImportEvent.vue';
+// Facture
+import HelpTabAddFactureEvent from './HelpTabAddFactureEvent.vue';
+import HelpTabUpdateFactureEvent from "./HelpTabUpdateFactureEvent.vue";
+import HelpTabDeleteFactureEvent from "./HelpTabDeleteFactureEvent.vue";
+import HelpTabUpdateFactureStatutEvent from "./HelpTabUpdateFactureStatutEvent.vue";
+import HelpTabExportFacturesPDFEvent from "./HelpTabExportFacturesPDFEvent.vue";
+// Mon entreprise
+import HelpTabUpdateMonEntrepriseEvent from "./HelpTabUpdateMonEntrepriseEvent.vue";
+import HelpTabUpdateTjmEvent from "./HelpTabUpdateTjmEvent.vue";
+// Imports/Exports
+import HelpTabExportImportClientsEvent from "./HelpTabExportImportClientsEvent.vue";
+import HelpTabExportImportFacturesEvent from "./HelpTabExportImportFacturesEvent.vue";
+import HelpTabExportImportEvent from './HelpTabExportImportClientsEvent.vue';
+
 
 export {
+    // Client
     HelpTabAddClientEvent,
     HelpTabUpdateClientEvent,
     HelpTabDeleteClientEvent,
-    HelpTabUpdateDurationEvent,
-    HelpTabUpdateTrancheEvent,
-    HelpTabUpdateStatutEvent,
-    HelpTabFilterEvent,
-    HelpTabExportImportEvent
+    HelpTabExportImportEvent,
+
+    // Factures
+    HelpTabAddFactureEvent,
+    HelpTabUpdateFactureEvent,
+    HelpTabDeleteFactureEvent,
+    HelpTabUpdateFactureStatutEvent,
+    HelpTabExportFacturesPDFEvent,
+
+    // Votre entreprise
+    HelpTabUpdateMonEntrepriseEvent,
+    HelpTabUpdateTjmEvent,
+
+    // Exports/Imports
+    HelpTabExportImportClientsEvent,
+    HelpTabExportImportFacturesEvent,
 }

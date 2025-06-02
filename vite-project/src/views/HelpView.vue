@@ -1,6 +1,7 @@
 <template>
     <v-row>
         <v-col cols="4">
+            
             <v-tabs
                 v-model="activeTab"
                 color="primary"
@@ -32,51 +33,92 @@
 <script setup lang="ts">
     import { ref, Ref, shallowRef } from 'vue';
     import {
+        // Client
         HelpTabAddClientEvent,
         HelpTabUpdateClientEvent,
         HelpTabDeleteClientEvent,
-        HelpTabUpdateDurationEvent,
-        HelpTabUpdateTrancheEvent,
-        HelpTabUpdateStatutEvent,
-        HelpTabFilterEvent,
-        HelpTabExportImportEvent
+        HelpTabExportImportEvent,
+
+        // Factures
+        HelpTabAddFactureEvent,
+        HelpTabUpdateFactureEvent,
+        HelpTabDeleteFactureEvent,
+        HelpTabUpdateFactureStatutEvent,
+        HelpTabExportFacturesPDFEvent,
+
+        // Votre entreprise
+        HelpTabUpdateMonEntrepriseEvent,
+        HelpTabUpdateTjmEvent,
+
+        // Exports/Imports
+        HelpTabExportImportClientsEvent,
+        HelpTabExportImportFacturesEvent,
     } from '../components/helpTabs';
 
     const tabs = shallowRef([
+        // Aide - Clients
         {
             text: 'Comment ajouter un client ?',
-            value: 'add-event',
+            value: 'add-client-event',
             component: HelpTabAddClientEvent
         },
         {
             text: 'Comment modifier un client ?',
-            value: 'update-event',
+            value: 'update-client-event',
             component: HelpTabUpdateClientEvent
         },
         {
             text: 'Comment supprimer un client ?',
-            value: 'delete-event',
+            value: 'delete-client-event',
             component: HelpTabDeleteClientEvent
         },
+        // Aide - Factures
         {
-            text: 'Comment modifier la durée d\'une tâche ?',
-            value: 'update-duration-event',
-            component: HelpTabUpdateDurationEvent
+            text: 'Comment ajouter une facture ?',
+            value: 'add-facture-event',
+            component: HelpTabAddFactureEvent
         },
         {
-            text: 'Comment modifier la tranche concernée d\'une tâche ?',
-            value: 'update-tranche-event',
-            component: HelpTabUpdateTrancheEvent
+            text: 'Comment modifier une facture ?',
+            value: 'update-facture-event',
+            component: HelpTabUpdateFactureEvent
         },
         {
-            text: 'Comment modifier le statut d\'une tâche ?',
-            value: 'update-statut-event',
-            component: HelpTabUpdateStatutEvent
+            text: 'Comment supprimer une facture ?',
+            value: 'delete-facture-event',
+            component: HelpTabDeleteFactureEvent
         },
         {
-            text: 'Comment filtrer mes tâches ?',
-            value: 'filter-event',
-            component: HelpTabFilterEvent
+            text: "Comment mettre à jour le statut  d'une facture ?",
+            value: 'update-facture-statut-event',
+            component: HelpTabUpdateFactureStatutEvent
+        },
+        {
+            text: 'Comment exporter ma facture en pdf ?',
+            value: 'export-facture-pdf-event',
+            component: HelpTabExportFacturesPDFEvent
+        },
+        // Aide - Mon entreprise
+        {
+            text: 'Comment mettre à jour les informations de votre entreprise ?',
+            value: 'update-my-entreprise-event',
+            component: HelpTabUpdateMonEntrepriseEvent
+        },
+        {
+            text: 'Comment mettre à jour mon taux journalier moyen (TJM) ?',
+            value: 'update-tjm-event',
+            component: HelpTabUpdateTjmEvent
+        },
+        // Aide - Imports/Exports de données
+        {
+            text: 'Comment sauvegarder les clients enregistrés ?',
+            value: 'update-tjm-event',
+            component: HelpTabExportImportClientsEvent
+        },
+        {
+            text: 'Comment sauvegarder mes factures ?',
+            value: 'update-tjm-event',
+            component: HelpTabExportImportFacturesEvent
         },
         {
             text: 'Comment échanger mon travail avec mes collègues ?',

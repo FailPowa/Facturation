@@ -51,6 +51,7 @@
                     :loading="loadingImport"
                     color="primary"
                     class="ml-4"
+                    @click="importEvents"
                 >
                     Importer le fichier
                 </v-btn>
@@ -95,7 +96,7 @@
     async function importEvents(): Promise<void> {
         loadingImport.value = true;
         if (selectedFile.value !== null) {
-
+            
         }
         loadingImport.value = false;
     }

@@ -69,7 +69,7 @@
                 <AlertDialog
                     v-model="uiStore.popupVisible"
                     :intent="uiStore.alertType"
-                    :duration="7"
+                    :duration="5"
                     class="animate__animated animate__fadeInDown "
                 >
                     <p class="text-h6 text-left">{{ uiStore.message }}</p>

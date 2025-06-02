@@ -11,7 +11,7 @@
             </h3>
             <br />
             <p>
-                Depuis l'onglet des clients, le bouton suivant est disponible au dessus à droite de la table des clients
+                Depuis l'onglet des clients, le bouton suivant est disponible au dessus à droite de la table des clients :
             </p>
             <!-- Bouton ajouter nouveau client-->
             <v-btn
@@ -27,7 +27,7 @@
                 </v-icon>
             </v-btn>
             <br />
-            <p>En cliquant dessus, une fenêtre s'ouvre, permettant de saisir les informations du clien à ajouter</p>
+            <p>En cliquant dessus, une fenêtre s'ouvre, permettant de saisir les informations du client à ajouter</p>
             <p>Certaines informations sont requises pour la création d'un client tel que, son nom, son adresse, son numéro de siret, etc...</p>
             <p class="mt-2 font-weight-medium font-italic">(A noter: Le numéro de siret de La Poste, ne respectant pas l'algorithme de Luhn, rendra la saisie du formulaire de création d'un client invalide.)</p>
             <br />
