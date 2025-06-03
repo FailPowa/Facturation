@@ -6,77 +6,72 @@
         <v-card-text class="help-text">
             <br />
             <h3>
-                <v-icon 
-                    :icon="icons.mdiUploadBoxOutline" 
-                    size="large" 
-                />
-                Je souhaite envoyer mes tâches à un collègue
+                <v-icon :icon="icons.mdiImport" size="large" />
+                Gérer les clients : Import / Export
             </h3>
             <br />
-            <p>Le bouton ci-dessous vous permet d'exporter les tâches de votre application</p>
-            <v-btn 
-                :loading="loadingExport"
-                size="small"
-                color="success"
-                class="mt-2 mb-2"
-                @click="exportEvents"
-            >
-                Exporter mes tâches
-            </v-btn>
-            <p>En cliquant dessus, cela génère un fichier <strong>super_planner_taches.json</strong> que vos collègues pourront importer via la section suivante</p>
-            <br />
-            <v-divider />
-            <br />
-            <h3>
-                <v-icon 
-                    :icon="icons.mdiDownloadBoxOutline" 
-                    size="large" 
-                />
-                Je souhaite récupérer les tâches d'un collègue
-            </h3>
-            <br />
-            <p>Le champ ci-dessous vous permet de sélectionner un fichier json, précédemment généré via la section ci-dessus</p>
-            <p>Puis de l'importer en cliquant sur le bouton à droite du champs</p>
-            <v-row class="mt-3">
-                <v-file-input
-                    v-model="selectedFile"
-                    :loading="loadingImport"
-                    label="Veuillez sélectionner un fichier"
-                    accept="application/JSON"
-                    variant="outlined"
-                    density="compact"
-                    max-width="40%"
-                />
-                <v-btn 
-                    :loading="loadingImport"
-                    color="primary"
-                    class="ml-4"
-                    @click="importEvents"
-                >
-                    Importer le fichier
-                </v-btn>
-            </v-row>
+
             <p>
-                <strong>ATTENTION :</strong>
-                Cela supprimera tout travail déjà réalisé sur votre application
+                Pour accéder à cette fonctionnalité, cliquez sur le menu :
+                <v-btn color="transparent" icon>
+                    <v-icon :icon="icons.mdiMenu" size="large" />
+                </v-btn>
+                tout à gauche de la barre de navigation.
             </p>
-            <p>Cette fonctionnalité réalise une copie du travail de votre collègue, sans sauvegarde préalable de votre propre travail</p>
+            <p>
+                Puis en bas à gauche du menu, cliquez sur :
+                <v-btn color="secondary" icon>
+                    <v-icon :icon="icons.mdiCog" size="large" />
+                </v-btn>
+            </p>
+
+            <br />
+
+            <!-- Export clients -->
+            <p>Exporter les clients existants :</p>
+            <v-btn color="primary" class="mt-2 mb-2" size="small">
+                Exporter les clients
+            </v-btn>
+            <p>
+                Cela génère un fichier <strong>nom_fichier.json</strong> à sauvegarder. Vous pourrez ensuite le partager ou l'importer ailleurs.
+            </p>
+
+            <br />
+            <v-divider class="my-4" />
+            <br />
+
+            <!-- Import clients -->
+            <p>Importer des clients exportés :</p>
+            <v-btn color="primary" class="mt-2 mb-2" size="small">
+                Importer les clients
+            </v-btn>
+            <p>
+                Vous pourrez sélectionner un fichier exporté depuis cette application.
+            </p>
+            <p>
+                Les nouveaux clients seront ajoutés à la liste actuelle. Si certains sont déjà présents, l'import échouera.
+            </p>
+            <p>
+                <strong>Important :</strong> seuls les fichiers générés par cette application sont acceptés.
+            </p>
         </v-card-text>
+
+
     </v-card>
 </template>
 <script setup lang="ts">
     import { ref, Ref } from 'vue';
     import { 
-        mdiUploadBoxOutline,
-        mdiDownloadBoxOutline,
-        mdiPlus
+        mdiImport,
+        mdiCog,
+        mdiMenu
     } from '@mdi/js';
 
     const title: Ref<string> = ref('Comment échanger mon travail avec mes collègues ?');
     const icons = ref({
-        mdiUploadBoxOutline,
-        mdiDownloadBoxOutline,
-        mdiPlus
+        mdiImport,
+        mdiCog,
+        mdiMenu
     });
     const loadingExport: Ref<boolean> = ref(false);
     const loadingImport: Ref<boolean> = ref(false);
@@ -96,7 +91,7 @@
     async function importEvents(): Promise<void> {
         loadingImport.value = true;
         if (selectedFile.value !== null) {
-            
+            return
         }
         loadingImport.value = false;
     }

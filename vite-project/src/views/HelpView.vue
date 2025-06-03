@@ -37,7 +37,6 @@
         HelpTabAddClientEvent,
         HelpTabUpdateClientEvent,
         HelpTabDeleteClientEvent,
-        HelpTabExportImportEvent,
 
         // Factures
         HelpTabAddFactureEvent,
@@ -53,6 +52,9 @@
         // Exports/Imports
         HelpTabExportImportClientsEvent,
         HelpTabExportImportFacturesEvent,
+
+        // Paramètres
+        HelpTabChangeTheme
     } from '../components/helpTabs';
 
     const tabs = shallowRef([
@@ -100,7 +102,7 @@
         },
         // Aide - Mon entreprise
         {
-            text: 'Comment mettre à jour les informations de votre entreprise ?',
+            text: 'Comment accéder et mettre à jour les informations de votre entreprise ?',
             value: 'update-my-entreprise-event',
             component: HelpTabUpdateMonEntrepriseEvent
         },
@@ -112,18 +114,18 @@
         // Aide - Imports/Exports de données
         {
             text: 'Comment sauvegarder les clients enregistrés ?',
-            value: 'update-tjm-event',
+            value: 'update-import-export-clients-event',
             component: HelpTabExportImportClientsEvent
         },
         {
             text: 'Comment sauvegarder mes factures ?',
-            value: 'update-tjm-event',
+            value: 'update-import-export-factures-event',
             component: HelpTabExportImportFacturesEvent
         },
         {
-            text: 'Comment échanger mon travail avec mes collègues ?',
-            value: 'export-import-event',
-            component: HelpTabExportImportEvent
+            text: "Comment changer le thème de l'application ?",
+            value: 'change-theme-event',
+            component: HelpTabChangeTheme
         }
     ]);
     const activeTab: Ref<string> = ref('add-event');

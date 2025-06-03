@@ -6,36 +6,65 @@
         <v-card-text class="help-text">
             <br />
             <h3>
-                <v-icon :icon="icons.mdiAccountGroupOutline" />
-                Depuis l'onglet Clients
+                <v-icon :icon="icons.mdiCashMultiple" size="large" />
+                Modifier votre TJM (Taux Journalier Moyen)
             </h3>
             <br />
             <p>
-                Depuis l'onglet des clients, le bouton suivant <v-icon :icon="icons.mdiPencilOutline" @click="" /> est disponible dans la section <strong>Actions</strong>
-                de la table des clients.
+                Pour modifier votre <strong>TJM</strong>, commencez par ouvrir le menu de navigation latéral.
+            </p>
+            <p>
+                Cliquez sur le bouton suivant, situé tout à gauche de la barre supérieure de l’application :
+            </p>
+            <v-btn 
+                :icon="icons.mdiMenu" 
+                variant="text"
+                class="mb-2 ma-2"
+            />
+            <p>
+                Ce bouton ouvre le <strong>menu de navigation latéral</strong>, également appelé "menu hamburger".
+            </p>
+            <p>
+                Une fois ouvert, vous trouverez votre TJM affiché au <strong>centre</strong> de ce menu, sous forme d'une carte.
+            </p>
+            <p>
+                Pour le modifier, cliquez sur ce bouton :
+            </p>
+            <v-btn 
+                color="primary" 
+                icon 
+                class="mb-2 ma-2"
+            >
+                <v-icon :icon="icons.mdiWrench" size="large" />
+            </v-btn>
+            <p>
+                Une fenêtre s’ouvrira pour vous permettre de saisir un nouveau TJM. 
+                Une fois validé, ce montant sera pris en compte automatiquement dans vos prochaines factures.
             </p>
             <br />
-            <p>En cliquant dessus, une fenêtre s'ouvre, permettant de modifier les informations du client.</p>
-            <p>Toutes les informations sont modifiables, cependant, comme pour la création de client,</p>
-            <p>certaines sont requises à l'enregistrement tel que, son nom, son adresse ou encore son numéro de siret.</p>
-            <p class="mt-2 font-weight-medium font-italic">(A noter: Le numéro de siret de La Poste, ne respectant pas l'algorithme de Luhn, rendra la saisie du formulaire de création d'un client invalide.)</p>
-            <br />
         </v-card-text>
+
+
     </v-card>
 </template>
 <script setup lang="ts">
     import { ref, Ref } from 'vue';
     import { 
-        mdiAccountGroupOutline,
+        mdiCashMultiple,
         mdiListBoxOutline,
-        mdiPencilOutline
+        mdiPencilOutline,
+        mdiMenu,
+        mdiWrench
+        
     } from '@mdi/js';
 
     const title: Ref<string> = ref('Comment modifier un client ?');
     const icons = ref({
-        mdiAccountGroupOutline,
+        mdiCashMultiple,
         mdiListBoxOutline,
-        mdiPencilOutline
+        mdiPencilOutline,
+        mdiMenu,
+        mdiWrench
     });
 </script>
 <style scoped>

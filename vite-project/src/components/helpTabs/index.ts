@@ -14,7 +14,8 @@ import HelpTabUpdateTjmEvent from "./HelpTabUpdateTjmEvent.vue";
 // Imports/Exports
 import HelpTabExportImportClientsEvent from "./HelpTabExportImportClientsEvent.vue";
 import HelpTabExportImportFacturesEvent from "./HelpTabExportImportFacturesEvent.vue";
-import HelpTabExportImportEvent from './HelpTabExportImportClientsEvent.vue';
+// Paramètres
+import HelpTabChangeTheme from "./HelpTabChangeTheme.vue";
 
 
 export {
@@ -22,7 +23,6 @@ export {
     HelpTabAddClientEvent,
     HelpTabUpdateClientEvent,
     HelpTabDeleteClientEvent,
-    HelpTabExportImportEvent,
 
     // Factures
     HelpTabAddFactureEvent,
@@ -38,4 +38,7 @@ export {
     // Exports/Imports
     HelpTabExportImportClientsEvent,
     HelpTabExportImportFacturesEvent,
+
+    // Paramètres
+    HelpTabChangeTheme
 }

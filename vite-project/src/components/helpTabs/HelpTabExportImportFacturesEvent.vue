@@ -6,77 +6,72 @@
         <v-card-text class="help-text">
             <br />
             <h3>
-                <v-icon 
-                    :icon="icons.mdiUploadBoxOutline" 
-                    size="large" 
-                />
-                Je souhaite envoyer mes tâches à un collègue
+                <v-icon :icon="icons.mdiInvoiceImportOutline" size="large" />
+                Gérer les factures : Import / Export
             </h3>
             <br />
-            <p>Le bouton ci-dessous vous permet d'exporter les tâches de votre application</p>
-            <v-btn 
-                :loading="loadingExport"
-                size="small"
-                color="success"
-                class="mt-2 mb-2"
-                @click="exportEvents"
-            >
-                Exporter mes tâches
-            </v-btn>
-            <p>En cliquant dessus, cela génère un fichier <strong>super_planner_taches.json</strong> que vos collègues pourront importer via la section suivante</p>
-            <br />
-            <v-divider />
-            <br />
-            <h3>
-                <v-icon 
-                    :icon="icons.mdiDownloadBoxOutline" 
-                    size="large" 
-                />
-                Je souhaite récupérer les tâches d'un collègue
-            </h3>
-            <br />
-            <p>Le champ ci-dessous vous permet de sélectionner un fichier json, précédemment généré via la section ci-dessus</p>
-            <p>Puis de l'importer en cliquant sur le bouton à droite du champs</p>
-            <v-row class="mt-3">
-                <v-file-input
-                    v-model="selectedFile"
-                    :loading="loadingImport"
-                    label="Veuillez sélectionner un fichier"
-                    accept="application/JSON"
-                    variant="outlined"
-                    density="compact"
-                    max-width="40%"
-                />
-                <v-btn 
-                    :loading="loadingImport"
-                    color="primary"
-                    class="ml-4"
-                    @click="importEvents"
-                >
-                    Importer le fichier
-                </v-btn>
-            </v-row>
+
             <p>
-                <strong>ATTENTION :</strong>
-                Cela supprimera tout travail déjà réalisé sur votre application
+                Pour accéder à cette section, ouvrez le menu :
+                <v-btn color="transparent" icon>
+                    <v-icon :icon="icons.mdiMenu" size="large" />
+                </v-btn>
+                puis cliquez sur :
+                <v-btn color="secondary" icon>
+                    <v-icon :icon="icons.mdiCog" size="large" />
+                </v-btn>
+                tout en bas à gauche.
             </p>
-            <p>Cette fonctionnalité réalise une copie du travail de votre collègue, sans sauvegarde préalable de votre propre travail</p>
+
+            <br />
+
+            <!-- Export factures -->
+            <p>Exporter vos factures :</p>
+            <v-btn color="secondary" class="mt-2 mb-2" size="small">
+                Exporter les factures
+            </v-btn>
+            <p>
+                Cela vous permet de télécharger un fichier <strong>nom_fichier.json</strong> contenant toutes vos factures actuelles.
+            </p>
+
+            <br />
+            <v-divider class="my-4" />
+            <br />
+
+            <!-- Import factures -->
+            <p>Importer des factures :</p>
+            <v-btn color="secondary" class="mt-2 mb-2" size="small">
+                Importer les factures
+            </v-btn>
+            <p>
+                Choisissez un fichier <strong>nom_fichier.json</strong> généré par cette application.
+            </p>
+            <p>
+                Les nouvelles factures seront ajoutées à celles existantes. Si certaines sont déjà présentes, l'import échouera.
+            </p>
+            <p>
+                <strong>Important :</strong> seuls les fichiers créés via cette application peuvent être importés.
+            </p>
         </v-card-text>
+
+
     </v-card>
 </template>
 <script setup lang="ts">
     import { ref, Ref } from 'vue';
     import { 
-        mdiUploadBoxOutline,
-        mdiDownloadBoxOutline,
-        mdiPlus
+        mdiPlus,
+        mdiMenu,
+        mdiCog,
+        mdiInvoiceImportOutline
     } from '@mdi/js';
 
     const title: Ref<string> = ref('Comment échanger mon travail avec mes collègues ?');
     const icons = ref({
-        mdiUploadBoxOutline,
-        mdiDownloadBoxOutline,
-        mdiPlus
+        mdiPlus,
+        mdiMenu,
+        mdiCog,
+        mdiInvoiceImportOutline
     });
     const loadingExport: Ref<boolean> = ref(false);
     const loadingImport: Ref<boolean> = ref(false);
@@ -96,7 +91,7 @@
     async function importEvents(): Promise<void> {
         loadingImport.value = true;
         if (selectedFile.value !== null) {
-            
+            return
         }
         loadingImport.value = false;
     }
