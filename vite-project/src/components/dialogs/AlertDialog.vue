@@ -7,7 +7,6 @@
         closable
         width="600"
         @click:close="emits('close')"
-        @vue:mounted="displayTemporarily"
     >
         <slot></slot>
     </v-alert>
@@ -15,9 +14,7 @@
 
 
 <script setup lang="ts">
-    import { onBeforeUnmount } from 'vue';
-    import { useUiStore } from '../../stores/ui';
-
+    import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
     
     // Variable contenant le v-model du composant
     const model = defineModel({ type: Boolean})
@@ -43,6 +40,11 @@
     // Identifiant de la fonction timeout lancé au montage de l'alerte
     let timeoutId: ReturnType<typeof setTimeout>;
 
+    // Met en place la durée d'affichage du composant
+    onMounted(() => {
+        displayTemporarily();
+    })
+
     // Terminer la fonction displayTemporarily avant le démontage
     onBeforeUnmount(() => {
         clearTimeout(timeoutId);
@@ -50,7 +52,7 @@
 
     // Permet de fermer l'alerte automatiquement après une certaine durée
     async function displayTemporarily(){
-        if (props.duration){
+        if (props.duration !== undefined){
             timeoutId = setTimeout(() => {
                 model.value = false;
             }, props.duration * 1000)

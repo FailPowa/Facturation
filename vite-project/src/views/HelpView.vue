@@ -1,6 +1,7 @@
 <template>
     <v-row>
         <v-col cols="4">
+            
             <v-tabs
                 v-model="activeTab"
                 color="primary"
@@ -32,58 +33,100 @@
 <script setup lang="ts">
     import { ref, Ref, shallowRef } from 'vue';
     import {
-        HelpTabAddEvent,
-        HelpTabUpdateEvent,
-        HelpTabDeleteEvent,
-        HelpTabUpdateDurationEvent,
-        HelpTabUpdateTrancheEvent,
-        HelpTabUpdateStatutEvent,
-        HelpTabFilterEvent,
-        HelpTabExportImportEvent
+        // Client
+        HelpTabAddClientEvent,
+        HelpTabUpdateClientEvent,
+        HelpTabDeleteClientEvent,
+
+        // Factures
+        HelpTabAddFactureEvent,
+        HelpTabUpdateFactureEvent,
+        HelpTabDeleteFactureEvent,
+        HelpTabUpdateFactureStatutEvent,
+        HelpTabExportFacturesPDFEvent,
+
+        // Votre entreprise
+        HelpTabUpdateMonEntrepriseEvent,
+        HelpTabUpdateTjmEvent,
+
+        // Exports/Imports
+        HelpTabExportImportClientsEvent,
+        HelpTabExportImportFacturesEvent,
+
+        // Paramètres
+        HelpTabChangeTheme
     } from '../components/helpTabs';
 
     const tabs = shallowRef([
+        // Aide - Clients
         {
-            text: 'Comment ajouter une tâche ?',
-            value: 'add-event',
-            component: HelpTabAddEvent
+            text: 'Comment ajouter un client ?',
+            value: 'add-client-event',
+            component: HelpTabAddClientEvent
         },
         {
-            text: 'Comment modifier une tâche ?',
-            value: 'update-event',
-            component: HelpTabUpdateEvent
+            text: 'Comment modifier un client ?',
+            value: 'update-client-event',
+            component: HelpTabUpdateClientEvent
         },
         {
-            text: 'Comment modifier la durée d\'une tâche ?',
-            value: 'update-duration-event',
-            component: HelpTabUpdateDurationEvent
+            text: 'Comment supprimer un client ?',
+            value: 'delete-client-event',
+            component: HelpTabDeleteClientEvent
+        },
+        // Aide - Factures
+        {
+            text: 'Comment ajouter une facture ?',
+            value: 'add-facture-event',
+            component: HelpTabAddFactureEvent
         },
         {
-            text: 'Comment modifier la tranche concernée d\'une tâche ?',
-            value: 'update-tranche-event',
-            component: HelpTabUpdateTrancheEvent
+            text: 'Comment modifier une facture ?',
+            value: 'update-facture-event',
+            component: HelpTabUpdateFactureEvent
         },
         {
-            text: 'Comment modifier le statut d\'une tâche ?',
-            value: 'update-statut-event',
-            component: HelpTabUpdateStatutEvent
+            text: 'Comment supprimer une facture ?',
+            value: 'delete-facture-event',
+            component: HelpTabDeleteFactureEvent
         },
         {
-            text: 'Comment supprimer une tâche ?',
-            value: 'delete-event',
-            component: HelpTabDeleteEvent
+            text: "Comment mettre à jour le statut  d'une facture ?",
+            value: 'update-facture-statut-event',
+            component: HelpTabUpdateFactureStatutEvent
         },
         {
-            text: 'Comment filtrer mes tâches ?',
-            value: 'filter-event',
-            component: HelpTabFilterEvent
+            text: 'Comment exporter ma facture en pdf ?',
+            value: 'export-facture-pdf-event',
+            component: HelpTabExportFacturesPDFEvent
+        },
+        // Aide - Mon entreprise
+        {
+            text: 'Comment accéder et mettre à jour les informations de votre entreprise ?',
+            value: 'update-my-entreprise-event',
+            component: HelpTabUpdateMonEntrepriseEvent
         },
         {
-            text: 'Comment échanger mon travail avec mes collègues ?',
-            value: 'export-import-event',
-            component: HelpTabExportImportEvent
+            text: 'Comment mettre à jour mon taux journalier moyen (TJM) ?',
+            value: 'update-tjm-event',
+            component: HelpTabUpdateTjmEvent
+        },
+        // Aide - Imports/Exports de données
+        {
+            text: 'Comment sauvegarder les clients enregistrés ?',
+            value: 'update-import-export-clients-event',
+            component: HelpTabExportImportClientsEvent
+        },
+        {
+            text: 'Comment sauvegarder mes factures ?',
+            value: 'update-import-export-factures-event',
+            component: HelpTabExportImportFacturesEvent
+        },
+        {
+            text: "Comment changer le thème de l'application ?",
+            value: 'change-theme-event',
+            component: HelpTabChangeTheme
         }
     ]);
     const activeTab: Ref<string> = ref('add-event');
-    const delay = ref(1)
 </script>

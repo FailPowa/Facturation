@@ -93,7 +93,9 @@
      * Exporte les données des clients
      */
     async function exportClients() {
+        uiStore.setLoading(true);
         const response: CallbackMessage = await window.serviceElectron.exportClients();
+        uiStore.setLoading(false);
         showAlertDialog(response.code, response.message);
     }
 
@@ -101,7 +103,9 @@
      * Exporte les données des factures
      */
     async function exportFactures() {
+        uiStore.setLoading(true);
         const response: CallbackMessage = await window.serviceElectron.exportFactures();
+        uiStore.setLoading(false);
         showAlertDialog(response.code, response.message);
     }
 
@@ -109,7 +113,9 @@
      * Importe les données des clients
      */
     async function importClients() {
+        uiStore.setLoading(true);
         const response: CallbackMessage = await window.serviceElectron.importClients();
+        uiStore.setLoading(false);
         showAlertDialog(response.code, response.message, response.details);
     }
 
@@ -117,7 +123,9 @@
      * Importe les données des factures
      */
     async function importFactures() {
+        uiStore.setLoading(true);
         const response: CallbackMessage = await window.serviceElectron.importFactures();
+        uiStore.setLoading(false);
         showAlertDialog(response.code, response.message, response.details);
     }
 

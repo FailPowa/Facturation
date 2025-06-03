@@ -1,15 +1,21 @@
 <template>
-    <v-card variant="outlined" class="d-flex pa-4 ga-4 ma-6">
-        <p>TJM</p>
-        <p>{{ formatMontantEuro(tjm.montant) }}</p>
+    <v-card
+        class="pa-4 d-flex align-center justify-space-between ga-6"
+        elevation="2"
+        rounded="lg"
+        max-width="300"
+    >
+        <div>
+            <div class="text-caption text-grey">Taux Journalier Moyen (TJM)</div>
+            <div class="text-h6 font-weight-medium">{{ formatMontantEuro(tjm.montant) }} / jour</div>
+        </div>
         <v-btn
             icon
-            size="x-small"
-            variant="outlined"
             color="primary"
+            size="small"
             @click="dialog = true"
         >
-            <v-icon>{{ icons.mdiWrench }}</v-icon>
+            <v-icon :icon="icons.mdiWrench" />
         </v-btn>
     </v-card>
     <v-dialog

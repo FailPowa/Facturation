@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, onUpdated, ref, Ref } from 'vue';
+    import { onMounted, ref, Ref } from 'vue';
     import EntrepriseForm from '../forms/EntrepriseForm.vue';
     import SettingThemes from '../settings/SettingThemes.vue';
     import monEntrepriseDetails from '../details/monEntrepriseDetails.vue';
@@ -119,9 +119,11 @@
         mdiArrowULeftBottom  
     } from '@mdi/js';
     import { useMonEntreprise } from '../../stores/monEntreprise';
+    import { useUiStore } from '../../stores/ui';
     
     /** Stores */
     const monEntrepriseStore = useMonEntreprise();
+    const uiStore = useUiStore();
 
     /** Variable contenant les informations de votre entreprise */
     const monEntreprise: Ref<EntrepriseType> = ref({} as EntrepriseType);
@@ -133,7 +135,7 @@
     const updateDialog: Ref<boolean> = ref(false);
     
     /** Variable contenant la partie à afficher pour le composant window : { 1: MonEntreprise, 2: Paramètres } */
-    const windowPart = ref(1)
+    const windowPart = ref(1);
     
     /** Récupère votre entrerpise */
     onMounted(async () => {
@@ -144,14 +146,15 @@
     /** Récupère votre entreprise */
     async function getMonEntreprise() {
         await monEntrepriseStore.update();
-        monEntreprise.value = monEntrepriseStore.infos
-        updatingMonEntreprise.value = Object.assign({}, monEntrepriseStore.infos)
+        monEntreprise.value = monEntrepriseStore.infos;
+        updatingMonEntreprise.value = Object.assign({}, monEntrepriseStore.infos);
     }
 
     /** Met à jour les informations de votre entreprise */
     async function updateMonEntreprise(updatedMonEntreprise: EntrepriseType) {
-        await window.serviceElectron.updateClient(updatedMonEntreprise)
-        await getMonEntreprise()
-        updateDialog.value = false
+        await window.serviceElectron.updateClient(updatedMonEntreprise);
+        await getMonEntreprise();
+        updateDialog.value = false;
+        uiStore.showMessage("Vos informations ont été mis à jour avec succès", "success");
     }
 </script>

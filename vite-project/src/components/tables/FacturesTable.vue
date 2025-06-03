@@ -179,6 +179,7 @@
                                 color="primary"
                                 size="small"
                                 @click="setFacture(item)"
+                                
                             >
                                 {{ icons.mdiPencilOutline }}
                             </v-icon>
@@ -254,19 +255,6 @@
             />
     </v-dialog>
 
-    <!-- Boite de dialogue : Alerte dialog -->
-    <v-dialog
-        v-model="alertDialog"
-        :max-width="600"
-    >
-        <AlertDialog
-            v-model="alertDialog"
-            :title="messageRef"
-            :details="detailsRef"
-            :type="typeRef"
-        />
-    </v-dialog>
-    
     <!-- Boite de dialogue : Visualiser pdf -->
     <v-dialog
         v-model="pdfDialog"
@@ -294,12 +282,15 @@
     import { factureHeaders } from './headers';
     import { formatDate, getCurrentYear } from '../../../plugins/dateFormatter';
     import { formatMontantEuro } from '../../../plugins/formatMontantEuro';
+    import { useUiStore } from '../../stores/ui';
     import FactureForm from '../forms/FactureForm.vue';
     import StatutChip from '../chips/StatutChip.vue';
     import AddPaymentDateDialog from '../dialogs/AddPaymentDateDialog.vue';
     import ConfirmDialog from '../dialogs/ConfirmDialog.vue';
-    import AlertDialog from '../dialogs/AlertDialog.vue';
-    import ViewerPDF from '../viewer/ViewerPDF.vue';
+        import ViewerPDF from '../viewer/ViewerPDF.vue';
+
+    /** Store */
+    const uiStore = useUiStore();
 
     /**
      * Paramètres du composant
@@ -337,13 +328,7 @@
     const updateFactureDialog: Ref<boolean> = ref(false);
     const deleteFactureDialog: Ref<boolean> = ref(false);
     const addDatePaiementDialog: Ref<boolean> = ref(false);
-    const alertDialog: Ref<boolean> = ref(false);
     const pdfDialog: Ref<boolean> = ref(false);
-    
-    // Le type de la boite de dialogue ne peut prendre que les valeurs suivantes ("success" | "info" | "warning" | "error" | undefined)
-    const typeRef: Ref<string> = ref("");
-    const messageRef: Ref<string> = ref("");
-    const detailsRef: Ref<string[]> = ref([]);
 
     /** Variable contenant l'url du pdf */
     const urlPdf: Ref<string> = ref('');
@@ -417,26 +402,19 @@
      * @param message Message de retour
      * @param details Informations supplémentaires sur le message de retour
      */
-    function showAlertDialog(code: number, message: string, details: string[]) {
-        messageRef.value = message
-        detailsRef.value = details
+    function showAlertDialog(code: number, message: string) {
         switch(code){
             case ResultCode.Success:
-                typeRef.value = 'success';  // Code 0 : succès
-                alertDialog.value = true;   // Affiche la boite de dialogue
+                uiStore.showMessage(message, 'success')
                 break
             case ResultCode.Warning:
-                typeRef.value = 'warning';  // Code 1 : echec
-                alertDialog.value = true;   // Affiche la boite de dialogue
+                uiStore.showMessage(message, 'warning')
                 break
             case ResultCode.Cancel:
                 // Code 2 : Annulation de la transaction
                 break
             default: 
-                typeRef.value = 'error'; // 
-                alertDialog.value = true;
-                detailsRef.value = [`Code de retour inconnu : ${code}`, `Message de retour: ${message}`, ...details] 
-                messageRef.value = "Erreur inconnu"
+                uiStore.showMessage("Erreur inconnu : " + `${code}`, 'error')
                 
         }
     }
@@ -526,11 +504,11 @@
      */
     async function generatePDF(id: string) {
         const { response, url } = await window.serviceElectron.generatePdfFromFacture(id) as { response: CallbackMessage, url: string }
-        showAlertDialog(response.code, response.message, response.details);
         if (response.code == ResultCode.Success){
-            alertDialog.value = false;
             urlPdf.value = url;
             pdfDialog.value = true;
+        }else{
+            showAlertDialog(response.code, response.message);
         }
     }
 
