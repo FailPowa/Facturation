@@ -41,6 +41,7 @@
         >
             <MyEntrepriseLayout />
         </v-navigation-drawer>
+        
         <v-main>
             <v-container>
                 <v-row>
@@ -50,19 +51,51 @@
                 </v-row>
             </v-container>
         </v-main>
+        
+        <v-overlay
+            :model-value="uiStore.loading"
+            class="align-center justify-center"
+        >
+            <v-progress-circular
+                color="primary"
+                size="64"
+                indeterminate
+            ></v-progress-circular>
+        </v-overlay>
+
+        <div class="custom-alert">
+            <transition 
+                leave-active-class="animate__animated animate__fadeOutDown">
+                <AlertDialog
+                    v-model="uiStore.popupVisible"
+                    :intent="uiStore.alertType"
+                    :duration="7"
+                    class="animate__animated animate__fadeInDown "
+                >
+                    <p class="text-h6 text-left">{{ uiStore.message }}</p>
+                </AlertDialog>
+            </transition>
+        </div>
     </v-layout>
 </template>
 
 <script setup lang="ts">
-    import { ref, Ref } from 'vue';
+    import { onMounted, onUpdated, ref, Ref } from 'vue';
     import { routes } from '../router/routes';
-    import MyEntrepriseLayout from './components/layout/MyEntrepriseLayout.vue'
+    import MyEntrepriseLayout from './components/layout/MyEntrepriseLayout.vue';
+    import AlertDialog from './components/dialogs/AlertDialog.vue';
     import { 
         mdiHelpCircleOutline, 
         mdiAccountGroupOutline, 
         mdiHomeOutline,
         mdiInvoiceMultipleOutline
     } from '@mdi/js';
+    import { useMonEntreprise } from './stores/monEntreprise';
+    import { useUiStore } from './stores/ui';
+    
+    /** Stores */
+    const entrepriseStore = useMonEntreprise();
+    const uiStore = useUiStore();
 
     /** Variable contenant les différentes routes */
     const routesList: Ref<any[]> = ref(routes);
@@ -79,4 +112,29 @@
      *  la fenêtre pour afficher les informations sur votre entreprise 
      */
     const drawer = ref(false)
+
+    /**
+     * Met à jour les informations de votre entreprise lors du montage
+     */
+    onMounted(async () => {
+        await entrepriseStore.update();
+    })
+
+    /**
+     * Met à jour à chaque fois que les sous-composants du composant racine change ?
+     */
+    onUpdated(async () => {
+        await entrepriseStore.update();
+    })
 </script>
+
+
+<style scoped>
+.custom-alert {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+}
+</style>

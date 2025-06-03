@@ -4,7 +4,7 @@
         fluid 
         class="d-flex flex-column ga-12"
     >
-        <p class="text-h3 text-center">Bienvenue {{ monEntreprise.nom }} !</p>
+        <p class="text-h3 text-center">Bienvenue {{ monEntrepriseStore.infos.nom }} !</p>
 
         <!-- Onglets -->
         <v-tabs
@@ -40,30 +40,20 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, onUpdated, Ref, ref } from 'vue'
+    import { Ref, ref } from 'vue'
     import FacturesTable from '../tables/FacturesTable.vue'
     import FactureChart from '../charts/FactureChart.vue'
-    import { EntrepriseType, FullFactureType } from '../../../types'
+    import { FullFactureType } from '../../../types'
+    import { useMonEntreprise } from '../../stores/monEntreprise';
+    
+    /** Stores */
+    const monEntrepriseStore = useMonEntreprise();
 
     /** Variable contenant la valeur de la page affiché par le composant Tabs */
     const tab = ref(1);
 
     /** Variable contenant les factures */
     const factures: Ref<FullFactureType[]> = ref([]);
-
-    /** Variable contenant les informations sur votre entreprise */
-    const monEntreprise: Ref<EntrepriseType> = ref({} as EntrepriseType); 
-
-    /** Récupère votre entrerpise */
-    onMounted(async () => {
-        await getMonEntreprise();
-    });
-
-    /** Récupère votre entrerpise */
-    onUpdated(async () => {
-        await getMonEntreprise();
-    });
-
 
     /**
      * Met à jour la liste des factures utilisée par le graphique
@@ -74,11 +64,5 @@
     function onFactureUpdate(newFactures: FullFactureType[]){
         factures.value = [];
         factures.value = newFactures;
-    }
-
-    /** Récupère votre entreprise */
-    async function getMonEntreprise() {
-        const result = await window.serviceElectron.getMonEntreprise();
-        monEntreprise.value = Object.assign({}, result)
     }
 </script>

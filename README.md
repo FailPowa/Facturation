@@ -14,6 +14,8 @@ Outil de facturation local pour un développeur indépendant
     - Vue ( 3.5 )
     - Vuetify ( 3.7 )
     - Animate CSS ( 4.1.1 )
+    - Pupeeter ( 24.9.0 )
+    - Pinia ( 3.0.2 )
 
     Le projet est divisé en deux
         Un projet Electron pour l'architecture de notre application et les services
