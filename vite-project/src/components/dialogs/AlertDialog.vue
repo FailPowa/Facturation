@@ -14,7 +14,7 @@
 
 
 <script setup lang="ts">
-    import { onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
+    import { onBeforeUnmount, onMounted } from 'vue';
     
     // Variable contenant le v-model du composant
     const model = defineModel({ type: Boolean})

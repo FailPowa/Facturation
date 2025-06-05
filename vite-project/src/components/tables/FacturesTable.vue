@@ -236,7 +236,7 @@
         persistent
     >
         <AddPaymentDateDialog
-            :facture="selectedFacture"
+            :date-facture="selectedFacture?.date!!"
             @cancel="addDatePaiementDialog = false"
             @confirm="addDatePaiement"
         />
@@ -503,10 +503,13 @@
      * @param {string} id - Identifiant de la facture à exporter en PDF.
      */
     async function generatePDF(id: string) {
+        uiStore.setLoading(true)
         const { response, url } = await window.serviceElectron.generatePdfFromFacture(id) as { response: CallbackMessage, url: string }
         if (response.code == ResultCode.Success){
+            uiStore.setLoading(false)
             urlPdf.value = url;
             pdfDialog.value = true;
+
         }else{
             showAlertDialog(response.code, response.message);
         }

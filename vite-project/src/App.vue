@@ -55,6 +55,7 @@
         <v-overlay
             :model-value="uiStore.loading"
             class="align-center justify-center"
+            persistent
         >
             <v-progress-circular
                 color="primary"

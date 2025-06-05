@@ -3,8 +3,9 @@ import { describe, it, expect } from 'vitest';
 import monEntrepriseDetails from '../monEntrepriseDetails.vue';
 import { Entreprise } from '../../../../types';
 import vuetify from '../../../../plugins/vuetify';
+import { numTvaFormatter, siretFormatter } from '../../../../plugins/entrepriseFormatter';
 
-describe('EntrepriseForm.vue', () => {
+describe('monEntrepriseDetails.vue', () => {
     it("renders the correct company's details", () => {
         const entreprise = new Entreprise(
             1,
@@ -29,9 +30,12 @@ describe('EntrepriseForm.vue', () => {
             }
         });
         expect(wrapper.text())
-            .contain(entreprise.nom, "Doesn't contain name")
-            .contain(entreprise.adresse)
-            .contain(entreprise.codePostal)
-            .contain(entreprise.mail)
+            .contain(entreprise.nom, "the compopent doesn't contain name")
+            .contain(entreprise.adresse, "the compopent doesn't contain adresse")
+            .contain(entreprise.codePostal, "the component doesn't contain code postal")
+            .contain(entreprise.ville, "the component doesn't contain ville")
+            .contain(entreprise.mail, "the component doesn't contain mail")
+            .contain(numTvaFormatter(entreprise.numTva || ""), "the component doesn't contain numTva")
+            .contain(siretFormatter(entreprise.siret), "the component doesn't contain siret")
     })
 })

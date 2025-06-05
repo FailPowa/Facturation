@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
     import { VuePDF, usePDF } from '@tato30/vue-pdf'; 
-    import { Ref, ref } from 'vue';
+    import { ref } from 'vue';
     import { mdiMagnifyPlus, mdiMagnifyMinus, mdiClose } from '@mdi/js';
     import '@tato30/vue-pdf/style.css';
 

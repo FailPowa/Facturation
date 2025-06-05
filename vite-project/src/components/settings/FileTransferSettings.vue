@@ -116,7 +116,7 @@
         uiStore.setLoading(true);
         const response: CallbackMessage = await window.serviceElectron.importClients();
         uiStore.setLoading(false);
-        showAlertDialog(response.code, response.message, response.details);
+        showAlertDialog(response.code, response.message);
     }
 
     /**
@@ -126,7 +126,7 @@
         uiStore.setLoading(true);
         const response: CallbackMessage = await window.serviceElectron.importFactures();
         uiStore.setLoading(false);
-        showAlertDialog(response.code, response.message, response.details);
+        showAlertDialog(response.code, response.message);
     }
 
 

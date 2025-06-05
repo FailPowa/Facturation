@@ -126,7 +126,17 @@
     const uiStore = useUiStore();
 
     /** Variable contenant les informations de votre entreprise */
-    const monEntreprise: Ref<EntrepriseType> = ref({} as EntrepriseType);
+    const monEntreprise: Ref<EntrepriseType> = ref({
+        id: -1,
+        nom: "",
+        adresse: "",
+        codePostal: "",
+        ville: "",
+        mail: "",
+        numTva: "",
+        siret: "",
+        isMe: true
+    } as EntrepriseType);
     
     /** Variable contenant les informations de votre entreprise à mettre à jour */
     const updatingMonEntreprise: Ref<EntrepriseType> = ref({} as EntrepriseType);
