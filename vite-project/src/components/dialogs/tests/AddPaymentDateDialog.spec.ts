@@ -38,7 +38,7 @@ describe("AddPaymentDateDialog.vue", () => {
             }
         });
         wrapper.vm.confirmDialog();
-        const eventsEmitted: Record<string, Date[]> = wrapper.emitted();
+        const eventsEmitted: Record<string, Date[][]> = wrapper.emitted();
         expect(eventsEmitted, "L'évènement 'confirmer' n'a pas été émi").toHaveProperty("confirm");
         wrapper.unmount();
     })

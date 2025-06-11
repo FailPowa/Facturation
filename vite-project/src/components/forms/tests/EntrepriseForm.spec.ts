@@ -36,8 +36,6 @@ describe('EntrepriseForm.vue', () => {
                 plugins: [vuetify]
             }
         });
-        const input =  await wrapper.find('[data-testid="entreprise-form-submit-btn"]')
-        console.log(input)
         wrapper.unmount();
     })
 
@@ -81,10 +79,6 @@ describe('EntrepriseForm.vue', () => {
 
                 const input = await wrapper.find('[data-testid="entreprise-form-submit-btn"]')
                 input.trigger("click")
-                await flushPromises();
-                await setTimeout(() => {
-                    
-                }, 1000)
                 expect(wrapper.emitted("confirm")).toBeDefined();
                 const emittedData = wrapper.emitted("confirm")?.[0][0]
                 expect(emittedData).toBe(data)
