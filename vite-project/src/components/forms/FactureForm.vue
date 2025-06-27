@@ -89,7 +89,7 @@
                             color="success"
                             variant="flat"
                             block
-                            @click="validateForm"
+                            @click="validateForm(false)"
                         >
                             Valider
                         </v-btn>
@@ -113,7 +113,7 @@
                             color="info"
                             variant="flat"
                             block
-                            @click="generatePDF"
+                            @click="validateForm(true)"
                         >
                             Générer un pdf
                         </v-btn>
@@ -235,16 +235,9 @@
     }
 
     /**
-     * Clic sur le bouton Generer pdf
+     * Clic sur le bouton Valider ou Generer pdf
      */
-    function generatePDF(): void{
-        emit('generatePdf')
-    }
-
-    /**
-     * Clic sur le bouton Valider
-     */
-    async function validateForm(): Promise<void> {
+    async function validateForm(isPdf : boolean): Promise<void> {
         /** Verifie si les champs du formulaire respectent les règles définies */
         const { valid, errors } = await formRef.value.validate();
         if (valid){
@@ -255,7 +248,7 @@
             // facture.value.nbJours = Number(facture.value.nbJours)
             facture.value.nbJoursPaiement = Number(facture.value.nbJoursPaiement)
             facture.value.tjm = Number(facture.value.tjm)
-            emit('confirm', facture.value);
+            emit(isPdf ? 'generatePdf' : 'confirm', facture.value);
         }else{
             console.log('Formulaire invalide', errors)
         }
