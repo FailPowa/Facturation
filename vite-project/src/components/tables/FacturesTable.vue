@@ -511,6 +511,7 @@
             pdfDialog.value = true;
 
         }else{
+            uiStore.setLoading(false)
             showAlertDialog(response.code, response.message);
         }
     }
