@@ -3,7 +3,7 @@
         <v-container fluid>
             <v-row>
                 <v-col offset="0" cols="12">
-                    <v-card-title 
+                    <v-card-title
                         class="text-h6 text-center"
                     >
                         {{ title }}
@@ -12,13 +12,15 @@
             </v-row>
             <v-row>
                 <v-col class="d-flex ga-16 justify-center">
-                    <v-btn 
+                    <v-btn
+                        id="confirm-btn"
                         color="success"
                         @click="confirmDialog"
                     >
                         Valider
                     </v-btn> 
                     <v-btn 
+                        id="cancel-btn"
                         color="error"
                         @click="exitDialog"
                     >

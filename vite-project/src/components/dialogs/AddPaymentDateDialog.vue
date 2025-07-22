@@ -13,9 +13,13 @@
             <v-row>
                 <v-col offset="0" cols="12">
                     <v-date-input
+                        v-model="datePaiement"
+                        :rules="datePaiementRules"
+                        validate-on="input"
                         label="Date de paiement"
                         placeholder="JJ/MM/AAAA"
                         variant="outlined"
+                        data-testid="add-payment-date-field"
                     ></v-date-input>
                 </v-col>
             </v-row>
@@ -23,12 +27,14 @@
                 <v-col class="d-flex ga-16 justify-center">
                     <v-btn 
                         color="success"
+                        data-testid="confirm-btn"
                         @click="confirmDialog"
                     >
                         Valider
                     </v-btn> 
                     <v-btn 
                         color="error"
+                        data-testid="cancel-btn"
                         @click="exitDialog"
                     >
                         Annuler
@@ -42,16 +48,12 @@
 
 <script setup lang="ts">
     import { Ref, ref } from 'vue';
-    import { FullFacture } from '../../../types';
+import { formatDate } from '../../../plugins/dateFormatter';
 
     /** Paramètres du composant */
     const props = defineProps({
-        facture: { type: [FullFacture, null], required: true}
+        dateFacture: { type: Date, required: true}
     });
-
-    if (props.facture === null){
-        exitDialog();
-    }
 
     /** Définition des événements */
     const emit = defineEmits([
@@ -60,7 +62,7 @@
     ]);
 
     /** Variable contenant la date de paiement */
-    const datePaiement: Ref<Date> = ref(new Date(Date.now()));
+    const datePaiement: Ref<Date> = ref(props.dateFacture);
 
     /**
      * Clic sur le bouton Annuler
@@ -73,6 +75,26 @@
      * Clic sur le bouton Valider
      */
     function confirmDialog(): void {
-        emit('confirm', datePaiement.value);
+        const isValid = datePaiementRules.every(rule => rule(datePaiement.value) === true)
+        if (isValid){
+            emit('confirm', datePaiement.value);
+        }
     };
+
+    /**
+     * Règles : 
+     *  - La date de paiement ne peut pas être inférieure à la date de la facture
+     */
+    const datePaiementRules = [
+        (value: string | Date) => {
+            let date : Date
+            if (typeof value === "string"){
+                const [day, month, year] = value.split('/').map(Number);
+                date = new Date(year, month - 1, day)
+            }else{
+                date = value
+            }
+            return (date.getTime() >= props.dateFacture.getTime()) ? true : "La date de paiement est inférieur à la date de la facture"
+        }
+    ]
 </script>

@@ -45,7 +45,7 @@
   },
   "build": {
     "appId": "com.official-electron-vue.app",
-    "productName": "Facturation Nightly",
+    "productName": "Facturation",
     "copyright": "Copyright © 2025 ${author}",
     "nsis": {
       "oneClick": true,
@@ -57,7 +57,8 @@
     ],
     "extraResources": [
       "defaults/**/*",
-      "./Electron/resources/*"
+      "./Electron/resources/*",
+      "./Electron/templates/*"
     ],
     "directories": {
       "buildResources": "assets",

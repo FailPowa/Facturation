@@ -2,26 +2,26 @@
     <v-container>
         <v-list dense>
             <v-list-item>
-                <v-list-item-title class="text-h6">{{ monEntreprise.nom }}</v-list-item-title>
+                <v-list-item-title class="text-h6" id="nom">{{ props.entreprise.nom }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item>
-                <v-list-item-subtitle>{{ monEntreprise.adresse }}</v-list-item-subtitle>
+                <v-list-item-subtitle id="adresse">{{ props.entreprise.adresse }}</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
-                <v-list-item-subtitle>{{ monEntreprise.codePostal }} {{ monEntreprise.ville }}</v-list-item-subtitle>
-            </v-list-item>
-
-            <v-list-item>
-                <v-list-item-subtitle>Email : {{ monEntreprise.mail }}</v-list-item-subtitle>
+                <v-list-item-subtitle id="cp-ville">{{ props.entreprise.codePostal }} {{ props.entreprise.ville }}</v-list-item-subtitle>
             </v-list-item>
 
             <v-list-item>
-                <v-list-item-subtitle>SIRET : {{ monEntreprise.siret.length !== 0 ? siretFormatter(monEntreprise.siret) : ""}}</v-list-item-subtitle>
+                <v-list-item-subtitle id="email">Email : {{ props.entreprise.mail }}</v-list-item-subtitle>
             </v-list-item>
 
             <v-list-item>
-                <v-list-item-subtitle>TVA : {{ monEntreprise.numTva ? numTvaFormatter(monEntreprise.numTva) : ""}}</v-list-item-subtitle>
+                <v-list-item-subtitle id="siret">SIRET : {{ props.entreprise.siret.length !== 0 ? siretFormatter(props.entreprise.siret) : ""}}</v-list-item-subtitle>
+            </v-list-item>
+
+            <v-list-item>
+                <v-list-item-subtitle id="tva">TVA : {{ props.entreprise.numTva ? numTvaFormatter(props.entreprise.numTva) : ""}}</v-list-item-subtitle>
             </v-list-item>
         </v-list>
     </v-container>
@@ -29,7 +29,6 @@
 
 
 <script setup lang="ts">
-    import { onUpdated, ref, Ref } from 'vue';
     import { Entreprise } from '../../../types';
     import { siretFormatter, numTvaFormatter } from '../../../plugins/entrepriseFormatter';
 
@@ -39,21 +38,5 @@
             type: Entreprise,
             required: true
         }
-    })
-    /** Variable contenant l'entreprise récupéré en paramètre */
-    const monEntreprise : Ref<Entreprise> = ref({
-        id: -1,
-        nom: "",
-        adresse: "",
-        codePostal: "",
-        ville: "",
-        mail: "",
-        numTva: "",
-        siret: "",
-        isMe: true
-    } as Entreprise)
-    
-    onUpdated(() => {
-        monEntreprise.value = props.entreprise
     })
 </script>

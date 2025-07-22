@@ -67,6 +67,9 @@
      * Clic sur le bouton Valider
      */
     function confirmDialog(): void {
+        if (montant.value < 0){
+            montant.value = montant.value * -1
+        }
         emit('confirm', montant.value);
     }
 </script>

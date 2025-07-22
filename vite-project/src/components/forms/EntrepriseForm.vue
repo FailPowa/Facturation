@@ -11,13 +11,15 @@
                 v-model="entrepriseForm.nom"
                 :rules="nomRules"
                 label="Nom" 
-                class="mb-3" 
+                class="mb-3"
+                data-testid="entreprise-form-nom"
             />
             <v-text-field 
                 v-model="entrepriseForm.adresse" 
                 :rules="adresseRules"
                 label="Adresse" 
-                class="mb-3" 
+                class="mb-3"
+                data-testid="entreprise-form-adresse"
             />
 
             <v-row class="mb-3">
@@ -25,14 +27,16 @@
                     <v-text-field 
                         v-model="entrepriseForm.codePostal" 
                         :rules="codePostalRules"
-                        label="Code Postal" 
+                        label="Code Postal"
+                        data-testid="entreprise-form-codePostal"
                     />
                 </v-col>
                 <v-col cols="8">
                     <v-text-field 
                         v-model="entrepriseForm.ville" 
                         :rules="villeRules"
-                        label="Ville" 
+                        label="Ville"
+                        data-testid="entreprise-form-ville"
                     />
                 </v-col>
             </v-row>
@@ -41,19 +45,22 @@
                 v-model="entrepriseForm.mail" 
                 :rules="mailRules"
                 label="Mail" 
-                class="mb-3" 
+                class="mb-3"
+                data-testid="entreprise-form-mail"
             />
             <v-text-field 
                 v-model="entrepriseForm.numTva" 
                 :rules="numTvaRules" 
                 label="Numéro de TVA" 
-                class="mb-3" 
+                class="mb-3"
+                data-testid="entreprise-form-numTva"
             />
             <v-text-field 
                 v-model="entrepriseForm.siret" 
                 :rules="siretRules"
                 label="SIRET" 
                 class="mb-5" 
+                data-testid="entreprise-form-siret"
             />
 
             <v-row justify="center">
@@ -61,6 +68,7 @@
                     <v-btn 
                         type="submit"
                         color="success"
+                        data-testid="entreprise-form-submit-btn"
                         block
                     >
                         Valider
@@ -69,6 +77,7 @@
                 <v-col cols="5">
                     <v-btn 
                         color="error"
+                        data-testid="entreprise-form-cancel-btn"
                         block
                         @click="cancelForm"
                     >

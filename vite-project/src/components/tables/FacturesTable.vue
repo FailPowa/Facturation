@@ -209,8 +209,9 @@
             :facture="null"
             form-title="Ajouter une facture"
             @cancel="addFactureDialog = false"
-            @confirm="saveFacture($event, 'IMPAYEE')"
-            @save="saveFacture($event, 'BROUILLON')"
+            @confirm="saveFacture($event, 'IMPAYEE', false)"
+            @save="saveFacture($event, 'BROUILLON', false)"
+            @generate-pdf="saveFacture($event, 'IMPAYEE', true)"
         />
     </v-dialog>
 
@@ -224,8 +225,9 @@
             :facture="selectedFacture"
             form-title="Modifier une facture"
             @cancel="updateFactureDialog = false"
-            @confirm="saveFacture($event, 'IMPAYEE')"
-            @save="saveFacture($event, 'BROUILLON')"
+            @confirm="saveFacture($event, 'IMPAYEE', false)"
+            @save="saveFacture($event, 'BROUILLON', false)"
+            @generate-pdf="saveFacture($event, 'IMPAYEE', true)"
         />
     </v-dialog>
 
@@ -236,7 +238,7 @@
         persistent
     >
         <AddPaymentDateDialog
-            :facture="selectedFacture"
+            :date-facture="selectedFacture?.date!!"
             @cancel="addDatePaiementDialog = false"
             @confirm="addDatePaiement"
         />
@@ -420,17 +422,21 @@
     }
 
     /** Sauvegarde d'une facture depuis le formulaire */
-    async function saveFacture(facture: FactureType, statutValue: 'BROUILLON' | 'IMPAYEE'): Promise<void> {
+    async function saveFacture(facture: FactureType, statutValue: 'BROUILLON' | 'IMPAYEE', isPdf : boolean): Promise<void> {
         // Récupération du statut Impayée
         const statut: StatutType = await window.serviceElectron.getStatutByValue(statutValue);
         facture.statutId = statut.id;
-
+        let savedFacture = null
         if (facture.id !== '') { // MàJ d'une facture existante
-            await window.serviceElectron.updateFacture(JSON.stringify(facture));
+            savedFacture = await window.serviceElectron.updateFacture(JSON.stringify(facture));
             updateFactureDialog.value = false;
         } else { // Création de la nouvelle facture
-            await window.serviceElectron.addFacture(JSON.stringify(facture));
+            savedFacture = await window.serviceElectron.addFacture(JSON.stringify(facture));
             addFactureDialog.value = false;
+        }
+
+        if (isPdf && savedFacture !== null){
+            generatePDF(savedFacture.id);
         }
         
         // Actualisation du tableau
@@ -503,11 +509,15 @@
      * @param {string} id - Identifiant de la facture à exporter en PDF.
      */
     async function generatePDF(id: string) {
+        uiStore.setLoading(true)
         const { response, url } = await window.serviceElectron.generatePdfFromFacture(id) as { response: CallbackMessage, url: string }
         if (response.code == ResultCode.Success){
+            uiStore.setLoading(false)
             urlPdf.value = url;
             pdfDialog.value = true;
+
         }else{
+            uiStore.setLoading(false)
             showAlertDialog(response.code, response.message);
         }
     }
