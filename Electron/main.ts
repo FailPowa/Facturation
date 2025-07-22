@@ -3,7 +3,37 @@ import path from "path";
 import { isDev } from "./config";
 import { appConfig } from "./ElectronStore/Configuration";
 import AppUpdater from "./AutoUpdate";
-import { getAllEvents } from "./services/eventHandler";
+import { withJsonParsing } from "./middlewares/withJsonParsing"
+import {
+    // TJM
+    getTjm,
+    updateTjm,
+    // Entreprise
+    getClients,
+    addCompany,
+    updateClient,
+    deleteClient,
+    getMyEntreprise,
+    exportClients,
+    importClients,
+    // Facture
+    getFullFacturesByYear,
+    getAllFacturesYears,
+    getLastFacture,
+    isClientInFactures,
+    addFacture,
+    updateFacture,
+    deleteFacture,
+    exportFactures,
+    importFactures,
+    // Statut
+    getStatuts,
+    getStatutByValue,
+    // Générer PDF
+    generatePdfFromFacture,
+} from './services';
+import { jsonStringToFacture } from "./types";
+
 
 /**
  * Fonction de création de la fenêtre
@@ -18,6 +48,7 @@ async function createWindow() {
         minHeight: 600,
 
         webPreferences: {
+            webSecurity: false, // Temporaire
             preload: __dirname + "/preload.js",
             devTools: isDev,
         },
@@ -51,7 +82,34 @@ async function createWindow() {
 }
 
 /** Ecoute des événements concernant les events pour charger les événements du fichier JSON */
-ipcMain.handle('getEvents', getAllEvents);
+// TJM
+ipcMain.handle('getTjm', getTjm);
+ipcMain.handle('updateTjm', updateTjm);
+// Entreprise
+ipcMain.handle('getClients', getClients);
+ipcMain.handle('addClient', addCompany);
+ipcMain.handle('updateClient', updateClient),
+ipcMain.handle('deleteClient', deleteClient);
+ipcMain.handle('getMonEntreprise', getMyEntreprise);
+// Facture
+ipcMain.handle('getFullFacturesByYear', getFullFacturesByYear);
+ipcMain.handle('getAllFacturesYears', getAllFacturesYears);
+ipcMain.handle('getLastFacture', getLastFacture)
+ipcMain.handle('addFacture', withJsonParsing(addFacture, jsonStringToFacture));
+ipcMain.handle('updateFacture', withJsonParsing(updateFacture, jsonStringToFacture));
+ipcMain.handle('deleteFacture', deleteFacture);
+ipcMain.handle('isClientInFactures', isClientInFactures);
+// Statut
+ipcMain.handle('getStatuts', getStatuts);
+ipcMain.handle('getStatutByValue', getStatutByValue);
+// Import et Exports de données
+ipcMain.handle('exportClients', exportClients);
+ipcMain.handle('importClients', importClients);
+ipcMain.handle('exportFactures', exportFactures);
+ipcMain.handle('importFactures', importFactures);
+// Générer PDF
+ipcMain.handle('generatePdfFromFacture', generatePdfFromFacture);
+// Versions
 ipcMain.handle('versions', () => {
     return {
         node: process.versions.chrome,
@@ -61,6 +119,7 @@ ipcMain.handle('versions', () => {
         name: app.getName(),
     };
 });
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

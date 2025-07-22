@@ -1,6 +1,25 @@
-import { Event, CalendarEvent } from './Event';
+import { Tjm } from './Tjm';
+import { EntrepriseType, Entreprise } from './Entreprise';
+import { FactureType, FullFactureType, FullFacture } from './Facture';
+import { StatutType } from './Statut';
+import { CallbackMessage, ResultCode } from './CallbackMessage';
 
 export type {
-    Event,
-    CalendarEvent
+    // TJM
+    Tjm,
+    // Entreprise
+    EntrepriseType,
+    // Facture
+    FactureType,
+    FullFactureType,
+    // Statut
+    StatutType,
+    // CallbackMessage
+    CallbackMessage
+}
+
+export {
+    FullFacture,
+    Entreprise,
+    ResultCode
 }

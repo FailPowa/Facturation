@@ -1,19 +1,44 @@
-import HelpTabAddEvent from "./HelpTabAddEvent.vue";
-import HelpTabUpdateEvent from "./HelpTabUpdateEvent.vue";
-import HelpTabDeleteEvent from "./HelpTabDeleteEvent.vue";
-import HelpTabUpdateDurationEvent from './HelpTabUpdateDurationEvent.vue';
-import HelpTabUpdateTrancheEvent from './HelpTabUpdateTrancheEvent.vue';
-import HelpTabUpdateStatutEvent from './HelpTabUpdateStatutEvent.vue';
-import HelpTabFilterEvent from './HelpTabFilterEvent.vue';
-import HelpTabExportImportEvent from './HelpTabExportImportEvent.vue';
+// client
+import HelpTabAddClientEvent from "./HelpTabAddClientEvent.vue";
+import HelpTabUpdateClientEvent from "./HelpTabUpdateClientEvent.vue";
+import HelpTabDeleteClientEvent from "./HelpTabDeleteClientEvent.vue";
+// Facture
+import HelpTabAddFactureEvent from './HelpTabAddFactureEvent.vue';
+import HelpTabUpdateFactureEvent from "./HelpTabUpdateFactureEvent.vue";
+import HelpTabDeleteFactureEvent from "./HelpTabDeleteFactureEvent.vue";
+import HelpTabUpdateFactureStatutEvent from "./HelpTabUpdateFactureStatutEvent.vue";
+import HelpTabExportFacturesPDFEvent from "./HelpTabExportFacturesPDFEvent.vue";
+// Mon entreprise
+import HelpTabUpdateMonEntrepriseEvent from "./HelpTabUpdateMonEntrepriseEvent.vue";
+import HelpTabUpdateTjmEvent from "./HelpTabUpdateTjmEvent.vue";
+// Imports/Exports
+import HelpTabExportImportClientsEvent from "./HelpTabExportImportClientsEvent.vue";
+import HelpTabExportImportFacturesEvent from "./HelpTabExportImportFacturesEvent.vue";
+// Paramètres
+import HelpTabChangeTheme from "./HelpTabChangeTheme.vue";
+
 
 export {
-    HelpTabAddEvent,
-    HelpTabUpdateEvent,
-    HelpTabDeleteEvent,
-    HelpTabUpdateDurationEvent,
-    HelpTabUpdateTrancheEvent,
-    HelpTabUpdateStatutEvent,
-    HelpTabFilterEvent,
-    HelpTabExportImportEvent
+    // Client
+    HelpTabAddClientEvent,
+    HelpTabUpdateClientEvent,
+    HelpTabDeleteClientEvent,
+
+    // Factures
+    HelpTabAddFactureEvent,
+    HelpTabUpdateFactureEvent,
+    HelpTabDeleteFactureEvent,
+    HelpTabUpdateFactureStatutEvent,
+    HelpTabExportFacturesPDFEvent,
+
+    // Votre entreprise
+    HelpTabUpdateMonEntrepriseEvent,
+    HelpTabUpdateTjmEvent,
+
+    // Exports/Imports
+    HelpTabExportImportClientsEvent,
+    HelpTabExportImportFacturesEvent,
+
+    // Paramètres
+    HelpTabChangeTheme
 }
